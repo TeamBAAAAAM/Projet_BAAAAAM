@@ -1,0 +1,54 @@
+.header {
+	padding: 10px 32px;
+	border: none;
+	border-radius: 0px;
+	background-color: #339966;
+	color: white;
+	box-shadow: 1px 1px 10px grey;
+}
+
+.header img {
+	margin-left: 15px;
+	height: 50px;
+}
+
+.header .dropdown {
+	margin-left: 0px;
+}
+
+.header .dropdown > button {
+	color: #339966;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.navbar-header > button {
+	height: 50px;
+	background-color: white;
+}
+
+#research, #data-table {
+	margin: 20px 0px;
+}
+
+#research {
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+}
+
+#container_form {
+	padding: 30px 20px;
+}
+
+#container_form h2 {
+	margin-bottom: 35px;
+}
+
+#container_form a {
+	margin-left: 35px;
+}
+
+tr:nth-child(2n) {
+	background-color: #e6fff2;
+}
