@@ -1,0 +1,43 @@
+div.btn-status {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	border-radius: 10px;
+	font-family: Calibri;
+	transition: background-color 0.25s, color 0.75s ease-out;
+	padding-bottom: 10px;
+}
+
+.unselected:hover {
+	background-color: #2bba72;
+	color: white;
+	border-color: white;
+	cursor: pointer;
+}
+
+.unselected {
+	background-color: #339966;
+	color: white;
+	border: 2px solid white;
+}
+
+.selected {
+	background-color: white;
+	color: #2bba72;
+	border: 2px solid #2bba72;
+}
+
+form {
+	margin: 40px 0px;
+}
+
+@media only screen and (min-width : 768px) {
+	div.btn-status {
+		height: 240px;
+	}
+}
+@media only screen and (min-width : 992px) {
+	div.btn-status {
+		height: 190px;
+	}
+}

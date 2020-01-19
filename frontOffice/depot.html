@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>BAAAAAM - Dépôt des documents</title>     
+    </head>
+    <body>
+        <div class="jumbotron text-center">
+            <h3>NOM DE L'OUTIL</h3>
+        </div>
+		
+        <div class="container">
+            <div class="container-fluid text-center">
+                <div class="row">
+                    <div id="salarie" class="col-sm-4 btn-status">
+                        <h2>Vous êtes salariés</h2>
+                    </div>
+                    <div id="interim" class="col-sm-4 btn-status">
+                        <h2>Vous êtes interimaires et/ou saisonniers</h2>
+                    </div>
+                    <div id="cesu" class="col-sm-4 btn-status">
+                        <h2>Vous êtes assurés indemnisés par CESU/PAJEMPLOI ou assistante maternelle</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid text-center">
+                <div class="row">
+                    <div id="pole-emploi" class="col-sm-4 btn-status">
+                        <h2>Vous êtes assurés indemnisés à Pôle Emploi</h2>
+                    </div>
+                    <div id="pole-emploiC" class="col-sm-4 btn-status">
+                        <h2>Vous êtes assurés exerçant une activité salariée avec un complément par Pôle Emploi</h2>
+                    </div>
+                    <div id="intermit" class="col-sm-4 btn-status">
+                        <h2>Vous êtes intermittents du spectacle / artistes auteurs</h2>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" action="#" id="form">
+                <div class="form-group">
+                    <label for="nir">N° Sécurité sociale :</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                        <input id="nir" type="text" class="form-control" name="nir" placeholder="NIR">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="nom">Nom :</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                        <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="prenom">Prénom :</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                        <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                        <input id="email" type="text" class="form-control" name="email" placeholder="Email">
+                    </div>
+                </div>
+                <div>
+                    <h4>Pièces justificatives à déposer :</h4>
+                    <!-- <div class="custom-file mb-3">
+                        <input type="file" class="custom-file-input" id="ATT_SAL" name="ATT_SAL">
+                        <label class="custom-file-label" for="ATT_SAL">Choose file</label>
+                    </div> -->
+                    <div class="form-group pj salarie">
+                        <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur : </label>
+                        <input type="file" id="ATT_SAL" name="ATT_SAL">
+                    </div>
+                    <div class="form-group pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS">Les <span id="nb_BS">12</span> bulletins de salaire de tous vos employeurs précédant <span id="max_BS">l'arrêt de travail</span> : </label>
+                        <input type="file" id="BS" name="BS" multiple>
+                    </div>
+                    <!-- <div class="form-group pj cesu">
+                        <label for="ATT_CESU">Attestation d'emploi chèque emploi service : </label>
+                        <input type="file" id="ATT_CESU" name="JUSTIF_SAL">
+                    </div> -->
+                    <!-- <div class="form-group pj ">
+                        <label for="CT_TRAVAIL">Contrat de travail ou Certificat de travail : </label>
+                        <input type="file" id="CT_TRAVAIL" name="JUSTIF_SAL">
+                    </div> -->
+                    <div class="form-group pj intermit">
+                        <label for="CACHET_GUSO">Cachet du GUSO (intermittent du spectacle) : </label>
+                        <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
+                    </div>
+                    <!-- <div class="form-group pj">
+                        <label for="RECU_STC">Reçu pour solde tout compte : </label>
+                        <input type="file" id="RECU_STC" name="JUSTIF_SAL">
+                    </div> -->
+                    <div class="form-group pj intermit">
+                        <label for="DOC_AGESSA">Demande de renseignement AGESSA-MDA : </label>
+                        <input type="file" id="DOC_AGESSA" name="PJ_IJ">
+                    </div>                   
+                </div>
+                <input type="submit" class="btn btn-info" value="Envoyer">
+            </form>
+        </div>
+
+        <footer class="container-fluid text-center">
+            <p>Footer</p>
+        </footer>
+    </body>
+</html>
+
