@@ -1,30 +1,71 @@
+/* Header */
+.header {
+	padding: 10px 32px;
+	border: none;
+	border-radius: 0px;
+	background-color: #339966;
+	color: white;
+	box-shadow: 1px 1px 10px grey;
+}
+
+.header img {
+	margin-left: 15px;
+	height: 50px;
+}
+
+.header .dropdown {
+	margin-left: 0px;
+}
+
+.header .dropdown > button {
+	color: #339966;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.navbar-header > button {
+	height: 50px;
+	background-color: white;
+}
+
+#header_btns {
+	margin-top: 10px;
+}
+
+#header_btns button {
+	margin-left: 5px;
+	height: 50px;
+	font-size: 20px;
+	transition: background-color 0.5s;
+}
+
+/* Components */
 div.btn-status {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	text-decoration: none;
-	border-radius: 10px;
+	border-radius: 20px;
 	font-family: Calibri;
 	transition: background-color 0.25s, color 0.75s ease-out;
 	padding-bottom: 10px;
-}
-
-.unselected:hover {
-	background-color: #2bba72;
-	color: white;
-	border-color: white;
-	cursor: pointer;
+	border: 1px solid white;
 }
 
 .unselected {
-	background-color: #339966;
+	background-color: #0072ff54;
 	color: white;
-	border: 2px solid white;
+}
+
+.unselected:hover {
+	background-color: #0072ffb8;
+	color: white;
+	cursor: pointer;
 }
 
 .selected {
-	background-color: white;
-	color: #2bba72;
-	border: 2px solid #2bba72;
+	background-color: #0072ffb8;
+	color: white;
 }
 
 form {
