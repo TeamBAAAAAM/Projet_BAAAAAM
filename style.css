@@ -1,4 +1,4 @@
-#body_index {
+body {
 	background: url(background.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -38,20 +38,15 @@
 	background-color: white;
 }
 
-#index_nav_bar {
+#header_btns {
 	margin-top: 10px;
 }
 
-#index_nav_bar button {
+#header_btns button {
 	margin-left: 5px;
-	box-shadow: 1px 1px 5px grey;
 	height: 50px;
 	font-size: 20px;
-	transition: box-shadow 0.5s;
-}
-
-#index_nav_bar button:hover {
-	box-shadow: none;
+	transition: background-color 0.5s;
 }
 
 #index_buton {
