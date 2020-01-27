@@ -52,6 +52,18 @@ div.btn-status {
 	border: 1px solid white;
 }
 
+#btn-modal {
+	border: 5px outset #4a5468;
+	background-color: #1058af;
+	color: white;
+	font-weight: bold;
+	margin-top: 18px;
+	border-radius: 100px;
+}
+#btn-modal:hover {
+	border: 5px inset #4a5468;
+}
+
 .unselected {
 	background-color: #0072ff54;
 	color: white;

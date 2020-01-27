@@ -82,7 +82,7 @@ $(document).ready(function(){
 			
 			//Changement de texte
 			$("#nb_BS").text("12");	//12 Bulletins de salaire
-			$("#max_BS").text("l'arrêt de travail"); //Autres cas que celui de Pôle Emploi
+			$("#seuil_BS").text("l'arrêt de travail"); //Autres cas que celui de Pôle Emploi
 		}
 	});
 	

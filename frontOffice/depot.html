@@ -31,102 +31,179 @@
 					</ul>
 				</div>
 			</div>
-		</nav>
-		
-    <div class="container text-center" id="status">
+        </nav>
+        		
+        <div class="container text-center" id="status">
 			<div class="row">
 				<div id="salarie" class="col-sm-4 btn-status">
-					<h2>Vous êtes salarié</h2>
+					<h2>Je suis salarié·e</h2>
 				</div>
 				<div id="interim" class="col-sm-4 btn-status">
-					<h2>Vous êtes interimaire et/ou saisonnier</h2>
+					<h2>Je suis interimair·e et/ou saisonnier·ère</h2>
 				</div>
 				<div id="cesu" class="col-sm-4 btn-status">
-					<h2>Vous êtes indemnisé par CESU/PAJEMPLOI ou assistante maternelle</h2>
+					<h2>Je suis indemnisé·e par CESU/PAJEMPLOI ou je suis assistant·e maternel·le</h2>
 				</div>
 			</div>
 			<div class="row">
 				<div id="pole-emploi" class="col-sm-4 btn-status">
-					<h2>Vous êtes indemnisé par Pôle Emploi</h2>
+					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
 				</div>
 				<div id="pole-emploiC" class="col-sm-4 btn-status">
-					<h2>Vous exercez une activité salariée avec un complément par Pôle Emploi</h2>
+					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
 				</div>
 				<div id="intermit" class="col-sm-4 btn-status">
-					<h2>Vous êtes intermittent du spectacle / artiste auteur</h2>
+					<h2>Je suis intermittent·e du spectacle / artiste auteur</h2>
 				</div>
 			</div>
-		</div>
-
-
+        </div>
 		
         <div class="container">
-            <form method="POST" action="#" id="form">
+            <form method="POST" action="#" id="form">                
+			    <h2>Formulaire d'envoi</h2>
 				<div class="container" id="etat-civil">
-					<div class="form-group">
-						<label for="nir">N° Sécurité sociale :</label>
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<input id="nir" type="text" class="form-control" name="nir" placeholder="NIR">
-						</div>
+					<div class="row">
+                        <div class="col-sm-4">
+                            <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input id="nir" type="text" class="form-control" name="nir" placeholder="# ## ## ## ### ### ##">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="btn btn-light" id="btn-modal"  data-toggle="modal" data-target=".bs-example-modal-sm" title="Où puis-je trouver mon numéro de sécurité sociale ?">?</button>
+                            <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                                <div class="modal-dialog modal-sm" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2>Où puis-je trouver mon numéro de sécurité sociale ?</h2>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Votre numéro de sécurité sociale ou NIR figure sur la face recto de votre carte vitale (ici encadré en rouge).</p>
+                                            <img src="../img/photo-carte-secu.jpg" alt="Image de la carte Vitale">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
-					<div class="form-group">
-						<label for="nom">Nom :</label>
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<input id="nom" type="text" class="form-control" name="nom" placeholder="Nom">
-						</div>
+					<div class="row">
+                        <div class="col-sm-4">
+                            <label for="nom" class="control-label">Nom (*) :</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom">
+                            </div>
+                        </div>        
+                        <div class="col-sm-4">                
+                            <label for="prenom" class="control-label">Prénom (*) :</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom">
+                            </div>
+                        </div>
 					</div>
-					<div class="form-group">
-						<label for="prenom">Prénom :</label>
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom">
-						</div>
+					<div class="row">
+                        <div class="col-sm-4">
+                            <label for="email" class="control-label">Email :</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                <input id="email" type="text" class="form-control" name="email" placeholder="xyz@exemple.com">
+                            </div>
+                        </div>
 					</div>
-					<div class="form-group">
-						<label for="email">Email :</label>
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-							<input id="email" type="text" class="form-control" name="email" placeholder="Email">
-						</div>
-					</div>
-              </div>
+                    <div class="row">
+                        <div class="col-sm-4">                            
+                            <label for="date-arret" class="control-label">Je n'exerce plus d'activité depuis le :</label>
+                            <input type="date" id="date-arret" class="form-control" name="date-arret">
+                        </div>
+                    </div>
+                </div>
 				
                 <div class="container" id="pj">
-                    <h4>Pièces justificatives à déposer :</h4>
+                    <h3>Pièces justificatives à déposer :</h3>
                     <!-- <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="ATT_SAL" name="ATT_SAL">
                         <label class="custom-file-label" for="ATT_SAL">Choose file</label>
+                        <input type="file" class="custom-file-input" id="ATT_SAL" name="ATT_SAL">
                     </div> -->
-                    <div class="form-group pj salarie">
-                        <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur : </label>
-                        <input type="file" id="ATT_SAL" name="ATT_SAL">
+                    <div class="row pj salarie">
+                        <label for="ATT_SAL" class="custom-file-label">Attestation de salaire délivrée par votre employeur (*) :</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="ATT_SAL" name="ATT_SAL" class="file-upload">
+                        </div>
                     </div>
-                    <div class="form-group pj interim cesu pole-emploi pole-emploiC">
-                        <label for="BS">Les <span id="nb_BS">12</span> bulletins de salaire de tous vos employeurs précédant <span id="max_BS">l'arrêt de travail</span> : </label>
-                        <input type="file" id="BS" name="BS" multiple>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_1" class="custom-file-label">Bulletin·s de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_1" name="BS_1">
                     </div>
-                    <!-- <div class="form-group pj cesu">
-                        <label for="ATT_CESU">Attestation d'emploi chèque emploi service : </label>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_2" class="custom-file-label">2ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_2" name="BS_2">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_3" class="custom-file-label">3ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_3" name="BS_3">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_4" class="custom-file-label">4ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_4" name="BS_4">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_5" class="custom-file-label">5ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_5" name="BS_5">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_6" class="custom-file-label">6ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_6" name="BS_6">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_7" class="custom-file-label">7ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_7" name="BS_7">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_8" class="custom-file-label">8ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_8" name="BS_8">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_9" class="custom-file-label">9ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_9" name="BS_9">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_10" class="custom-file-label">10ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_10" name="BS_10">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_11" class="custom-file-label">11ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_11" name="BS_11">
+                    </div>
+                    <div class="row pj interim cesu pole-emploi pole-emploiC">
+                        <label for="BS_12" class="custom-file-label">12ème bulletin de salaire de tous vos employeurs précédant <span id="seuil_BS">l'arrêt de travail</span> (*) : </label>
+                        <input type="file" id="BS_12" name="BS_12">
+                    </div>
+                    <!-- <div class="row pj cesu">
+                        <label for="ATT_CESU" class="custom-file-label">Attestation d'emploi chèque emploi service : </label>
                         <input type="file" id="ATT_CESU" name="JUSTIF_SAL">
                     </div> -->
-                    <!-- <div class="form-group pj ">
-                        <label for="CT_TRAVAIL">Contrat de travail ou Certificat de travail : </label>
+                    <!-- <div class="row pj ">
+                        <label for="CT_TRAVAIL" class="custom-file-label">Contrat de travail ou Certificat de travail : </label>
                         <input type="file" id="CT_TRAVAIL" name="JUSTIF_SAL">
                     </div> -->
-                    <div class="form-group pj intermit">
-                        <label for="CACHET_GUSO">Cachet du GUSO (intermittent du spectacle) : </label>
+                    <div class="row pj intermit">
+                        <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (intermittent·e du spectacle) (*) : </label>
                         <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
                     </div>
-                    <!-- <div class="form-group pj">
-                        <label for="RECU_STC">Reçu pour solde tout compte : </label>
+                    <!-- <div class="row pj">
+                        <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
                         <input type="file" id="RECU_STC" name="JUSTIF_SAL">
                     </div> -->
-                    <div class="form-group pj intermit">
-                        <label for="DOC_AGESSA">Demande de renseignement AGESSA-MDA : </label>
+                    <div class="row pj intermit">
+                        <label for="DOC_AGESSA" class="custom-file-label">Demande de renseignement AGESSA-MDA (*) : </label>
                         <input type="file" id="DOC_AGESSA" name="PJ_IJ">
                     </div>                   
+                </div>
+
+                <div class="container">                    
+				    <p>(*) : Champs obligatoires</p>
                 </div>
                 <input type="submit" class="btn btn-info" value="Envoyer">
             </form>
