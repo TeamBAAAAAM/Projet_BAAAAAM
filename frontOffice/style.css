@@ -84,6 +84,10 @@ form {
 	margin: 40px 0px;
 }
 
+#champ_obligatoire {
+	margin-top: 20px;
+}
+
 /*footer*/
 footer {
 	margin-top: 50px;
