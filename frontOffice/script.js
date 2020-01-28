@@ -1,6 +1,6 @@
 //Au lancement de la page
 $(document).ready(function(){
-	$("#form").hide(); //Le formulaire est masqué
+	$("#form_panel").hide(); //Le formulaire est masqué
 	
 	//Désélection de tous les boutons
 	$("#salarie").addClass("unselected");
@@ -24,11 +24,11 @@ function goToByScroll(id, duration) {
 //Rafraichissement du formulaire
 function showForm() {
 	//Si les éléments de l'état civil n'est pas affiché
-	if ($("#form > div.container:first-child").is(":visible") == false) {
+	if ($("#form_panel > div.container:first-child").is(":visible") == false) {
 		setStatusToTheLeft(); //On place le menu des boutons du haut à gauche
-		$("#form").show(); //On affiche le formulaire
+		$("#form_panel").show(); //On affiche le formulaire
 	}
-	goToByScroll('form', 1000); //On scroll sur le formulaire
+	goToByScroll('form_panel', 1000); //On scroll sur le formulaire
 }
 
 //Place les boutons de "statuts sociaux" sur la gauche
