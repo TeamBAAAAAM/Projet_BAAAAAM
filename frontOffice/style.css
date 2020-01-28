@@ -52,6 +52,18 @@ div.btn-status {
 	border: 1px solid white;
 }
 
+#btn-modal {
+	border: 5px outset white;
+	background-color: #1058af;
+	color: white;
+	font-weight: bold;
+	margin-top: 34px;
+	border-radius: 100px;
+}
+#btn-modal:hover {
+	border-style: inset;
+}
+
 .unselected {
 	background-color: #0072ff54;
 	color: white;
@@ -68,8 +80,97 @@ div.btn-status {
 	color: white;
 }
 
-form {
-	margin: 40px 0px;
+#form_panel {
+	margin-top: 40px;
+	border-radius: 25px;
+}
+
+#form_panel > .panel-heading {
+	border-radius: 25px 25px 0px 0px;
+	padding-left: 40px;
+	background-color: #0072ffb8;
+	font-size: 2em;
+	color: white;
+}
+
+#champ_obligatoire {
+	margin: 20px 0px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.control-label {
+	margin-left: 5px;
+	margin-top : 15px;
+}
+
+.modal-content {
+	background-color: rgba(0, 0, 0, 0.90);
+	color: white;
+}
+.head_modal_title {
+	border: none;
+}
+
+/*note*/
+.note {
+	font-style: italic;
+	font-size: 0.75em;
+	color: blue;
+}
+
+/*footer*/
+footer {
+	margin-top: 50px;
+	background-color: #1c2331;
+	color: white;
+	padding: 0px 50px;
+}
+
+footer div.title_footer {
+	padding-top: 30px;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 1px solid #21d192;
+	text-transform: uppercase;
+}
+
+footer iframe.col-sm-5 {
+	padding-left: 30px;
+	padding-right: 0px;
+	border: none;
+}
+
+#juridique {
+	margin-top: 15px;
+	padding: 10px 0px;
+	background-color: #181f2b;
+}
+
+footer a {
+	text-decoration: none;	
+	color: #21d192;
+}
+footer a:hover {
+	text-decoration: none;	
+	color: lightgrey;
+}
+
+footer #links a {
+	margin-bottom: 10px;
+}
+
+#copyright {
+	padding: 20px 0px;
+	background-color: #161c27;
+}
+
+footer div.list-group a {
+	border: none;
+	background-color: #1c2331;
+	color: #21d192;
 }
 
 @media only screen and (min-width : 768px) {
