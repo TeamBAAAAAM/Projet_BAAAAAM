@@ -53,15 +53,15 @@ div.btn-status {
 }
 
 #btn-modal {
-	border: 5px outset #4a5468;
+	border: 5px outset white;
 	background-color: #1058af;
 	color: white;
 	font-weight: bold;
-	margin-top: 18px;
+	margin-top: 34px;
 	border-radius: 100px;
 }
 #btn-modal:hover {
-	border: 5px inset #4a5468;
+	border-style: inset;
 }
 
 .unselected {
@@ -80,12 +80,43 @@ div.btn-status {
 	color: white;
 }
 
-form {
-	margin: 40px 0px;
+#form_panel {
+	margin-top: 40px;
+	border-radius: 25px;
+}
+
+#form_panel > .panel-heading {
+	border-radius: 25px 25px 0px 0px;
+	padding-left: 40px;
+	background-color: #0072ffb8;
+	font-size: 2em;
+	color: white;
 }
 
 #champ_obligatoire {
-	margin-top: 20px;
+	margin: 20px 0px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.control-label {
+	margin-left: 5px;
+	margin-top : 15px;
+}
+
+.modal-content {
+	background-color: rgba(0, 0, 0, 0.90);
+	color: white;
+}
+.head_modal_title {
+	border: none;
+}
+
+/*note*/
+.note {
+	font-style: italic;
+	font-size: 0.75em;
+	color: blue;
 }
 
 /*footer*/
@@ -109,6 +140,7 @@ footer div.title_footer {
 footer iframe.col-sm-5 {
 	padding-left: 30px;
 	padding-right: 0px;
+	border: none;
 }
 
 #juridique {
