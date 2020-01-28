@@ -62,7 +62,7 @@
             <div class="panel panel-default" id="form_panel">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
-                    <form method="POST" action="#">  
+                    <form method="POST" action="#"> 
                         <div class="container" id="etat-civil">
                             <h3>Identification :</h3>
                             <div class="row">
@@ -152,42 +152,58 @@
                                     <input type="date" id="date-arret" class="form-control" name="date-arret">
                                 </div>
                             </div>
-                    
+                        </div>
+
                         <div class="container" id="pj">
                             <h3>Pièces justificatives à déposer :</h3>
                             <!-- <div class="custom-file mb-3">
+                                <div class="col-sm-12">
                                 <label class="custom-file-label" for="ATT_SAL">Choose file</label>
                                 <input type="file" class="custom-file-input" id="ATT_SAL" name="ATT_SAL">
                             </div> -->
                             <div class="row pj salarie">
-                                <label for="ATT_SAL" class="custom-file-label">Attestation de salaire délivrée par votre employeur (*) :</label>
-                                <div class="file-upload-wrapper">
-                                    <input type="file" id="ATT_SAL" name="ATT_SAL" class="file-upload">
+                                <div class="col-sm-12">
+                                    <label for="ATT_SAL" class="custom-file-label">Attestation de salaire délivrée par votre employeur (*) :</label>
+                                    <div class="file-upload-wrapper">
+                                        <input type="file" id="ATT_SAL" name="ATT_SAL" class="file-upload">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row pj interim cesu pole-emploi pole-emploiC">
-                                <label for="BS" class="custom-file-label">Les bulletin·s de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) (*) : </label>
-                                <input type="file" id="BS" name="BS" multiple>
+                                <div class="col-sm-12">
+                                    <label for="BS" class="custom-file-label">Les bulletin·s de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) (*) : </label>
+                                    <input type="file" id="BS" name="BS" multiple>
+                                </div>
                             </div>
                             <!-- <div class="row pj cesu">
-                                <label for="ATT_CESU" class="custom-file-label">Attestation d'emploi chèque emploi service : </label>
-                                <input type="file" id="ATT_CESU" name="JUSTIF_SAL">
+                                <div class="col-sm-12">
+                                    <label for="ATT_CESU" class="custom-file-label">Attestation d'emploi chèque emploi service : </label>
+                                    <input type="file" id="ATT_CESU" name="JUSTIF_SAL">
+                                </div>
                             </div> -->
                             <!-- <div class="row pj ">
-                                <label for="CT_TRAVAIL" class="custom-file-label">Contrat de travail ou Certificat de travail : </label>
-                                <input type="file" id="CT_TRAVAIL" name="JUSTIF_SAL">
+                                <div class="col-sm-12">
+                                    <label for="CT_TRAVAIL" class="custom-file-label">Contrat de travail ou Certificat de travail : </label>
+                                    <input type="file" id="CT_TRAVAIL" name="JUSTIF_SAL">
+                                </div>
                             </div> -->
                             <div class="row pj intermit">
-                                <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (intermittent·e du spectacle) (*) : </label>
-                                <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
+                                <div class="col-sm-12">
+                                    <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (intermittent·e du spectacle) (*) : </label>
+                                    <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
+                                </div>
                             </div>
                             <!-- <div class="row pj">
-                                <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
-                                <input type="file" id="RECU_STC" name="JUSTIF_SAL">
+                                <div class="col-sm-12">
+                                    <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
+                                    <input type="file" id="RECU_STC" name="JUSTIF_SAL">
+                                </div>
                             </div> -->
                             <div class="row pj intermit">
-                                <label for="DOC_AGESSA" class="custom-file-label">Demande de renseignement AGESSA-MDA (*) : </label>
-                                <input type="file" id="DOC_AGESSA" name="PJ_IJ">
+                                <div class="col-sm-12">
+                                    <label for="DOC_AGESSA" class="custom-file-label">Demande de renseignement AGESSA-MDA (*) : </label>
+                                    <input type="file" id="DOC_AGESSA" name="PJ_IJ">
+                                </div>
                             </div>                   
                         </div>
 
@@ -195,7 +211,6 @@
                             <p>(*) : Champs obligatoires</p>
                         </div>
                         <input type="submit" class="btn btn-info" value="Envoyer">
-                    </div>
                     </form>
                 </div>
             </div>
