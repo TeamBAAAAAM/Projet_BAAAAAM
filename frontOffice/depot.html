@@ -14,57 +14,40 @@
 		<nav class="navbar navbar-default header welcome">
 			<div class="container">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>                        
-					</button>
-					<h1>Bienvenue</h1>
-				</div>
-				<div class="collapse navbar-collapse" id="header_btns">
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<button class="btn btn-default">Envoi sans compte</button>
-							<button class="btn btn-primary">Connexion</button>
-							<button class="btn btn-success">Inscription</button>
-						</li>
-					</ul>
+					<a href="../index.html"><h1>Bienvenue</h1></a>
 				</div>
 			</div>
         </nav>
         		
         <div class="container text-center" id="status">
 			<div class="row">
-				<div id="salarie" class="col-sm-4 btn-status">
-					<h2>Je suis salarié·e</h2>
-				</div>
-				<div id="interim" class="col-sm-4 btn-status">
+				<div id="interim" class="col-sm-3 btn-status">
 					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
 				</div>
-				<div id="cesu" class="col-sm-4 btn-status">
+				<div id="cesu" class="col-sm-3 btn-status">
 					<h2>Je suis indemnisé·e par CESU/PAJEMPLOI ou je suis assistant·e maternel·le</h2>
+				</div>
+				<div id="pole-emploi" class="col-sm-3 btn-status">
+					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
+				</div>
+				<div id="pole-emploiC" class="col-sm-3 btn-status">
+					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
 				</div>
 			</div>
 			<div class="row">
-				<div id="pole-emploi" class="col-sm-4 btn-status">
-					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
+				<div id="independant" class="col-sm-3 btn-status">
+					<h2>Je suis travailleur indépendant et j'attends un enfant</h2>
 				</div>
-				<div id="pole-emploiC" class="col-sm-4 btn-status">
-					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
-				</div>
-				<div id="intermit-enfant" class="col-sm-4 btn-status">
-					<h2>Je suis travailleur·e indépendant·e et j'attends un enfant</h2>
-				</div>
-            </div>
-			<div class="row">
-				<div id="intermit" class="col-sm-4 btn-status">
+				<div id="intermit" class="col-sm-3 btn-status">
                     <h2>Je suis intermittent·e du spectacle</h2>
                 </div>
-				<div id="art-aut" class="col-sm-4 btn-status">
-                    <h2>Je suis artiste auteur·e</h2>
+				<div id="art-aut" class="col-sm-3 btn-status">
+                    <h2>Je suis artiste auteur</h2>
                 </div>
-            </div>
-                
+				<div id="salarie" class="col-sm-3 btn-status">
+					<h2>Je suis salarié·e</h2>
+				</div>
+            </div>                
         </div>
 
         <div class="container">
@@ -195,15 +178,17 @@
                             </div> -->
                             <div class="row pj intermit">
                                 <div class="col-sm-12">
-                                    <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (intermittent·e du spectacle) (*) : </label>
+                                    <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (*) : </label>
                                     <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
                                 </div>
                             </div>
                             <!-- <div class="row pj">
-                                <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
-                                <input type="file" id="RECU_STC" name="JUSTIF_SAL">
-                            </div> -->                            
-                            <div class="row pj intermit">
+                                <div class="col-sm-12">
+                                    <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
+                                    <input type="file" id="RECU_STC" name="JUSTIF_SAL">
+                                </div>
+                            </div> -->
+                            <div class="row pj art-aut">
                                 <div class="col-sm-12">
                                     <label for="DOC_AGESSA" class="custom-file-label">Imprimé délivré par AGESSA (*) : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ">
@@ -219,9 +204,9 @@
             </div>
         </div>
 
-        <footer class="container-fluid text-center">
+		<footer class="container-fluid text-center">
 			<div class="row">
-				<div class="col-sm-4">
+				<div class="col-sm-3">
 					<div class="title_footer">Présentation</div>
 					<div class="row">
 						<p>Ajouter une description ici.</p>
@@ -230,31 +215,53 @@
 				<div id="links" class="col-sm-3">
 					<div class="title_footer">Liens utiles</div>
 					<div class="row">
-						<a class="col-sm-12" href="https://www.ameli.fr/haute-garonne" target="_blank">Site ameli - Haute Garonne</a>
-						<a class="col-sm-12"  href="https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_somtc=true" target="_blank">Mon compte ameli</a>
+						<div class="col-sm-12">
+							<a class="col-sm-12" href="https://www.ameli.fr/haute-garonne" target="_blank">
+								Site ameli - Haute Garonne
+							</a>
+						</div>
+						<div class="col-sm-12">
+							<a class="col-sm-12" href="https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_somtc=true" target="_blank">
+								Mon compte ameli
+							</a>
+						</div>
+						<div class="col-sm-12">
+							<a class="col-sm-12" href="https://www.oups.gouv.fr/">
+								<img src="../img/logo_oups.svg">
+							</a>
+						</div>
 					</div>
 				</div>
-				<div class="col-sm-5">
+				<div class="col-sm-6">
 					<div class="title_footer">Contact</div>
 					<div class="row">
 						<iframe class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr" style="border:0;" allowfullscreen=""></iframe>	
 						<div class="col-sm-7 text-left">
-							<p>Caisse d'Assurance Maladie</p>
-							<p>Toulouse - Haute-Garonne (31)</p>
-							<p>3 Boulevard du Professeur Léopold Escande</p>
-							<p>31093 Toulouse</p>
-							<p>08 11 70 36 46</p>
-							<p>Ouvert du lundi au vendredi de 08h00 à 17h00</p>
-							<p>Fermé le samedi et le dimanche</p>
+							<div class="col-sm-12">Caisse Primaire d'Assurance Maladie</div>
+							<div class="col-sm-12">3, Boulevard du Professeur Léopold Escande</div>	
+							<div class="col-sm-12">Haute-Garonne (31) - 31093 Toulouse</div>													
+							<div class="col-sm-12">	
+								<img src="../img/num_tel.png" height="50px">
+							</div>																										
+							<div class="col-sm-12">Ouvert du lundi au vendredi de 08h00 à 17h00</div>														
+							<div class="col-sm-12">Fermé le samedi et le dimanche</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div id="juridique" class="row">
-				<a href="#" class="col-sm-3" target="_blank">Conditions Générales d'Utilisation</a>
-				<a href="#" class="col-sm-3" target="_blank">Politique de traitement des données personnelles</a>
-				<a href="#" class="col-sm-3" target="_blank">Politique de traitement des cookies</a>
-				<a href="#" class="col-sm-3" target="_blank">Mentions Légales</a>
+			<div id="juridique" class="row">				
+				<div class="col-sm-3">
+					<a href="#" target="_blank">Conditions Générales d'Utilisation</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="#" target="_blank">Politique de traitement des données personnelles</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="#" target="_blank">Politique de traitement des cookies</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="#" target="_blank">Mentions Légales</a>
+				</div>
 			</div>
 			<div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>
         </footer>
