@@ -149,11 +149,11 @@ footer iframe.col-sm-5 {
 	background-color: #181f2b;
 }
 
-footer a {
+footer a, nav a{
 	text-decoration: none;	
 	color: #21d192;
 }
-footer a:hover {
+footer a:hover , nav a:hover{
 	text-decoration: none;	
 	color: lightgrey;
 }

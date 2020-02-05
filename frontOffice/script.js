@@ -1,14 +1,14 @@
+var pj = ["salarie", "interim", "cesu", "pole-emploi",
+		  "pole-emploiC", "intermit", "independant", "art-aut"];
+
 //Au lancement de la page
 $(document).ready(function(){
 	$("#form_panel").hide(); //Le formulaire est masqué
 	
 	//Désélection de tous les boutons
-	$("#salarie").addClass("unselected");
-	$("#interim").addClass("unselected");
-	$("#cesu").addClass("unselected");
-	$("#pole-emploi").addClass("unselected");
-	$("#pole-emploiC").addClass("unselected");
-	$("#intermit").addClass("unselected");
+	for(i = 0; i < pj.length ; i++) {
+		$("#" + pj[i]).addClass("unselected");
+	}
 });
 
 //Scroll vers le div d'identifiants "id"
@@ -48,113 +48,51 @@ function isUnselected(selector) {
 	return false;
 }
 
-//Affichage des zones de dépot des PJ en fonction
-//de la catégorie choisie via le nom des classes
-$(document).ready(function(){
-	//Masquage du formulaire au chargement de la page
-	$("#salarie").click(function(){
-		if(isUnselected("#salarie")){
-			showForm();
-			
-			$(".interim").hide();
-			$(".cesu").hide();
-			$(".pole-emploi").hide();
-			$(".pole-emploiC").hide();
-			$(".intermit").hide();
-			$(".salarie").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#salarie").toggleClass("unselected selected");
-		}
-	});
-	
-	$("#interim").click(function(){
-		if(isUnselected("#interim")){
-			showForm();
-			
-			$(".salarie").hide();
-			$(".cesu").hide();
-			$(".pole-emploi").hide();
-			$(".pole-emploiC").hide();
-			$(".intermit").hide();
-			$(".interim").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#interim").toggleClass("unselected selected");
-			
+//Cache tous les justificatifs
+function hideAllPJ() {
+	for(i = 0; i < pj.length ; i++) {
+		$("#" + pj[i]).hide();
+	}
+}
+
+function majPJ(pj) {
+	if(isUnselected("#" + pj)){
+		showForm();
+		
+		hideAllPJ();
+		$("." + pj).show(1000);
+		$(".selected").toggleClass("unselected selected");
+		$("#" + pj).toggleClass("unselected selected");
+
+		if((pj == "interim")
+		|| (pj == "art-aut")
+		|| (pj == "independant")
+		|| (pj == "cesu")
+		|| (pj == "independant")
+		|| (pj == "independant")
+		){
 			//Changement de texte
 			$("#nb_BS").text("12");	//12 Bulletins de salaire
 			$("#seuil_BS").text("l'arrêt de travail"); //Autres cas que celui de Pôle Emploi
 		}
-	});
-	
-	$("#cesu").click(function(){
-		if(isUnselected("#cesu")){
-			showForm();
-			
-			$(".salarie").hide();
-			$(".interim").hide();
-			$(".pole-emploi").hide();
-			$(".pole-emploiC").hide();
-			$(".intermit").hide();
-			$(".cesu").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#cesu").toggleClass("unselected selected");
-			
-			//Changement de texte
-			$("#nb_BS").text("12");	//12 Bulletins de salaire
-			$("#max_BS").text("l'arrêt de travail"); //Autres cas que celui de Pôle Emploi
-		}
-	});
-	
-	$("#pole-emploi").click(function(){
-		if(isUnselected("#pole-emploi")){
-			showForm();
-			
-			$(".salarie").hide();
-			$(".interim").hide();
-			$(".cesu").hide();
-			$(".pole-emploiC").hide();
-			$(".intermit").hide();
-			$(".pole-emploi").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#pole-emploi").toggleClass("unselected selected");
-			
+		else if(pj == "pole-emploi"){
 			//Changement de texte
 			$("#nb_BS").text("4");	//4 Bulletins de salaire
 			$("#max_BS").text("l'inscription à Pôle Emploi"); //Cas à Pôle Emploi
 		}
-	});
-	
-	$("#pole-emploiC").click(function(){		
-		if(isUnselected("#pole-emploiC")){
-			showForm();
-			
-			$(".salarie").hide();
-			$(".interim").hide();
-			$(".cesu").hide();
-			$(".pole-emploi").hide();
-			$(".intermit").hide();
-			$(".pole-emploiC").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#pole-emploiC").toggleClass("unselected selected");
-			
+		else if(pj == "pole-emploiC"){
 			//Changement de texte
-			$("#nb_BS").text("3");	//3 Bulletins de salaire
+			$("#nb_BS").text("3");	//4 Bulletins de salaire
 			$("#max_BS").text("l'inscription à Pôle Emploi"); //Cas à Pôle Emploi
 		}
-	});
-	
-	$("#intermit").click(function(){
-		if(isUnselected("#intermit")){
-			showForm();
-			
-			$(".salarie").hide();
-			$(".interim").hide();
-			$(".cesu").hide();
-			$(".pole-emploi").hide();
-			$(".pole-emploiC").hide();
-			$(".intermit").show(1000);
-			$(".selected").toggleClass("unselected selected");
-			$("#intermit").toggleClass("unselected selected");
-		}
-	});
+	}
+}
+
+//Affichage des zones de dépot des PJ en fonction
+//de la catégorie choisie via le nom des classes
+$(document).ready(function(){
+	//Masquage du formulaire au chargement de la page
+	for(i = 0 ; i < pj.length ; i++) {
+		$("#" + pj[i]).click(majPJ(pj[i]));
+	}
 });
