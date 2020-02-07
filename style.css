@@ -2,6 +2,8 @@ body {
 	background: url(background.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
+	min-width: 545px;
+	font-family: "Calibri";
 }
 
 .header {
@@ -46,6 +48,9 @@ body {
 	border: 3px solid #2e242433;
 	border-radius: 15px;
 	transition: background-color 1s, box-shadow 1s;
+	margin-top: 200px;
+	font-size: 34px;
+	padding: 15px 25px;
 }
 
 #send_button a:hover {
@@ -63,7 +68,7 @@ body {
 
 /*footer*/
 footer {
-	margin-top: 50px;
+	margin-top: 220px;
 	background-color: #1c233191;
 	color: white;
 	padding: 0px 50px;
@@ -113,4 +118,18 @@ footer div.list-group a {
 	border: none;
 	background-color: #1c2331;
 	color: #21d192;
+}
+
+a[href='https://www.oups.gouv.fr/'] > img {
+	width: 180px;
+}
+
+img[src="img/num_tel.png"] {
+	height: 50px;
+}
+
+@media (max-width: 770px) {
+	#contact > *{
+		text-align: center;
+	}
 }
