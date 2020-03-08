@@ -22,4 +22,5 @@ function connexionMySQL() {
     return $cres;
 }
 // essaie de changement 
+//2e essaie
 ?>
