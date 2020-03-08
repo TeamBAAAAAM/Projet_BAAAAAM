@@ -1,10 +1,10 @@
 <?php
 
 //Variables de connexion 
-define("ID_MYSQL", "21900900");
-define("PWD_MYSQL", "01581D");
-define("BD_MYSQL", "db_21900900_2");
-define("SERVER_MYSQL", "etu-web2");
+define("ID_MYSQL", "root");
+define("PWD_MYSQL", "");
+define("BD_MYSQL", "arrets");
+define("SERVER_MYSQL", "");
 
 
 // Connexion BD
