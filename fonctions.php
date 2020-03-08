@@ -21,6 +21,4 @@ function connexionMySQL() {
     }
     return $cres;
 }
-
-
 ?>
