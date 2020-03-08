@@ -23,4 +23,5 @@ function connexionMySQL() {
 }
 // essaie de changement 
 //2e essaie
+//Axel
 ?>
