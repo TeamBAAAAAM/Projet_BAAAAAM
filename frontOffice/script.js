@@ -1,4 +1,55 @@
 var pj = ["salarie", "interim", "cesu", "pole-emploi", "pole-emploiC", "intermit", "independant", "art-aut"];
+var msg_salarie = "Uniquement si vous ne faîte pas partie des autres cas.";
+var msg_interim = "A titre d'exemple, peuvent ";
+var msg_cesu = "";
+var msg_pole_emploi = "";
+var msg_pole_emploiC = "";
+var msg_intermit = "";
+var msg_independant = "";
+var msg_art_aut = "";
+
+//Fonction pour gérer les messages des statuts
+function showInfo_function(currentPJ) {
+	switch (currentPJ) {
+		case "salarie":
+			$("#message").html(msg_salarie);
+			break;
+		case "interim":
+			$("#message").html(msg_interim);
+			break;
+		case "cesu":
+			$("#message").html(msg_cesu);
+			break;
+		case "pole-emploi":
+			$("#message").html(msg_pole_emploi);
+			break;
+		case "pole-emploiC":
+			$("#message").html(msg_pole_emploiC);
+			break;
+		case "intermit":
+			$("#message").html(msg_intermit);
+			break;
+		case "independant":
+			$("#message").html(msg_independant);
+			break;
+		case "art-aut":
+			$("#message").html(msg_art_aut);
+			break;
+	}
+
+	$("#info-status").show();
+}
+
+function hideInfo() {
+	$("#info-status").hide();
+}
+
+//Affiche un message détaillant un statut lors du survol d'un bouton
+function showInfo() {
+	for(i = 0; i < pj.length; i++) {
+		$("#" + pj[i]).hover(showInfo_function(pj[i]), hideInfo());
+	}
+}
 
 //Scroll vers le div d'identifiants "id"
 function goToByScroll(id, duration) {
@@ -53,6 +104,7 @@ function click_function(event){
 		showForm();
 		
 		hideAllPJ();
+		$("#form_panel > div.panel-heading").text($("#" + currentPJ).text());
 		$("." + currentPJ).show(1000);
 		$(".selected").toggleClass("unselected selected");
 		$("#" + currentPJ).toggleClass("unselected selected");
@@ -84,6 +136,7 @@ function click_function(event){
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
 $(document).ready(function(){
+	showInfo();
 	$("#form_panel").hide(); //Le formulaire est masqué
 	
 	for(i = 0 ; i < pj.length ; i++) {
