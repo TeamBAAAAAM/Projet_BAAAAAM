@@ -7,7 +7,6 @@ define("BD_MYSQL", "bd_cpam");
 define("HOST", "localhost");
 define("PORT", "3306");
 
-
 // Connexion BD
 function connexionMySQL() {
     //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
@@ -21,9 +20,27 @@ function connexionMySQL() {
             return NULL;
         }
     }
+        
+    echo("<p>Connexion réussi</p>");
     return $cres;
 }
-// essaie de changement 
-//2e essaie
-//Axel
+
+//Enregistre le dossier d'un assuré et son contenu
+//dans un espace dédié du serveur
+function RecevoirDossier($RefD, $NirA, $fichiers, $dossierCible) {
+    foreach ($fichiers as $fichier) {
+        if (($_FILES[$fichier]['name'] != "")){
+            $target_dir = $DossierCible."/".$NirA."/".$RefD."/";
+            $file = $_FILES[$fichier]['name'];
+            $path = pathinfo($file);
+            $filename = $path['filename'];
+            $ext = $path['extension'];
+            $temp_name = $_FILES[$fichier]['tmp_name'];
+            $path_filename_ext = $target_dir.$filename.".".$ext;
+
+            move_uploaded_file($temp_name, $path_filename_ext);
+            echo "Fichier téléchargé avec succès !";
+        }   
+    }
+}
 ?>
