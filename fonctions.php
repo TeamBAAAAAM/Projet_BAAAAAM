@@ -2,8 +2,8 @@
 
 //Variables de connexion 
 define("USER", "root");
-define("PWD_MYSQL", "root");
-define("BD_MYSQL", "arrets");
+define("PWD_MYSQL", "");
+define("BD_MYSQL", "bd_cpam");
 define("HOST", "localhost");
 define("PORT", "3306");
 
