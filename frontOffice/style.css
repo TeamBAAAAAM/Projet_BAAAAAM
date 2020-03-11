@@ -1,34 +1,199 @@
+body {
+	font-family: "Calibri";
+}
+
+/* Header */
+.header {
+	padding: 10px 32px;
+	border: none;
+	border-radius: 0px;
+	background-color: #339966;
+	color: white;
+	box-shadow: 1px 1px 10px grey;
+}
+
+.header img {
+	margin-left: 15px;
+	height: 50px;
+}
+
+.header .dropdown {
+	margin-left: 0px;
+}
+
+.header .dropdown > button {
+	color: #339966;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.navbar-header > button {
+	height: 50px;
+	background-color: white;
+}
+
+#header_btns {
+	margin-top: 10px;
+}
+
+#header_btns button {
+	margin-left: 5px;
+	height: 50px;
+	font-size: 20px;
+	transition: background-color 0.5s;
+}
+
+/* Components */
 div.btn-status {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	text-decoration: none;
-	border-radius: 10px;
+	border-radius: 20px;
 	font-family: Calibri;
 	transition: background-color 0.25s, color 0.75s ease-out;
 	padding-bottom: 10px;
+	border: 1px solid white;
 }
 
-.unselected:hover {
-	background-color: #2bba72;
+#btn-modal {
+	border: 5px outset white;
+	background-color: #1058af;
 	color: white;
-	border-color: white;
-	cursor: pointer;
+	font-weight: bold;
+	margin-top: 34px;
+	border-radius: 100px;
+}
+#btn-modal:hover {
+	border-style: inset;
 }
 
 .unselected {
-	background-color: #339966;
+	background-color: #0072ff54;
 	color: white;
-	border: 2px solid white;
+}
+
+.unselected:hover {
+	background-color: #0072ffb8;
+	color: white;
+	cursor: pointer;
 }
 
 .selected {
-	background-color: white;
-	color: #2bba72;
-	border: 2px solid #2bba72;
+	background-color: #0072ffb8;
+	color: white;
 }
 
-form {
-	margin: 40px 0px;
+#form_panel {
+	margin-top: 40px;
+	border-radius: 25px;
+}
+
+#form_panel > .panel-heading {
+	border-radius: 25px 25px 0px 0px;
+	padding-left: 40px;
+	background-color: #0072ffb8;
+	font-size: 2em;
+	color: white;
+}
+
+#champ_obligatoire {
+	margin: 20px 0px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.control-label {
+	margin-left: 5px;
+	margin-top : 15px;
+}
+
+.modal-content {
+	background-color: rgba(0, 0, 0, 0.90);
+	color: white;
+}
+.head_modal_title {
+	border: none;
+}
+
+/*note*/
+.note {
+	font-style: italic;
+	font-size: 0.75em;
+	color: blue;
+}
+
+/*footer*/
+footer {
+	margin-top: 95px;
+	background-color: #1c233191;
+	color: white;
+	padding: 0px 50px;
+}
+
+footer div.title_footer {
+	padding-top: 30px;
+	padding-bottom: 10px;
+	margin-bottom: 15px;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 1px solid #21d192;
+	text-transform: uppercase;
+}
+
+footer iframe.col-sm-5 {
+	padding-left: 30px;
+	padding-right: 0px;
+	border: none;
+}
+
+#juridique {
+	margin-top: 15px;
+	padding: 10px 0px;
+	background-color: #181f2bc7;
+}
+
+footer a {
+	text-decoration: none;	
+	color: #21d192;
+}
+footer a:hover {
+	text-decoration: none;	
+	color: lightgrey;
+}
+
+footer #links a {
+	margin-bottom: 10px;
+}
+
+#copyright {
+	padding: 20px 0px;
+	background-color: #161c27;
+}
+
+footer div.list-group a , .header a{
+	border: none;
+	background-color: #1c2331;
+	color: #21d192;
+}
+
+a[href='https://www.oups.gouv.fr/'] > img {
+	width: 180px;
+}
+
+img[src="../img/num_tel.png"] {
+	height: 50px;
+}
+
+div.alert {
+	margin: 30px 150px;
+	margin-bottom: 0px;
+}
+
+@media (max-width: 770px) {
+	#contact > *{
+		text-align: center;
+	}
 }
 
 @media only screen and (min-width : 768px) {
@@ -39,5 +204,12 @@ form {
 @media only screen and (min-width : 992px) {
 	div.btn-status {
 		height: 190px;
+	}
+}
+
+@media (max-width: 768px) {
+	div.btn-status {
+		border: 2px solid white;
+		border-radius: 0px;
 	}
 }

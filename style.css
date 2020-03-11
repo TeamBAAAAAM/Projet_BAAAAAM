@@ -2,6 +2,8 @@ body {
 	background: url(background.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
+	min-width: 545px;
+	font-family: "Calibri";
 }
 
 .header {
@@ -38,27 +40,96 @@ body {
 	background-color: white;
 }
 
-#header_btns {
-	margin-top: 10px;
+#send_button a {
+	text-decoration: none;
+	color: rgb(13, 236, 114);
+	background-color: white;
+	box-shadow: 1px 1px 10px rgb(22, 15, 29);
+	border: 3px solid #2e242433;
+	border-radius: 15px;
+	transition: background-color 1s, box-shadow 1s;
+	margin-top: 200px;
+	font-size: 34px;
+	padding: 15px 25px;
 }
 
-#header_btns button {
-	margin-left: 5px;
-	height: 50px;
-	font-size: 20px;
-	transition: background-color 0.5s;
+#send_button a:hover {
+	box-shadow: 1px 1px 10px rgb(59, 41, 78);
+	background-color: rgb(13, 236, 114);
+	color: white;
 }
 
-#index_buton {
-	position: absolute;
-	bottom: -50px;
+/*note*/
+.note {
+	font-style: italic;
+	font-size: 0.75em;
+	color: rgb(0, 224, 150);
 }
 
-#index_button button {
-	font-size: 25px;
+/*footer*/
+footer {
+	margin-top: 220px;
+	background-color: #1c233191;
+	color: white;
+	padding: 0px 50px;
+}
+
+footer div.title_footer {
+	padding-top: 30px;
+	padding-bottom: 10px;
 	margin-bottom: 15px;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 1px solid #21d192;
+	text-transform: uppercase;
 }
 
-.input-group{
-	margin-top: 25px;
+footer iframe.col-sm-5 {
+	padding-left: 30px;
+	padding-right: 0px;
+	border: none;
+}
+
+#juridique {
+	margin-top: 15px;
+	padding: 10px 0px;
+	background-color: #181f2bc7;
+}
+
+footer a {
+	text-decoration: none;	
+	color: #21d192;
+}
+footer a:hover {
+	text-decoration: none;	
+	color: lightgrey;
+}
+
+footer #links a {
+	margin-bottom: 10px;
+}
+
+#copyright {
+	padding: 20px 0px;
+	background-color: #161c27;
+}
+
+footer div.list-group a {
+	border: none;
+	background-color: #1c2331;
+	color: #21d192;
+}
+
+a[href='https://www.oups.gouv.fr/'] > img {
+	width: 180px;
+}
+
+img[src="img/num_tel.png"] {
+	height: 50px;
+}
+
+@media (max-width: 770px) {
+	#contact > *{
+		text-align: center;
+	}
 }
