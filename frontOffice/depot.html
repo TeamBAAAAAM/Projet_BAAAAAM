@@ -62,7 +62,7 @@
             <div class="panel panel-default" id="form_panel">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
-                    <form method="POST" action="#"> 
+                    <form method="POST" action="enregistrement.php"> 
                         <div class="container" id="etat-civil">
                             <h3>Identification :</h3>
                             <div class="row">
@@ -145,11 +145,19 @@
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre adresse email à des fins commerciales.</span>
                                 </div>
+                                <div class="col-sm-4">
+                                    <label for="tel" class="control-label">Numéro de téléphone : </label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                        <input id="tel" type="tel" class="form-control" name="tel">
+                                    </div>
+                                    <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre adresse email à des fins commerciales.</span>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">                            
-                                    <label for="date-arret" class="control-label">Je n'exerce plus d'activité depuis le :</label>
-                                    <input type="date" id="date-arret" class="form-control" name="date-arret">
+                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le :</label>
+                                    <input type="date" id="date_arret" class="form-control" name="date_arret">
                                 </div>
                             </div>
                         </div>
