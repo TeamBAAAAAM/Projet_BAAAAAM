@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<?php 
+    require_once './fonctions.php';
+    // connexion à la BD
+    $link = connexionMySQL();
+    if ($link == NULL){
+        //Redirection
+    }
+    
+    //Création de session
+    $_SESSION["ID"] = $GET["id"];
+?>
+
 <html lang="en">
 	<head>
 		
@@ -60,7 +72,7 @@
 			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
 			<div class="table-responsive">          
 				<table id="data-table" class="table table-hover">
-					<thead>
+<!--					<thead>
 						<tr>
 							<th>Date</th>
 							<th>NIR</th>
@@ -70,14 +82,11 @@
 							<th>Aperçu</th>
 							<th>Statut</th>
 						</tr>
-					</thead>
+					</thead>-->
 					<tbody id="data-list">
 						<tr>
-							<td>Date1</td>
-							<td>NIR1</td>
-							<td>Nom1</td>
-							<td>Prénom1</td>
-							<td>État1</td>
+							<td>Dossiers reçus aujourd'hui</td>
+                                                        <td><?php nbDossiersRecus($link) ?></td>
 							<td>
 								<div class="dropdown">
 									<button class="btn btn-default dropdown-toggle" type="button" id="apercu1" data-toggle="dropdown"></button>
@@ -85,25 +94,13 @@
 									<ul class="dropdown-menu" role="menu" aria-labelledby="apercu1">
 										<li role="presentation"><a role="menuitem" href="#">PJ1_1</a></li>
 										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ1_2</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ1_3</a></li>
 									</ul>
-								</div>
-							</td>
-							<td>
-								<div class="btn-group">
-									<button type="button" class="btn btn-warning">À traiter</button>
-									<button type="button" class="btn btn-success">Traité</button>
 								</div>
 							</td>
 						</tr>
 						<tr>
-							<td>Date2</td>
-							<td>NIR2</td>
-							<td>Nom2</td>
-							<td>Prénom2</td>
-							<td>État2</td>
+							<td>Dossiers restant à traiter</td>
+                                                        <td><?php nbDossiersATraiter($link) ?></td>
 							<td>
 								<div class="dropdown ">
 									<button class="btn btn-default dropdown-toggle"
