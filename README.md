@@ -17,6 +17,6 @@ Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 <li>Création de la base de données</li>
 <p> Script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a>
 <li>Accès à la base de données</li>
-<p>Dans le fichier fonctions.php accessible, modifier les variables de connexion </p>
+<p>Dans le fichier <a href="fonctions.php">fonctions.php</a>, modifier les variables de connexion si nécessaire</p>
 <img src="README_img/var_connexion.png" width="350px">
 </ul>
