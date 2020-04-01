@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php 
-    require_once './fonctions.php';
+    require("../fonctions.php");
     // connexion à la BD
     $link = connexionMySQL();
     if ($link == NULL){
@@ -86,95 +86,37 @@
 					<tbody id="data-list">
 						<tr>
 							<td>Dossiers reçus aujourd'hui</td>
-                                                        <td><?php nbDossiersRecus($link) ?></td>
-							<td>
-								<div class="dropdown">
-									<button class="btn btn-default dropdown-toggle" type="button" id="apercu1" data-toggle="dropdown"></button>
-									<span class="glyphicon glyphicon-search"></span>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="apercu1">
-										<li role="presentation"><a role="menuitem" href="#">PJ1_1</a></li>
-										<li role="presentation" class="divider"></li>
-									</ul>
-								</div>
-							</td>
+                                                        <td>
+                                                            <?php 
+                                                                $res = nbDossiersRecus($link);                                                                
+                                                                $ligne = mysqli_fetch_array($res);
+                                                                echo $ligne["nbDossiersRecus"];
+                                                            ?>
+                                                        </td>
 						</tr>
 						<tr>
 							<td>Dossiers restant à traiter</td>
-                                                        <td><?php nbDossiersATraiter($link) ?></td>
-							<td>
-								<div class="dropdown ">
-									<button class="btn btn-default dropdown-toggle"
-										type="button" id="apercu2" data-toggle="dropdown"></button>
-									<span class="glyphicon glyphicon-search"></span>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="apercu2">
-										<li role="presentation"><a role="menuitem" href="#">PJ2_1</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ2_2</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ2_3</a></li>
-									</ul>
-								</div>
-							</td>
-							<td>
-								<div class="btn-group">
-									<button type="button" class="btn btn-warning">À traiter</button>
-									<button type="button" class="btn btn-success">Traité</button>
-								</div>
-							</td>
+                                                        <td>
+                                                            <?php 
+                                                                $res = nbDossiersATraiter($link);
+                                                                $ligne = mysqli_fetch_array($res);
+                                                                echo $ligne["nbDossiersAtraiter"];
+                                                            ?>
+                                                        </td>
 						</tr>
 						<tr>
-							<td>Date3</td>
-							<td>NIR3</td>
-							<td>Nom3</td>
-							<td>Prénom3</td>
-							<td>État3</td>
-							<td>
-								<div class="dropdown">
-									<button class="btn btn-default dropdown-toggle"
-										type="button" id="apercu3" data-toggle="dropdown"></button>
-									<span class="glyphicon glyphicon-search"></span>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="apercu3">
-										<li role="presentation"><a role="menuitem" href="#">PJ3_1</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ3_2</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ3_3</a></li>
-									</ul>
-								</div>
-							</td>
-							<td>
-								<div class="btn-group">
-									<button type="button" class="btn btn-warning">À traiter</button>
-									<button type="button" class="btn btn-success">Traité</button>
-								</div>
-							</td>
+							<td>Dossiers classés sans suite aujourd'hui</td>
+                                                        <td>
+                                                            <?php 
+                                                                $res = nbDossiersClasses($link);
+                                                                $ligne = mysqli_fetch_array($res);
+                                                                echo $ligne["nbDossiersClasses"];
+                                                            ?>
+                                                        </td>
 						</tr>
 						<tr>
-							<td>Date4</td>
-							<td>NIR4</td>
-							<td>Nom4</td>
-							<td>Prénom4</td>
-							<td>État4</td>
-							<td>
-								<div class="dropdown">
-									<button class="btn btn-default dropdown-toggle"
-										type="button" id="apercu4" data-toggle="dropdown"></button>
-									<span class="glyphicon glyphicon-search"></span>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="apercu4">
-										<li role="presentation"><a role="menuitem" href="#">PJ4_1</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ4_2</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">PJ4_3</a></li>
-									</ul>
-								</div>
-							</td>
-							<td>
-								<div class="btn-group">
-									<button type="button" class="btn btn-warning">À traiter</button>
-									<button type="button" class="btn btn-success">Traité</button>
-								</div>
-							</td>
+							<td>Autre</td>
+							<td>15</td>
 						</tr>
 					</tbody>
 				</table>
