@@ -2,7 +2,7 @@
 
 //Variables de connexion 
 define("USER", "root");
-define("PWD_MYSQL", "root");
+define("PWD_MYSQL", "");
 define("BD_MYSQL", "bd_cpam");
 define("HOST", "localhost");
 define("PORT", "3306");
@@ -15,13 +15,11 @@ function connexionMySQL() {
         //echo("<p>Connexion impossible</p>");
         return NULL;
     }
-
     if (mysqli_select_db($cres, BD_MYSQL) == NULL) {
         //echo("<p>Problème de base de données</p>");
         return NULL;
     }
     //echo("<p>Connexion réussi</p>");
-
     return $cres;
 }
 
@@ -142,34 +140,4 @@ function RecevoirDossier($RefD, $NirA, $fichiers, $dossierCible) {
         }   
     }
 }
-
-
-// FONCTIONS POUR RECAPITULATIF
-
-// nombre de dossiers recus
-function nbDossiersRecus($link) {
-    $query = "Select count(*) AS nbDossiersRecus From dossier d Where d.DateD = CURDATE()";
-    
-    $result = mysqli_query($link, $query);
-    
-    return $result;
-}
-// nombre de dossiers restant à traiter
-function nbDossiersATraiter($link) {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter'";
-    
-    $result = mysqli_query($link, $query);
-    
-    return $result;
-}
-
-// nombre de dossiers classés sans suite
-function nbDossiersClasses($link) {
-    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And d.DateD = CURDATE()";
-    
-    $result = mysqli_query($link, $query);
-    
-    return $result;
-}
-
 ?>
