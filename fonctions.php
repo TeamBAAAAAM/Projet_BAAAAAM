@@ -180,13 +180,13 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
                 $filename = utf8_decode($path['filename']);
                 $ext = $path['extension'];
 
-                $CheminJ = $target_dir."/".$filename.".".$ext;
+                $CheminJ = "$target_dir/$Key_$i.$ext";
                 $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
                 $CodeD = ChercherDossierAvecREF($RefD, $link)["CodeD"];
                 $Mnemonique = ChercherMnemoniqueAvecMnemonique($Key, $link);
                 $Designation = $Mnemonique["Designation"] . " No. " . $i;
                 
-                if(EnregistrerFichier(utf8_encode($CheminJ), $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
+                if(EnregistrerFichier($CheminJ, $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
                     if(move_uploaded_file(
                         $Fichier['tmp_name'][$i],
                         $CheminJ
