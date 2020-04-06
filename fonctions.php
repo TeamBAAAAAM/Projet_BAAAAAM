@@ -74,5 +74,12 @@ function nbDossiersClasses($link) {
     return $result;
 }
 
+// FONCTIONS POUR TECHNICIEN
+
+function getTechnicienData($link, $matricule) {
+    $query = "Select CodeTech, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
 
 ?>

@@ -7,8 +7,17 @@
         //Redirection
     }
     
-    //Données mises en session
-	$_SESSION["matricule"] = $_POST["matricule"];
+	//Données mises en session
+	$matricule = $_POST["matricule"];
+	$_SESSION["matricule"] = $matricule;
+
+	$res = getTechnicienData($link, $matricule);
+	$ligne = mysqli_fetch_array($res);
+	$_SESSION["codeT"] = $ligne["CodeTech"];
+	$_SESSION["nomT"] = $ligne["NomT"];
+	$_SESSION["prenomT"] = $ligne["PrenomT"];
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
