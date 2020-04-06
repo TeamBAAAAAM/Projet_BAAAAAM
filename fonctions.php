@@ -47,30 +47,32 @@ function RecevoirDossier($RefD, $NirA, $fichiers, $dossierCible) {
 
 // FONCTIONS POUR RECAPITULATIF
 
-// nombre de dossiers recus
+// Nombre de dossiers recus à la date courante
 function nbDossiersRecus($link) {
-    $query = "Select count(*) AS nbDossiersRecus From dossier d Where d.DateD = CURDATE()";
-    
-    $result = mysqli_query($link, $query);
-    
+    $query = "Select count(*) AS nbDossiersRecus From dossier d Where d.DateD = CURDATE()";    
+    $result = mysqli_query($link, $query);    
     return $result;
 }
-// nombre de dossiers restant à traiter
-function nbDossiersATraiter($link) {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter'";
-    
-    $result = mysqli_query($link, $query);
-    
+// Nombre de dossiers restant à traiter au total
+function nbDossiersATraiterTotal($link) {
+    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter'";    
+    $result = mysqli_query($link, $query);    
     return $result;
 }
 
-// nombre de dossiers classés sans suite
-function nbDossiersClasses($link) {
-    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And d.DateD = CURDATE()";
-    
-    $result = mysqli_query($link, $query);
-    
+// Nombre de dossiers restant à traiter à la date courante
+function nbDossiersATraiter($link) {
+    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter' And d.DateD = CURDATE()";    
+    $result = mysqli_query($link, $query);    
     return $result;
 }
+
+// Nombre de dossiers classés sans suite à la date courante
+function nbDossiersClasses($link) {
+    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And d.DateD = CURDATE()";    
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
+
 
 ?>

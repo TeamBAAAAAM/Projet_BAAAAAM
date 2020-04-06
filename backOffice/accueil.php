@@ -1,16 +1,16 @@
-<!DOCTYPE html>
 <?php 
+	session_start();
     require("../fonctions.php");
-    // connexion à la BD
+    // Connexion à la BD
     $link = connexionMySQL();
     if ($link == NULL){
         //Redirection
     }
     
-    //Création de session
-    $_SESSION["ID"] = $GET["id"];
+    //Données mises en session
+	$_SESSION["matricule"] = $_POST["matricule"];
 ?>
-
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		
@@ -76,43 +76,38 @@
 						<tr>
 							<th>Date</th>
 							<th>NIR</th>
-							<th>Nom</th>
-							<th>Prénom</th>
-							<th>État</th>
-							<th>Aperçu</th>
-							<th>Statut</th>
 						</tr>
 					</thead>-->
 					<tbody id="data-list">
 						<tr>
 							<td>Dossiers reçus aujourd'hui</td>
-                                                        <td>
-                                                            <?php 
-                                                                $res = nbDossiersRecus($link);                                                                
-                                                                $ligne = mysqli_fetch_array($res);
-                                                                echo $ligne["nbDossiersRecus"];
-                                                            ?>
-                                                        </td>
+                                <td>
+                                    <?php 
+                                        $res = nbDossiersRecus($link);                                                                
+                                        $ligne = mysqli_fetch_array($res);
+                                        echo $ligne["nbDossiersRecus"];
+                                    ?>
+                                </td>
 						</tr>
 						<tr>
 							<td>Dossiers restant à traiter</td>
-                                                        <td>
-                                                            <?php 
-                                                                $res = nbDossiersATraiter($link);
-                                                                $ligne = mysqli_fetch_array($res);
-                                                                echo $ligne["nbDossiersAtraiter"];
-                                                            ?>
-                                                        </td>
+								<td>
+									<?php 
+										$res = nbDossiersATraiter($link);
+										$ligne = mysqli_fetch_array($res);
+										echo $ligne["nbDossiersAtraiter"];
+									?>
+								</td>
 						</tr>
 						<tr>
 							<td>Dossiers classés sans suite aujourd'hui</td>
-                                                        <td>
-                                                            <?php 
-                                                                $res = nbDossiersClasses($link);
-                                                                $ligne = mysqli_fetch_array($res);
-                                                                echo $ligne["nbDossiersClasses"];
-                                                            ?>
-                                                        </td>
+								<td>
+									<?php 
+										$res = nbDossiersClasses($link);
+										$ligne = mysqli_fetch_array($res);
+										echo $ligne["nbDossiersClasses"];
+									?>
+								</td>
 						</tr>
 						<tr>
 							<td>Autre</td>
@@ -123,7 +118,7 @@
 			</div>
 		</div>
 
-		<div id="pagination" class="container">
+		<!-- <div id="pagination" class="container">
 			<div class="row">
 				<div class="col-sm-12">
 					<ul class="pagination">
@@ -140,6 +135,8 @@
 					</ul>
 				</div>
 			</div>
-		</div>
+		</div> -->
+
+
 	</body>	
 </html>
