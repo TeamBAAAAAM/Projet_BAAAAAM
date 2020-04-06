@@ -111,7 +111,7 @@
                         $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
 
                         //Si le dossier n'a pas encore été enregistré
-                        if(!isset($_SESSION["RefD"]) && !empty($_FILES)) {
+                        if(!isset($_SESSION["RefD"])) {
                             $_SESSION["RefD"] = GenererReferenceDossier(8, $link);
 
                             if(EnregistrerDossier(
