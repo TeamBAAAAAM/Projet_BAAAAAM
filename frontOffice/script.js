@@ -133,6 +133,131 @@ function click_function(event){
 	}
  }
 
+//Fonction qui retourne la date d'aujoud'hui en français
+function dateAujoudhuiEnLettres() {
+    // les noms de jours / mois
+    var joursEnLettres = new Array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+    var moisEnLettres = new Array("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "décembre");
+    var aujourdhui = new Date();
+	
+	var jour = joursEnLettres[aujourdhui.getDay()];	
+	var numJour = aujourdhui.getDate();
+	var mois = moisEnLettres[aujourdhui.getMonth()];
+	var annee = aujourdhui.getFullYear();
+	 
+    return jour + " " + numJour + " " + mois + " " + annee;
+}
+
+//Fonction qui retourne l'heure actuelle
+function heureActuelle() {
+	var aujourdhui = new Date();
+
+	var heures = (aujourdhui.getHours() < 10) ? "0" + aujourdhui.getHours() : aujourdhui.getHours();
+	var minutes = (aujourdhui.getMinutes() < 10) ? "0" + aujourdhui.getMinutes() : aujourdhui.getMinutes();
+	var secondes = (aujourdhui.getSeconds() < 10) ? "0" + aujourdhui.getSeconds() : aujourdhui.getSeconds();
+
+	return heures + ":" + minutes + ":" + secondes;
+}
+
+//Retourne la date d'aujoud'hui au format "yyyy-mm-dd"
+function aujourdhui() {
+	var aujourdhui = new Date();
+	var numoJour = aujourdhui.getDate();
+	var mois = aujourdhui.getMonth() + 1;
+
+	var texte = aujourdhui.getFullYear() + "-";
+	texte += (mois < 10) ? "0" + mois + "-" : mois + "-";
+	texte += (numoJour < 10) ? "0" + numoJour : numoJour;
+
+	return texte;
+}
+
+//Fonction qui imprime le contenu d'un élément dont l'id est passé en paramètre
+function imprimerPage() {
+	$(".ignore").hide();
+
+	var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
+	
+	var message = '<div id="message" class="alert alert-warning">'+
+	'<strong><strong>&#128438;</strong> Impression : </strong> '+
+	infoImpression+  
+	'</div>';
+	
+	$("body").append(message);
+	window.print();
+
+	$("#message").remove();
+	$(".ignore").show();
+}
+
+function enregistrerPage() {
+	$(".ignore").hide();
+
+	var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
+	
+	var message = '<div id="message" class="alert alert-warning">'+
+	'<strong><strong>&#128438;</strong> Impression : </strong> '+
+	infoImpression+  
+	'</div>';
+	
+	$("body").append(message);
+	uriContent = "data:application/octet-stream," + encodeURIComponent(window.document.html);
+	newWindow = window.open(uriContent, 'neuesDokument');
+
+	$("#message").remove();
+	$(".ignore").show();
+}
+
+
+//Vérifie et corrige le format du NIR
+function checkFormatNir(pattern) {
+	if($("#nir").val() != "") {
+		var str = $("#nir").val().split(" ").join("");
+
+		//Suppression des valeurs non entière
+		var patt1 = /[0-9]/g;
+		str = str.match(patt1);
+
+		//S'il y a au moin un entier
+		if(str != null) {
+			str = str.join("");
+			nbEspace = 0;
+			//Boucle qui met les espaces au bon endroit
+			for(i = 0 ; i <= str.length - 1 ; i++) {
+				if(pattern.charAt(i) == " " && str.charAt(i) != " ") {
+					str = str.substr(0,i) + " " + str.substr(i);
+					nbEspace++;
+				}
+			}
+			
+			//Suppression des caractères en trop
+			if(str.length > pattern.length) {str = str.substr(0, pattern.length);}
+			
+			$("#nir").val(str);
+		}
+		else {
+			$("#nir").val("");
+		}
+	}
+}
+
+//Vérifie si une référence est correcte
+function verifierRef() {
+	var xhttp;
+	xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			(this);
+		}
+	};
+	xhttp.open("GET", url, true);
+	xhttp.send();
+}
+  
+function remplirFormulaire(xhttp) {
+	// action goes here
+}
+
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
 $(document).ready(function(){
@@ -144,4 +269,10 @@ $(document).ready(function(){
 		$("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
 		$("#" + currentPJ).click({arg1: currentPJ}, click_function);
 	}
+});
+
+//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
+$(document).ready(function(){
+	$("#date_arret").attr("max", aujourdhui());
+	$("#date_arret").attr("value", aujourdhui());
 });
