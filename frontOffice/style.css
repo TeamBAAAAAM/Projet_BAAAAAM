@@ -116,6 +116,30 @@ div.btn-status {
 	border: none;
 }
 
+.label_enregistrement {
+	font-size: small;
+	margin-left: 15px;
+	padding: 4px;
+}
+
+span.badge {	
+	font-size: small;
+	padding: 4px 8px;
+}
+
+.panel_header_fichier {
+	background-color: #29293d;
+	color: #00ace6;
+}
+
+span.glyphicon {
+	margin-right: 15px;
+}
+
+li.list-group-item {	
+	font-size: larger;
+}
+
 /*note*/
 .note {
 	font-style: italic;
