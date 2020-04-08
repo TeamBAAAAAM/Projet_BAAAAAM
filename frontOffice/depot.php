@@ -77,9 +77,9 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
                                         <input id="nir" type="text" class="form-control" name="nir"
-                                            pattern="[0-9]( [0-9]{2}){3}( [0-9]{3}){2}"
-                                            placeholder="# ## ## ## ### ###"
-                                            onkeyup='checkFormatNir("# ## ## ## ### ###");'
+                                            pattern="[0-9]( [0-9]{2}){3}( [0-9]{3}){2} [0-9]{2}"
+                                            placeholder="# ## ## ## ### ### ##"
+                                            onkeyup='checkNumber("nir", "# ## ## ## ### ### ##");'
                                             required
                                         >
                                     </div>
