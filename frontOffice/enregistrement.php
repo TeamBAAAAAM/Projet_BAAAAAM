@@ -114,18 +114,18 @@
                 </div>
             </div>
             <div id="juridique" class="row">				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Conditions Générales d'Utilisation</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Politique de traitement des données personnelles</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Politique de traitement des cookies</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Mentions Légales</a>
-                    </div>
+                <div class="col-sm-3">
+					<a href="../documentation-juridique/cgu.html" target="_blank">Conditions Générales d'Utilisation</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/politiquedp.html" target="_blank">Politique de traitement des données personnelles</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/politiquecookies.html" target="_blank">Politique de traitement des cookies</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/mentionslegales.html" target="_blank">Mentions Légales</a>
+				</div>
             </div>
             <div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>
         </footer>
