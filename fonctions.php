@@ -180,7 +180,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
                 $filename = utf8_decode($path['filename']);
                 $ext = $path['extension'];
 
-                $CheminJ = "$target_dir/$Key_$i.$ext";
+                $CheminJ = "$target_dir/$Key"."_$i.$ext";
                 $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
                 $CodeD = ChercherDossierAvecREF($RefD, $link)["CodeD"];
                 $Mnemonique = ChercherMnemoniqueAvecMnemonique($Key, $link);
