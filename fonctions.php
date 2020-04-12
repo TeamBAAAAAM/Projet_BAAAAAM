@@ -1,35 +1,28 @@
 <?php
 
-//Variables de connexion
-define("HOST", "localhost");
+//Variables de connexion 
 define("USER", "root");
-define("PWD_MYSQL", "");
+define("PWD_MYSQL", "root");
 define("BD_MYSQL", "bd_cpam");
+define("HOST", "localhost");
 define("PORT", "3306");
-
-//Chemin vers l'espace où sont enregistrés les dossiers des dossiers
-define("STORAGE_PATH",
-       "C:/Users/axelt/Documents/4 - Professionnels/DCT_2019-2020/Pièces justificatives"
-);
 
 // Connexion BD
 function connexionMySQL() {
     //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
-    $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
-    
-    /* Vérification de la connexion */
-    if ($link == NULL) {
-        echo "Erreur : Impossible de se connecter à MySQL."."<br>";
-        echo "Errno de débogage : ".utf8_encode(mysqli_connect_errno())."<br>";
-        echo "Erreur de débogage : ".utf8_encode(mysqli_connect_error())."<br>";
-        exit;
+    $cres = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
+    if ($cres == NULL) {
+        //echo("<p>Connexion impossible</p>");
+        return NULL;
     }
-    if(mysqli_select_db($link, BD_MYSQL) == NULL) {
-        echo "Erreur : Impossible de se connecter à la base de données.";
-        exit;
+
+    if (mysqli_select_db($cres, BD_MYSQL) == NULL) {
+        //echo("<p>Problème de base de données</p>");
+        return NULL;
     }
-    
-    return $link;
+    //echo("<p>Connexion réussi</p>");
+
+    return $cres;
 }
 
 function CharactereAleatoire() {
@@ -37,91 +30,82 @@ function CharactereAleatoire() {
     return $listeChar[rand(0, strlen($listeChar)-1)];
 }
 
-//Genère une référence valide pour un dossier
-function GenererReferenceDossier($nbChar, $link) {    
-    do {
-        $ref = "";
-        for($i = 0 ; $i < $nbChar ; $i++) {
-            $ref .= CharactereAleatoire();
-        }
-    } while(DossireExiste($ref, $link));
-    
+//Genère une référence
+function GenererReference($nbChar) {
+    $ref = "";
+    for($i = 0 ; $i < $nbChar ; $i++) {
+        $ref .= CharactereAleatoire();
+    }
     return $ref;
 }
 
 //Vérifie si un assuré est déjà enregitré
-function AssureExiste($NirA, $link) {
+function AssureExiste($NirA) {
+    $link = connexionMySQL();    
     $query = "SELECT * FROM Assure WHERE NirA = '".$NirA."'";
     $result = mysqli_query($link, $query);
-        
     return (mysqli_fetch_array($result) != NULL);
 }
 
 //Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
-function ChercherAssureAvecNIR($NirA, $link) {
+function ChercherAssureAvecNIR($NirA) {
+    $link = connexionMySQL();    
     $query = "SELECT * FROM Assure WHERE NirA = '".$NirA."'";
     $result = mysqli_query($link, $query);
-
-    return mysqli_fetch_array($result);
-}
-
-//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
-function ChercherDossierAvecREF($RefD, $link) {
-    $query = "SELECT * FROM Assure A, Dossier D ";
-    $query .= "WHERE A.CodeA = D.CodeA AND RefD = '".$RefD."'";
-    $result = mysqli_query($link, $query);
-
-    return mysqli_fetch_array($result);
-}
-
-//Retourne le code correspond au mnémonique entré en paramètre
-function ChercherMnemoniqueAvecMnemonique($Mnemonique, $link) {
-    $query = "SELECT * FROM Listemnemonique ";
-    $query .= "WHERE Mnemonique = '".$Mnemonique."'";
+    $ligne = mysqli_fetch_array($result);
     
-    $result = mysqli_query($link, $query);
-
-    return mysqli_fetch_array($result);
+    return $ligne;
 }
 
 //Vérifie si la référence donnée en paramètre n'est pas déjà utilisé
-function DossireExiste($RefD, $link) {    
-    $query = "SELECT RefD FROM Dossier WHERE RefD = '".$RefD."'";
+function DossireExiste($RefD) {
+    $link = connexionMySQL();    
+    $query = "SELECT RefD FROM Dossier WHERE RefD <> '".$RefD."'";
     $result = mysqli_query($link, $query);
-    
     return (mysqli_fetch_array($result) != NULL);
 }
 
-//Enregistre les données d'un assuré dans la BD
-function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link) {
-    $keys = ""; $values = "";
-    if($NirA != NULL) {$keys .= "NirA, "; $values .= "'".$NirA."', ";}
-    if($NomA != NULL) {$keys .= "NomA, "; $values .= "'".$NomA."', ";}
-    if($PrenomA != NULL) {$keys .= "PrenomA, "; $values .= "'".$PrenomA."', ";}
-    if($TelA != NULL) {
-        $TelA = explode(" ", $TelA);
-        $TelA = implode($TelA);
-        $keys .= "TelA, "; $values .= "'".$TelA."', ";
+//Ajoute un assuré à la BD (Retourne False si l'assuré est déjà enregistré
+//True sinon
+function AjouterAssure($NirA, $NomA, $PrenomA, $TelA, $MailA) {
+    if(AssureExiste($NirA)) {
+        return False;
     }
-    if($MailA != NULL) {$keys .= "MailA, "; $values .= "'".$MailA."', ";}
-    
-    //Suppression du dernier caractère pour les clés
-    $keys = substr($keys, 0, strlen($keys) - 2);
-    //Suppression du dernier caractère pour les valeurs
-    $values = substr($values, 0, strlen($values) - 2);
-    
-    $query = "INSERT INTO assure(".$keys.") VALUES (".$values.")";
-
-    return mysqli_query($link, $query);
+    else {
+        $link = connexionMySQL();
+        
+        $keys = ""; $values = "";
+        if($NirA != NULL){$keys .= "NirA, "; $values .= "'".$NirA."', ";}
+        if($NomA != NULL){$keys .= "NomA, "; $values .= "'".$NomA."', ";}
+        if($PrenomA != NULL){$keys .= "PrenomA, "; $values .= "'".$PrenomA."', ";}
+        if($TelA != NULL){$keys .= "TelA, "; $values .= "'".$TelA."', ";}
+        if($MailA != NULL){$keys .= "MailA, "; $values .= "'".$MailA."', ";}
+        
+        //Suppression du dernier caractère pour les clés
+        $keys = substr($keys, 0, strlen($keys) - 2);
+        //Suppression du dernier caractère pour les valeurs
+        $values = substr($values, 0, strlen($values) - 2);
+        
+        $query = "INSERT INTO assure(".$keys.") VALUES (".$values.")";
+        
+        $result = mysqli_query($link, $query);
+        return ($result != NULL);
+    }
 }
 
-//Enregistre un dossier puis renvoie True si la manoeuvre à réussie
-//False sinon
-function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) { 
+function EnregistrerDossier($DateA, $CodeA) {
+    $RefD = GenererReference(8);
+    
+    //Recherche d'une référence unique
+    while(DossireExiste($RefD)){        
+        $RefD = GenererReference(8);
+    }
+        
     $keys = ""; $values = "";
+    $keys .= "StatutD, "; $values .= "'À traiter', ";
     $keys .= "RefD, "; $values .= "'".$RefD."', ";
-    $keys .= "DateAM, "; $values .= "'".$DateAM."', ";
-    $keys .= "CodeA, "; $values .= $CodeA.", ";
+    $keys .= "DateA, "; $values .= "'".$DateA."', ";
+    $keys .= "CodeA, "; $values .= "'".$CodeA."', ";
 
     //Suppression du dernier caractère pour les clés
     $keys = substr($keys, 0, strlen($keys) - 2);
@@ -129,7 +113,7 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) {
     $values = substr($values, 0, strlen($values) - 2);
 
     $query = "INSERT INTO dossier(".$keys.") VALUES (".$values.")";
-
+  
     return mysqli_query($link, $query);
 }
 
@@ -206,6 +190,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
     return $resultats;
 }
 
+
 // FONCTIONS POUR RECAPITULATIF
 
 // nombre de dossiers recus
@@ -234,11 +219,4 @@ function nbDossiersClasses($link) {
     return $result;
 }
 
-// Redirection vers une page différente du même dossier
-function RedirigerVers($nomPage) {
-    $host = $_SERVER['HTTP_HOST'];
-    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-    header("Location: http://$host$uri/$nomPage");
-    exit;
-}
 ?>

@@ -1,13 +1,7 @@
-<?php
-    session_start();
-
-    require_once("../fonctions.php");
-    
-    //Ouverture de la connexion à la BD
-    $link = connexionMySQL();
-?>
-
 <!DOCTYPE html>
+<?php
+    require_once("../fonctions.php");
+?>
 <html lang="fr">
     <head>
         <meta charset="utf-8">
@@ -17,95 +11,38 @@
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <!-- Pour l'exportation en PDF -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
-        <script src="script.js"></script>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>BAAAAAM - Enregistrement des documents</title>
+        <title>Message de confirmation</title>
     </head>    
     <body>
         <nav class="navbar navbar-default header welcome">
             <div class="container">
                 <div class="navbar-header">
-                    <a href="../index.html"><h1>Bienvenue</h1></a>
+                    <a href="../index.html"><h1>Message de confirmation</h1></a>
                 </div>
             </div>
         </nav>
-
-        <div class="container">
+        
+        <div class="container-fluid">
             <div class="jumbotron">
                 <h1>Confirmation de réception</h1>
-                
-                <div class='alert alert-warning ignore'>
-                    <h2>&#9888; Pensez à conserver cette confirmation</h2>
-                    <p>Elle pourra vous être demandée ultérieurement pour vous identifier.</p>
-                    <p>
-                        <button type="button" class="btn btn-warning" onClick="imprimerPage();">
-                            <strong>&#128438;</strong> Imprimer tout de suite
-                        </button>
-                    </p>
-                </div>
-
-                <hr>
-
-                <div class="container-fluid">
-                    <?php               
-                        if(empty($_POST) && empty($_GET)) RedirigerVers("depot.php");
-
-                        if(!AssureExiste($_POST["nir"], $link)) {
-                            if(EnregistrerAssure(
+                <div id="info-status" class="well well-lg">
+                    <?php
+                        if(
+                            AjouterAssure(
                                 $_POST["nir"],
                                 $_POST["nom"],
                                 $_POST["prenom"], 
-                                $_POST["tel"], 
-                                $_POST["email"],
-                                $link)) {
-
-                                //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
-                                if(CreerDossierNIR($_POST["nir"])) {
-                                    $_SESSION["MessageAssure"] = "
-                                    <ul class='list-group'>
-                                        <li class='list-group-item list-group-item-success'> 
-                                            <h3>Enregistrement de vos informations</h3>
-                                        </li>";                   
-                                        
-                                    if(isset($_POST["nir"])) {$_SESSION["MessageAssure"] .= "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-barcode'></span>NIR : ".$_POST["nir"]."
-                                        </li>";
-                                    }
-                                    
-                                    if(isset($_POST["nom"])) {$_SESSION["MessageAssure"] .= "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-user'></span>Nom : ".$_POST["nom"]."
-                                        </li>";
-                                    }
-                                      
-                                    if(isset($_POST["prenom"])) {$_SESSION["MessageAssure"] .= "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-user'></span>Prénom : ".$_POST["prenom"]."
-                                        </li>";
-                                    }
-                                    
-                                    if(isset($_POST["tel"]) && $_POST["tel"] != "") {
-                                        $_SESSION["MessageAssure"] .= "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-envelope'></span>Tel : ".$_POST["tel"]."
-                                        </li>";
-                                    }
-                                    if(isset($_POST["email"]) && $_POST["email"] != "") {
-                                        $_SESSION["MessageAssure"] .= "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-phone-alt'></span>Email : ".$_POST["email"]."
-                                        </li>";
-                                    }
-                                    $_SESSION["MessageAssure"] .=  "
-                                    </ul>
-                                    ";
-                                }
-                            }
+                                $tel = $_POST["tel"], 
+                                $email = $_POST["email"])){
+                            echo("<h3>Vos informations ont été correctement enregistrées !</h3>");
+                            if(isset($_POST["nir"])){echo("<p>NIR : ".$_POST["nir"]."</p>");}
+                            if(isset($_POST["nom"])){echo("<p>Nom : ".$_POST["nom"]."</p>");}
+                            if(isset($_POST["prenom"])){echo("<p>Prénom : ".$_POST["prenom"]."</p>");}
+                            if(isset($_POST["tel"])){echo("<p>Tel : ".$_POST["tel"]."</p>");}
+                            if(isset($_POST["email"])){echo("<p>Email : ".$_POST["email"]."</p>");}
                         }
                 
                         $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
@@ -153,67 +90,30 @@
                         if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
                         if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
                         
-                        $resultats = EnregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);
-                        if($resultats != null) {
-                            echo "
-                            <ul class='list-group'>
-                                <li class='list-group-item panel_header_fichier'>   
-                                    <h3>Enregistrement de vos fichiers</h3>
-                                </li>
-                            ";
-
-                            foreach($resultats as $resultat) {
-                                if($resultat[0]) { //Si l'envoie a réussi
-                                    echo "
-                                        <li class='list-group-item list-group-item-default'>
-                                                <span class='glyphicon glyphicon-save-file'></span>
-                                                $resultat[1]
-                                                <span class='label label-success label_enregistrement'>
-                                                    &#10004; <strong>Enregistré</strong>
-                                                </span>
-                                                <span class='badge'>
-                                                    $resultat[2]
-                                                </span>
-                                        </li>
-                                    ";
-                                }
-                                else {
-                                    echo "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-save-file'></span>
-                                            $resultat[1] 
-                                            <span class='label label-danger label_enregistrement'>
-                                                &#10006; <strong>Échec</strong>
-                                            </span>
-                                            <span class='badge'>
-                                                $resultat[2]
-                                            </span>
-                                        </li>
-                                    ";
-                                }
-                            }       
-                            echo "
-                                </ul>
-                            ";                 
+                        $assure = ChercherAssureAvecNIR($_POST["nir"]);
+                        $result = EnregistrerDossier($_POST["date_arret"], $assure['CodeA']);
+                        
+                        echo($result[0]);
+                        if($result[0]){
+                            echo("<h3>Enregitrement de votre dossier : </h3>");
+                            echo("<p>".$_POST["prenom"]." ".$_POST["nom"]." (".$_POST["nir"].")</p>");                            
+                            echo("<p>Référence du dossier : ".$result[1]."</p>");                       
+                            echo("<p>Date de réception : ".$result[2]."</p>");
                         }
+                        
+                        //$att_sal = $_FILES["ATT_SAL"];
+                        //$bs = $_FILES["BS"];
+                        //$justif_sal = $_FILES["JUSTIF_SAL"];
+                        //$pj_ij = $_FILES["PJ_IJ"];
+                        /*
+                        echo($refD."\n".$nom."\n".$prenom."\n".$email."\n".$date_arret);
+                        */         
                     ?>
-                </div>
-                <hr>
-                <div class="container text-center ignore"> 
-                    <a type="button" class="btn btn-info" target="_blank" href="<?php echo 'mailConfirmation.php?MailA='.($assure['MailA']);?>">
-                        <strong>&#9993;</strong> Envoyer par mail
-                    </a>               
-                    <button type="button" class="btn btn-warning" onClick="imprimerPage();">
-                        <strong>&#128438;</strong> Imprimer
-                    </button>             
-                    <a type="button" class="btn btn-danger" href="../">
-                        <strong>&#9111;</strong> Retour à l'accueil
-                    </a>
                 </div>
             </div>
         </div>
         
-        <footer class="container-fluid text-center ignore">
+        <footer class="container-fluid text-center">
             <div class="row">
                 <div class="col-sm-3">
                     <div class="title_footer">Présentation</div>
@@ -259,25 +159,20 @@
                 </div>
             </div>
             <div id="juridique" class="row">				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Conditions Générales d'Utilisation</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Politique de traitement des données personnelles</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Politique de traitement des cookies</a>
-                    </div>				
-                    <div class="col-sm-3">
-                            <a href="#" target="_blank">Mentions Légales</a>
-                    </div>
+                <div class="col-sm-3">
+					<a href="../documentation-juridique/cgu.html" target="_blank">Conditions Générales d'Utilisation</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/politiquedp.html" target="_blank">Politique de traitement des données personnelles</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/politiquecookies.html" target="_blank">Politique de traitement des cookies</a>
+				</div>				
+				<div class="col-sm-3">
+					<a href="../documentation-juridique/mentionslegales.html" target="_blank">Mentions Légales</a>
+				</div>
             </div>
             <div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>
         </footer>
     </body>
 </html>
-
-<?php    
-    //Fermeture de la connexion à la BD
-    mysqli_close($link);
-?>
