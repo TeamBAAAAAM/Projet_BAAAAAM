@@ -18,13 +18,13 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>BAAAAAM - Dépôt des documents</title>
+        <title>PJPE - Dépôt des documents</title>
     </head>
     <body>
 		<nav class="navbar navbar-default header welcome">
 			<div class="container">
 				<div class="navbar-header">
-					<a href="../index.html"><h1>Bienvenue</h1></a>
+					<a href="../index.html"><h1>PJPE</h1></a>
 				</div>
 			</div>
         </nav>
@@ -77,9 +77,9 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
                                         <input id="nir" type="text" class="form-control" name="nir"
-                                            pattern="[0-9]( [0-9]{2}){3}( [0-9]{3}){2} [0-9]{2}"
-                                            placeholder="# ## ## ## ### ### ##"
-                                            onkeyup='checkNumber("nir", "# ## ## ## ### ### ##");'
+                                            pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
+                                            placeholder="# ## ## ## ### ###"
+                                            onKeyUp='checkFormatNir("# ## ## ## ### ###");'
                                             required
                                         >
                                     </div>
@@ -129,22 +129,17 @@
                                 <div class="col-sm-6">
                                     <label for="nom" class="control-label">Référence du dossier en cours :</label>    
                                     <div class="row">
-                                        <div class="col-sm-7">
+                                        <div class="col-sm-6">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="	glyphicon glyphicon-folder-close"></i></span>
-                                                <input id="nom" type="text" class="form-control" name="nom" placeholder="Référence">
+                                                <input onKeyUp="checkFormatRefD();" id="refD" type="text" class="form-control" name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$">
                                             </div>
                                         </div>
-
-                                        <!-- Bouton pour vérifier la validité d'une référence -->
-                                        <!--
                                         <div class="col-sm-2">
-                                            <button type="button" class="btn btn-primary" onClick="verifierRef();">
+                                            <button id="checkref" type="button" class="btn btn-primary" onClick="verifierRef();">
                                                 <strong>&#128272;</strong> Vérifier
                                             </button>
                                         </div>
-                                        -->
-
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-8">
