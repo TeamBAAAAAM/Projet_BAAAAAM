@@ -50,6 +50,13 @@
 	margin-left: 35px;
 }
 
-tr:nth-child(2n) {
-	background-color: #e6fff2;
+.glyphicon {
+	margin: 0px 5px;
+}
+
+.police {
+	font-size: 17px;
+}
+.titre {
+	font-size: 23px;
 }

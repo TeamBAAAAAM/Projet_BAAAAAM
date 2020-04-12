@@ -55,7 +55,7 @@ function nbDossiersRecus($link) {
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link) {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter'";    
+    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";    
     $result = mysqli_query($link, $query);    
     return $result;
 }

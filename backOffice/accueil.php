@@ -9,8 +9,8 @@
 	
 	// Récupération des données du technicien
 	$matricule = $_POST["matricule"];	
-	$res = getTechnicienData($link, $matricule);
-	$ligne = mysqli_fetch_array($res);
+	$result = getTechnicienData($link, $matricule);
+	$ligne = mysqli_fetch_array($result);
 	$codeT = $ligne["CodeTech"];
 	$nomT = $ligne["NomT"];
 	$prenomT = $ligne["PrenomT"];
@@ -18,8 +18,8 @@
 	// test
 	$matricule = "12345";
 	$codeT = "Code";
-	$nomT = "Nom"; 
-	$prenomT = "Prénom";
+	$nomT = "Doe"; 
+	$prenomT = "John";
 
 	//Mise en session	
 	$_SESSION["matricule"] = $matricule;	
@@ -72,7 +72,7 @@
 					<div class="nav navbar-nav navbar-right dropdown">
 						<button class="btn btn-default dropdown-toggle"
 							type="button" id="menu1" data-toggle="dropdown">
-							<h4><?php echo("$nomT $prenomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span></h4>
+							<h4><--?php echo("$nomT $prenomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span></h4>
 						</button>								
 						<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 							<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
@@ -104,7 +104,7 @@
 						<ul class="nav navbar-nav navbar-right dropdown">
 							<li class="dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-								<?php echo("$nomT $prenomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
+								<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 								</a>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 									<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
@@ -119,72 +119,67 @@
 		</nav>
 		
 		<div class="container">
-			<div class="table-responsive">          
-				<table id="data-table" class="table table-hover">
-					<thead>
-						<tr>
-							<th>Aujourd'hui</th>
-						</tr>
-					</thead>
-					<tbody id="data-list">
-						<tr>
-							<td>Dossiers reçus aujourd'hui</td>
-                                <td>
-                                    <?php 
-                                        $res = nbDossiersRecus($link);                                                                
-                                        $ligne = mysqli_fetch_array($res);
-                                        echo $ligne["nbDossiersRecus"];
-                                    ?>
-                                </td>
-						</tr>
-						<tr>
-							<td>Dossiers restant à traiter</td>
+			<div class="row">
+				<div class="col-sm-6 ">          
+					<table class="table table-striped police">
+						<thead class="titre"> 
+							<tr class="titre"><th><span class="glyphicon glyphicon-calendar"></span> Aujourd'hui  <?php setlocale(LC_TIME, "fr_FR"); echo ("<small>".strftime("(%a. %d-%m-%Y)")."</small>")?></th>
+							<th><h4></h4></th></tr>
+						</thead>
+						<tbody id="data-list">
+							<tr>
+								<td><span class="glyphicon glyphicon-download"></span> Dossiers reçus </td>
 								<td>
 									<?php 
-										$res = nbDossiersATraiter($link);
-										$ligne = mysqli_fetch_array($res);
+										$result = nbDossiersRecus($link);                                                                
+										$ligne = mysqli_fetch_array($result);
+										echo $ligne["nbDossiersRecus"];
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td><span class="glyphicon glyphicon-pencil"></span> Dossiers à traiter</td>
+								<td>
+									<?php 
+										$result = nbDossiersATraiter($link);
+										$ligne = mysqli_fetch_array($result);
 										echo $ligne["nbDossiersAtraiter"];
 									?>
 								</td>
-						</tr>
-						<tr>
-							<td>Dossiers classés sans suite aujourd'hui</td>
+							</tr>
+							<tr>
+								<td><span class="glyphicon glyphicon-alert"></span> Dossiers classés sans suite</td>
 								<td>
 									<?php 
-										$res = nbDossiersClasses($link);
-										$ligne = mysqli_fetch_array($res);
+										$result = nbDossiersClasses($link);
+										$ligne = mysqli_fetch_array($result);
 										echo $ligne["nbDossiersClasses"];
 									?>
 								</td>
-						</tr>
-						<tr>
-							<td>Autre</td>
-							<td>15</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
-		<!-- <div id="pagination" class="container">
-			<div class="row">
-				<div class="col-sm-12">
-					<ul class="pagination">
-						<li class="active"><a href="#">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">3</a></li>
-						<li><a href="#">4</a></li>
-						<li><a href="#">5</a></li>
-						<li><a href="#">6</a></li>
-						<li><a href="#">7</a></li>
-						<li><a href="#">8</a></li>
-						<li><a href="#">9</a></li>
-						<li><a href="#">10</a></li>
-					</ul>
+				<div class="col-sm-6">         
+					<table class="table table-striped police">
+						<thead>
+							<tr class="titre"><th><span class="glyphicon glyphicon-edit"></span> Nombre total de dossiers à traiter</th></tr>
+						</thead>
+						<tbody id="data-list">
+							<tr>							
+								<td class="text-center">
+									<?php 
+										$result = nbDossiersATraiterTotal($link);                                                                
+										$ligne = mysqli_fetch_array($result);
+										echo $ligne["nbDossiersAtraiterTotal"];
+									?>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
-		</div> -->
-
-
+		</div>
 	</body>	
 </html>
