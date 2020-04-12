@@ -78,9 +78,9 @@
 					</div>
 					<div class="collapse navbar-collapse" id="myNavbar2">
 						<ul class="nav navbar-nav" id="menu">
-							<li<a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+							<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
 							<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
-							<li class="active">><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
+							<li class="active"><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right dropdown">
