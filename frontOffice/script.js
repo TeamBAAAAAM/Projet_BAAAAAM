@@ -8,6 +8,10 @@ var msg_intermit = "";
 var msg_independant = "";
 var msg_art_aut = "";
 
+//À modifier si l'on souhaite modifier le formalisme de NIR et de la référence dossier
+var formatNIR = "# ## ## ## ### ###";
+var nbCharRefD = 8;
+
 //Fonction pour gérer les messages des statuts
 function showInfo_function(currentPJ) {
 	switch (currentPJ) {
@@ -133,6 +137,174 @@ function click_function(event){
 	}
  }
 
+//Fonction qui retourne la date d'aujoud'hui en français
+function dateAujoudhuiEnLettres() {
+    // les noms de jours / mois
+    var joursEnLettres = new Array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+    var moisEnLettres = new Array("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "décembre");
+    var aujourdhui = new Date();
+	
+	var jour = joursEnLettres[aujourdhui.getDay()];	
+	var numJour = aujourdhui.getDate();
+	var mois = moisEnLettres[aujourdhui.getMonth()];
+	var annee = aujourdhui.getFullYear();
+	 
+    return jour + " " + numJour + " " + mois + " " + annee;
+}
+
+//Fonction qui retourne l'heure actuelle
+function heureActuelle() {
+	var aujourdhui = new Date();
+
+	var heures = (aujourdhui.getHours() < 10) ? "0" + aujourdhui.getHours() : aujourdhui.getHours();
+	var minutes = (aujourdhui.getMinutes() < 10) ? "0" + aujourdhui.getMinutes() : aujourdhui.getMinutes();
+	var secondes = (aujourdhui.getSeconds() < 10) ? "0" + aujourdhui.getSeconds() : aujourdhui.getSeconds();
+
+	return heures + ":" + minutes + ":" + secondes;
+}
+
+//Retourne la date d'aujoud'hui au format "yyyy-mm-dd"
+function aujourdhui() {
+	var aujourdhui = new Date();
+	var numoJour = aujourdhui.getDate();
+	var mois = aujourdhui.getMonth() + 1;
+
+	var texte = aujourdhui.getFullYear() + "-";
+	texte += (mois < 10) ? "0" + mois + "-" : mois + "-";
+	texte += (numoJour < 10) ? "0" + numoJour : numoJour;
+
+	return texte;
+}
+
+//Fonction qui imprime le contenu d'un élément dont l'id est passé en paramètre
+function imprimerPage() {
+	$(".ignore").hide();
+
+	var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
+	
+	var message = '<div id="message" class="alert alert-warning">'+
+	'<strong><strong>&#128438;</strong> Impression : </strong> '+
+	infoImpression+  
+	'</div>';
+	
+	$("body").append(message);
+	window.print();
+
+	$("#message").remove();
+	$(".ignore").show();
+}
+
+function enregistrerPage() {
+	$(".ignore").hide();
+
+	var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
+	
+	var message = '<div id="message" class="alert alert-warning">'+
+	'<strong><strong>&#128438;</strong> Impression : </strong> '+
+	infoImpression+  
+	'</div>';
+	
+	$("body").append(message);
+	uriContent = "data:application/octet-stream," + encodeURIComponent(window.document.html);
+	newWindow = window.open(uriContent, 'neuesDokument');
+
+	$("#message").remove();
+	$(".ignore").show();
+}
+
+//Vérifie et corrige le format du NIR
+function checkFormatNir(format) {
+	formatNIR = format;
+
+	let caret = document.getElementById("nir").selectionStart;
+	var str = $("#nir").val().toUpperCase();
+
+	//Suppression des valeurs invalides
+	var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
+	var match = str.match(pattern);
+	if(match != null) {
+		str = match.join("");
+		var deb = str.substr(0, caret);
+		var fin = str.substr(caret);
+		
+		for(i = 0 ; i < caret ; i++) {
+			if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
+				deb = deb.substr(0, i) + " " + deb.substr(i);
+				caret++;
+			}
+		}
+	
+		//Si le curseur est dans la chaine de caractères
+		if(caret < str.length - 1) {
+			for(i = caret ; i < format.length ; i++) {
+				if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
+					fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
+				}
+				if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
+					fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
+				}
+			}
+		}
+	
+		str = deb + fin;
+		//Si le nombre de caractères courants dépasse celui du nombre autorisés
+		if(str.length > format.length) str = str.substr(0, format.length);
+	
+		$("#nir").val(str);
+		document.getElementById("nir").setSelectionRange(caret, caret);
+	
+		checkButtonRefD();
+	}
+}
+
+//Vérifie et corrige le format du NIR
+function checkFormatRefD() {
+	let caret = document.getElementById("refD").selectionStart;
+	var str = $("#refD").val();
+
+	//Suppression des valeurs invalides
+	var pattern = /[a-zA-Z0-9]/g;
+	var match = str.match(pattern);
+	if(match != null) {
+		str = match.join("");
+
+		//Suppression des caractères en trop
+		if(str.length > nbCharRefD) {str = str.substr(0, nbCharRefD);}
+
+		$("#refD").val(str);
+	}
+
+	document.getElementById("refD").setSelectionRange(caret, caret);
+	checkButtonRefD();
+}
+
+//Active ou désactive le bouton de vérification de référence
+function checkButtonRefD() {
+	if ($("#refD").val().length == nbCharRefD && $("#nir").val().length == formatNIR.length) {
+		$("#checkref").show();//Activation du bouton de vérification de la référence de dossier
+	}
+	else {
+		$("#checkref").hide();//Désactivation du bouton de vérification de la référence de dossier
+	}
+}
+
+//Vérifie si une référence est correcte
+function verifierRef() {
+	var xhttp;
+	xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			(this);
+		}
+	};
+	xhttp.open("GET", url, true);
+	xhttp.send();
+}
+  
+function remplirFormulaire(xhttp) {
+	// action goes here
+}
+
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
 $(document).ready(function(){
@@ -144,4 +316,11 @@ $(document).ready(function(){
 		$("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
 		$("#" + currentPJ).click({arg1: currentPJ}, click_function);
 	}
+	$("#checkref").hide();
+});
+
+//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
+$(document).ready(function(){
+	$("#date_arret").attr("max", aujourdhui());
+	$("#date_arret").attr("value", aujourdhui());
 });
