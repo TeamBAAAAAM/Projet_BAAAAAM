@@ -60,3 +60,7 @@
 .titre {
 	font-size: 23px;
 }
+
+#panel-statut a {
+	width: 150px;
+}

@@ -99,7 +99,56 @@
 		</nav>
 		
 		<div class="container">
-			
+			<div class="row">
+				<div id="panel-dossier" class="col-sm-6">
+					<div class="container-fluid panel panel-default">
+						<div class="panel-body">
+							<h3>DOSSIER No&#12296;REFERENCE_DOSSIER&#12297;</h3>
+							<h4>Date de réception : jj/mm/aa</h4>
+						</div>
+					</div>
+				</div>
+				<div id="panel-assure" class="col-sm-6">
+					<div class="container-fluid panel panel-default">
+						<div class="panel-body">
+							<h3>NIR : # ## ## ## ### ###</h3>
+							<h4>DUPONT Jean-Michel</h4>
+							<h4>En arrêt de travail depui : jj/mm/aa</h4>
+						</div>
+					</div>
+				</div>
+			<div>
+			<div class="row">
+				<div id="panel-statut" class="col-sm-12">
+					<div class= "panel panel-default">	
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-2">
+									<span class="titre">Statut</span>
+								</div>
+								<div class="col-sm-2">
+									<a href="#" class="btn btn-primary" role="button">À traiter</a>
+								</div>
+								<div class="col-sm-2">
+									<a href="#" class="btn btn-default" role="button">En Cours</a>
+								</div>
+								<div class="col-sm-2">
+									<a href="#" class="btn btn-primary" role="button">Classé sans suite</a>
+								</div>
+								<div class="col-sm-2">
+									<a href="#" class="btn btn-primary" role="button">Terminé</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div id="panel-pjs" class="col-sm-12 panel panel-default">
+				</div>
+				<div id="panel-apercu" class="col-sm-12 panel panel-default">
+				</div>
+			</div>
 		</div>
 	</body>	
 </html>
