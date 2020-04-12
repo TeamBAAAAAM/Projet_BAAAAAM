@@ -15,8 +15,11 @@ Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 <p>Il est également possible d’utiliser le lien suivant https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git pour cloner le dossier contenant les différentes pages à l’aide d’un IDE.</p>
 
 <li>Création de la base de données</li>
-<p> Script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a>
+<p> Script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a></p>
 <li>Accès à la base de données</li>
 <p>Dans le fichier <a href="fonctions.php">fonctions.php</a>, modifier les variables de connexion si nécessaire</p>
 <img src="README_img/var_connexion.png" width="350px">
 </ul>
+
+<p> La variable globale 'STORAGE_PATH' correspond au chemin menant au dossier de destination des fichiers enregistrés. </p>
+<p> La valeur de 'STORAGE_PATH' est à définir au début du fichier 'fonctions.php'. </p>
