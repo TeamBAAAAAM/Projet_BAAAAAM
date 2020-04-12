@@ -7,25 +7,24 @@
         //Redirection
 	}
 	
-	/* // Récupération des données du technicien
-	$matricule = $_POST["matricule"];	
-	$result = getTechnicienData($link, $matricule);
-	$ligne = mysqli_fetch_array($result);
-	$codeT = $ligne["CodeTech"];
-	$nomT = $ligne["NomT"];
-	$prenomT = $ligne["PrenomT"];*/
+	 // Récupération des données du dossier en cours de traitement
+    $codeDossier = $_POST["codeD"];	
+    $refDossier = $_POST["refD"];
+	if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
+    };
 
-	// test
+    // test    
 	$matricule = "12345";
-	$codeT = "Code";
+	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John";
+	$codeDossier = "11111";
+	$refDossier= "ABCD1111";
 
-    /* //Mise en session	    
-	$_SESSION["matricule"] = $matricule;	
-	$_SESSION["codeT"] = $codeT;
-	$_SESSION["nomT"] = $nomT;
-	$_SESSION["prenomT"] = $prenomT; */
+    //Mise en session	    
+	$_SESSION["codeDossier"] = $codeDossier;	
+	$_SESSION["refDossier"] = $refDossier;
 
 ?>
 <!DOCTYPE html>
