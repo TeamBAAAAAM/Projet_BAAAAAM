@@ -109,6 +109,7 @@
                         }
                 
                         $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
+
                         //Si le dossier n'a pas encore été enregistré
                         if(!isset($_SESSION["RefD"])) {
                             $_SESSION["RefD"] = GenererReferenceDossier(8, $link);
@@ -146,9 +147,8 @@
                                     }
                             }                            
                         }
-                        else {
-                            $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
-                        }
+
+                        $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
                             
                         if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
                         if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
