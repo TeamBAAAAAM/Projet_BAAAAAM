@@ -5,18 +5,27 @@
     $link = connexionMySQL();
     if ($link == NULL){
         //Redirection
-    }
-    
-	//Données mises en session
-	$matricule = $_POST["matricule"];
-	$_SESSION["matricule"] = $matricule;
-
+	}
+	
+	// Récupération des données du technicien
+	$matricule = $_POST["matricule"];	
 	$res = getTechnicienData($link, $matricule);
 	$ligne = mysqli_fetch_array($res);
-	$_SESSION["codeT"] = $ligne["CodeTech"];
-	$_SESSION["nomT"] = $ligne["NomT"];
-	$_SESSION["prenomT"] = $ligne["PrenomT"];
+	$codeT = $ligne["CodeTech"];
+	$nomT = $ligne["NomT"];
+	$prenomT = $ligne["PrenomT"];
 
+	// test
+	$matricule = "12345";
+	$codeT = "Code";
+	$nomT = "Nom"; 
+	$prenomT = "Prénom";
+
+	//Mise en session	
+	$_SESSION["matricule"] = $matricule;	
+	$_SESSION["codeT"] = $codeT;
+	$_SESSION["nomT"] = $nomT;
+	$_SESSION["prenomT"] = $prenomT;
 
 ?>
 <!DOCTYPE html>
@@ -27,6 +36,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="style.css">
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -51,42 +61,71 @@
 		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+					<!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>                        
-					</button>
+					</button> -->
 					<h1>Back Office</h1>
-				</div>
-				<div class="collapse navbar-collapse" id="myNavbar">
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<div class="dropdown">
-								<button class="btn btn-default dropdown-toggle"
-									type="button" id="menu1" data-toggle="dropdown">Nom Prénom</button>
-								<img src="avatar.png" class="img-circle" alt="Avatar Image">
+				</div><!-- 
+				<div class="" id="myNavbar">						
+					<div class="nav navbar-nav navbar-right dropdown">
+						<button class="btn btn-default dropdown-toggle"
+							type="button" id="menu1" data-toggle="dropdown">
+							<h4><?php echo("$nomT $prenomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span></h4>
+						</button>								
+						<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+							<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
+							<li role="presentation" class="divider"></li>
+							<li role="presentation"><a role="menuitem" href="#">Déconnexion</a></li>
+						</ul>
+					</div>
+				</div> -->
+			</div>
+		</nav>
+
+		<nav class="navbar navbar-inverse navbar-static-top">
+			<h4>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>                        
+						</button>
+					</div>
+					<div class="collapse navbar-collapse" id="myNavbar2">
+						<ul class="nav navbar-nav" id="menu">
+							<li class="active"><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+							<li><a href="#"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
+							<li><a href="#"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
+						</ul>
+
+						<ul class="nav navbar-nav navbar-right dropdown">
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+								<?php echo("$nomT $prenomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
+								</a>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 									<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
 									<li role="presentation" class="divider"></li>
-									<li role="presentation"><a role="menuitem" href="#">Déconnexion</a></li>
+									<li role="presentation"><a role="menuitem" href="#">Se déconnecter</a></li>
 								</ul>
-							</div>
-						</li>
-					</ul>
+							</li>						
+						</ul>
+					</div>
 				</div>
-			</div>
+			</h4>
 		</nav>
 		
 		<div class="container">
-			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
 			<div class="table-responsive">          
 				<table id="data-table" class="table table-hover">
-<!--					<thead>
+					<thead>
 						<tr>
-							<th>Date</th>
-							<th>NIR</th>
+							<th>Aujourd'hui</th>
 						</tr>
-					</thead>-->
+					</thead>
 					<tbody id="data-list">
 						<tr>
 							<td>Dossiers reçus aujourd'hui</td>
