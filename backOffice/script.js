@@ -1,6 +1,6 @@
 //Fonction qui gère modifie le lien vers l'aperçu
 function changePathViewer(path) {
-    $("iframe[name='apercu']").attr("src", path);
+    $("#apercu").attr("src", path);
 }
 
 //Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
