@@ -3,47 +3,47 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
-	 // Récupération des données du dossier en cours de traitement
-    $codeDossier = $_POST["codeD"];	
-    $refDossier = $_POST["refD"];
-
-	if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
-        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-    };
-
-    $dossier = ChercherDossierAvecREF($refDossier, $link);
-    $dateReception = $dossier["DateD"];
-    $statutDossier = $dossier["StatutD"];
-    $nirAssure = $dossier["NirA"];
-    $nomAssure = $dossier["NomA"];
-    $prenomAssure = $dossier["PrenomA"];
-    $dateArretMaladie = $dossier["DateAM"];
-
-    // Variables de test (à supprimer par la suite)
+	//Variable du technicien
 	$matricule = "12345";
 	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
-	$codeDossier = "11111";
-	$refDossier= "ABCD1111";
-    $dateReception = "13/04/20";
-    $statutDossier = "En cours";
-    $nirAssure = "# ## ## ## ### ###";
-    $nomAssure = "DUPONT";
-    $prenomAssure = "Jean-Michel";
-    $dateArretMaladie = "01/04/20";
+	$nomT = "BARBÉ"; 
+	$prenomT = "Sophie";
 
-    //Mise en session	    
-	$_SESSION["codeDossier"] = $codeDossier;	
-    $_SESSION["refDossier"] = $refDossier;
-    
-    // Pattern pour chemin des PJ (selon moyen utilisé pour stocker)
-    //$pattern = '/$\\[alnum]+\.(png|jpg|jpeg|pdf|tiff|bmp)/';
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["codeD"])) {
+		$_SESSION["codeDossier"] = $_GET["codeD"];
+		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
+		RedirigerVers("traiter.php");
+	}
 
+	//Changement de statut si un statut est indiqué dans l'URL
+	if(isset($_GET["statut"])) {
+		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		RedirigerVers("traiter.php");
+	}
+
+	//S'il n'y a pas de référence dossier en session
+	if(!isset($_SESSION["refDossier"])){
+		RedirigerVers("accueil.php");
+	}
+
+	//Variables du dossier et de l'assuré
+	$dossier = ChercherDossierAvecREF($_SESSION["refDossier"], $link);
+	$refDossier = $dossier["RefD"];
+	$codeDossier = $dossier["CodeD"];
+	$dateReception = $dossier["DateD"];
+	$statutDossier = utf8_encode($dossier["StatutD"]);
+	$nirAssure = $dossier["NirA"];
+	$nomAssure = $dossier["NomA"];
+	$prenomAssure = $dossier["PrenomA"];
+	$dateArretMaladie = $dossier["DateAM"];
+	
+    // Passage automatique du statut à "En cours"
+	if($statutDossier == "À traiter") {
+		TraiterDossier($codeT, $codeDossier, "En cours", $link);
+		$statutDossier = "En cours";
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +98,6 @@
 						<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
 						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
 					</ul>
-
 					<ul class="nav navbar-nav navbar-right dropdown">
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -120,7 +119,7 @@
 				<div id="panel-dossier" class="col-sm-6">
 					<div class="container-fluid panel panel-default">
 						<div class="panel-body">
-							<h3>DOSSIER No&#12296;<?php echo $refDossier;?>&#12297;</h3>
+							<h3>DOSSIER No <?php echo $refDossier;?></h3>
 							<h4>Date de réception :  <?php echo $dateReception;?></h4>
 						</div>
 					</div>
@@ -140,20 +139,21 @@
 					<div class= "panel panel-default">	
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-sm-2">
+								<div class="col-sm-3 text-center">
 									<span class="titre">Statut</span>
 								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary disabled" role="button">À traiter</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-default" role="button">En Cours</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary" role="button">Classé sans suite</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary" role="button">Terminé</a>
+								<div class="col-sm-9">
+									<div class="btn-group btn-group-justified">
+										<a href="traiter.php?statut=En cours"
+											class="<?php ClassBoutonTraiter($statutDossier, "En cours");?>"
+											role="button">En cours</a>
+										<a href="traiter.php?statut=Classé sans suite"
+											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite");?>" 
+											role="button">Classé sans suite</a>
+										<a href="traiter.php?statut=Terminé"
+											class="<?php ClassBoutonTraiter($statutDossier, "Terminé");?>"
+											role="button">Terminé</a>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -161,52 +161,33 @@
 				</div>
 			</div>
 			<div class="row">
-				<div id="panel-pjs" class="col-sm-6">
-					<div class= "panel panel-default">
+				<div id="panel-pjs" class="col-sm-4">
+					<div class= "panel panel-primary">
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_1.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">BS_2.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_3.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">BS_4.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_5.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">JUSTIF_SAL_1.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">JUSTIF_SAL_2.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">ATT_SAL_1.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">ATT_SAL_2.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">ATT_SAL_3.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_1.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_2.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_3.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_4.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_5.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_6.JPG</li>
-							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_7.JPG</li>
-                            <?php 
+						<?php
                             $result = RecupererPJ($link, $codeDossier);
                             $rows = mysqli_num_rows($result);
-                            for ($i = 0; $i <= $rows; $i++){
+                            for ($i = 0; $i < $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
-                                $cheminFichier = $justificatif["CheminJ"];
-                                //preg_match($pattern, $cheminFichier, $matches);
-                                //$nomFichier = $matches[0][0];
-                                //strstr($cheminFichier,'');
-                                $nomFichier = strrchr($cheminFichier,'\\');
+								$cheminFichier = $justificatif["CheminJ"];
+                                $nomFichier = strrchr($cheminFichier, '/');
                                 $nomFichier = substr($nomFichier, 1);
-                                $mnemonique = $justificatif["Mnemonique"];
-                                echo("<li class='list-group-item' onClick='apercu($cheminFichier)'>$nomFichier</li>");
+                                $extension = strrchr($cheminFichier, '.');
+                                $extension = substr($extension, 1);
+                                //$mnemonique = $justificatif["Mnemonique"];
+                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><h5><img class='icon icon-$extension'>$nomFichier</h5></li>");
                             }
-                            
                         ?>
-
                         </ul>
-                        
 					</div>
 				</div>
-				<div id="panel-apercu" class="col-sm-6">
+				<div id="panel-apercu" class="col-sm-8">
 					<div class= "panel panel-default">
 						<div class="panel-heading titre text-center">Aperçu</div>
-						<iframe name="apercu" class="panel-body" src=""></iframe>
+						<div class="panel-body">
+							<embed id="apercu" class="panel-body">
+						</div>
 					</div>
 				</div>
 			</div>

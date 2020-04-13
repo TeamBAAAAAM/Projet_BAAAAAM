@@ -8,9 +8,8 @@ define("BD_MYSQL", "bd_cpam");
 define("PORT", "3306");
 
 //Chemin vers l'espace où sont enregistrés les dossiers des dossiers
-define("STORAGE_PATH",
-       "C:/Users/axelt/Documents/4 - Professionnels/DCT_2019-2020/Pièces justificatives"
-);
+//NB : À partir de la racine
+define("STORAGE_PATH", "piecesJustificatives");
 
 /* ************************************************ */
 /*              FONCTIONS GENERALES                 */
@@ -99,6 +98,16 @@ function ChercherDossierAvecREF($RefD, $link) {
     return mysqli_fetch_array($result);
 }
 
+//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
+function ChercherREFAvecCodeD($CodeD, $link) {
+    $query = "SELECT RefD FROM Assure A, Dossier D ";
+    $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '".$CodeD."'";
+    $result = mysqli_query($link, $query);
+    echo $query;
+
+    return mysqli_fetch_array($result);
+}
+
 //Retourne le code correspond au mnémonique entré en paramètre
 function ChercherMnemoniqueAvecMnemonique($Mnemonique, $link) {
     $query = "SELECT * FROM Listemnemonique ";
@@ -160,13 +169,13 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) {
 
 //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
 function CreerDossierNIR($NirA) {
-    $dirname = utf8_decode(STORAGE_PATH)."/".$NirA;
+    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA;
     return mkdir($dirname);
 }
 
 //Créer le dossier de l'arrêt maladie d'un assuré en local
 function CreerDossierAM($RefD, $NirA) {
-    $dirname = utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
+    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA."/".$RefD;
     return mkdir($dirname);
 }
 
@@ -200,7 +209,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
             if ($Fichier['name'][$i] != "") {
                 $file = basename($Fichier['name'][$i]);
                 
-                $target_dir = utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
+                $target_dir = "../".utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
                 $path = pathinfo($file);
                 $filename = utf8_decode($path['filename']);
                 $ext = $path['extension'];
@@ -307,13 +316,90 @@ function ChangerStatutDossier($link, $codeDossier, $statut){
     return $result;
 }
 
+//Traite un dossier en indiquant dans la BD, le nom du technicien
+//Et modifie le statut d'un dossier
+function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
+    $keys = ""; $values = "";
+    if($CodeT != NULL) {$keys .= "CodeT, "; $values .= $CodeT.", ";}
+    if($CodeD != NULL) {$keys .= "CodeD, "; $values .= $CodeD.", ";}
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
+    echo $query;
+    
+    if(mysqli_query($link, $query)) {
+        if(!ChangerStatutDossier($link, $CodeD, utf8_decode($StatutD))){
+            echo "<div class='alert alert-danger'><strong>Alerte !".
+            "</strong> Erreur dans le changement du statut du dossier !</div>";
+            return False;
+        }
+        else return True;
+    }
+    else {
+        return False;
+    }
+}
+
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier){
-    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
+    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l " 
         ."WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);    
     return $result;
 }
+
+//Active ou désactive un bouton permettant de modifier le statut d'un dossier
+//Appelée dans la page 'traiter.php'
+//$sessionValue = $_SESSION['statut'] (statut actuel)
+//$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
+function ClassBoutonTraiter($sessionValue, $buttonValue) {
+    switch($sessionValue) {
+        case "En cours":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn btn-primary disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-primary";
+                    break;
+                case "Terminé":
+                    echo "btn btn-primary";
+                    break;
+            }
+            break;
+        case "Classé sans suite":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-danger disabled";
+                    break;
+                case "Terminé":
+                    echo "btn disabled";
+                    break;
+            }
+            break;
+        case "Terminé":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn disabled";
+                    break;
+                case "Terminé":
+                    echo "btn btn-success disabled";
+                    break;
+            }
+            break;
+    }
+}
+
 
 /*          CORBEILLE GENERALE         */
 
