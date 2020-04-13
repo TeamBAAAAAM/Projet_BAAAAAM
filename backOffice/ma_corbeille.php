@@ -90,9 +90,6 @@
 		</nav>
 		
 		<div class="container">
-<<<<<<< Updated upstream
-			
-=======
 		<!DOCTYPE html>
 <?php
 // Connexion base de données
@@ -191,9 +188,6 @@ catch(Exception $e)
 				?>
 			</table>
 
-
-	
->>>>>>> Stashed changes
 		</div>
 	</body>	
 </html>
