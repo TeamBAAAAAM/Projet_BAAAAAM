@@ -17,7 +17,7 @@
 
 	// test
 	$matricule = "12345";
-	$codeT = "Code";
+	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John";
 
@@ -117,7 +117,7 @@
 		</nav>
 		
 		<div class="container">
-			<div class="row">
+			<div class="row container-accueil">
 				<div class="col-sm-6 ">          
 					<table class="table table-striped police">
 						<thead class="titre"> 

@@ -9,7 +9,7 @@
 	
 	// test
 	$matricule = "12345";
-	$codeT = "Code";
+	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John";
 
