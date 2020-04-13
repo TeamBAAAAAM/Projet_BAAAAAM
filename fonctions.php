@@ -211,27 +211,27 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
 function nbDossiersRecus($link) {
     $query = "Select count(*) AS nbDossiersRecus From dossier d Where d.DateD = CURDATE()";    
     $result = mysqli_query($link, $query);    
-    return $result;
+    return mysqli_fetch_array($result);
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link) {
     $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";    
     $result = mysqli_query($link, $query);    
-    return $result;
+    return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers restant à traiter à la date courante
 function nbDossiersATraiter($link) {
     $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter' And d.DateD = CURDATE()";    
     $result = mysqli_query($link, $query);    
-    return $result;
+    return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link) {
     $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And d.DateD = CURDATE()";    
     $result = mysqli_query($link, $query);    
-    return $result;
+    return mysqli_fetch_array($result);
 }
 
 /*      FONCTIONS POUR TECHNICIEN    */
@@ -239,7 +239,7 @@ function nbDossiersClasses($link) {
 function getTechnicienData($link, $matricule) {
     $query = "Select CodeTech, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);    
-    return $result;
+    return mysqli_fetch_array($result);
 }
 
 
@@ -262,7 +262,7 @@ function ChangerStatutDossier($link, $codeDossier, $statut){
 
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier){
-    $query = "SELECT CodeJ, CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
+    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
         ."WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);    
     return $result;

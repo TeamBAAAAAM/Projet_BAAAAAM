@@ -39,7 +39,10 @@
 
     //Mise en session	    
 	$_SESSION["codeDossier"] = $codeDossier;	
-	$_SESSION["refDossier"] = $refDossier;
+    $_SESSION["refDossier"] = $refDossier;
+    
+    // Pattern pour chemin des PJ (selon moyen utilisé pour stocker)
+    //$pattern = '/$\\[alnum]+\.(png|jpg|jpeg|pdf|tiff|bmp)/';
 
 ?>
 <!DOCTYPE html>
@@ -162,8 +165,22 @@
 					<div class= "panel panel-default">
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
-							<li class="list-group-item" onClick="changePathViewer('path_file');">name_file</li>
-						</ul>
+						<?php
+                            $result = RecupererPJ($link, $codeDossier);
+                            $rows = mysqli_num_rows($result);
+                            for ($i = 0; $i <= $rows; $i++){
+                                $justificatif = mysqli_fetch_array($result);
+                                $cheminFichier = $justificatif["CheminJ"];
+                                //preg_match($pattern, $cheminFichier, $matches);
+                                //$nomFichier = $matches[0][0];
+                                //strstr($cheminFichier,'');
+                                $nomFichier = strrchr($cheminFichier,'\\');
+                                $nomFichier = substr($nomFichier, 1);
+                                $mnemonique = $justificatif["Mnemonique"];
+                                echo("<li class='list-group-item' onClick='changePathViewer($cheminFichier)'>$nomFichier</li>");
+                            }
+                        ?>
+                        </ul>
 					</div>
 				</div>
 				<div id="panel-apercu" class="col-sm-6">
