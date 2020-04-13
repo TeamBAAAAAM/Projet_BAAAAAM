@@ -3,13 +3,10 @@
 <?php
 
 //Charger les fonctions de connexion dans un autre fichier 
-require('Fonctions.php');
+require('fonctions.php');
 
 //Connexion
-$connexion= connexionMysql();
-if ($connexion==null)
-    //Redirection 
-        ;
+$connexion= connexionMySQL();
 
 // Démerrage de la session 
 session_start();

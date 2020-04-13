@@ -1,13 +1,10 @@
 <?php
 
 //Charger les fonctions de connexion dans un autre fichier 
-require('Fonctions.php');
+require('../fonctions.php');
 
 //Connexion
-$connexion= connexionMysql();
-if ($connexion==null)
-    //Redirection 
-        ;
+$connexion= connexionMySQL();
 
 // On démarre la session
 session_start();
@@ -20,6 +17,7 @@ session_start();
        <meta charset="utf-8">
         <!-- importer le fichier de style -->
 
+        <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="styleTech.css">
     </head>
     <body>
@@ -34,13 +32,13 @@ session_start();
                 <input type="text" placeholder="Veuillez renseigner votre matricule" 
                        name="matricule" required>
                 <?php
-		if (isset($_GET["msg_erreur"]))
+		            if (isset($_GET["msg_erreur"]))
                     {
-                    if ($_GET["msg_erreur"]== "msg_3")
-                    {
-                    echo("<p style='color:red' class=\"msg_erreur\">"."<em>La matricule ou le mot de passe "
-                        . "ne sont pas corrects</em> " . "</p>");
-                    }
+                        if ($_GET["msg_erreur"]== "msg_3")
+                        {
+                        echo("<p style='color:red' class=\"msg_erreur\">"."<em>La matricule ou le mot de passe "
+                            . "ne sont pas corrects</em> " . "</p>");
+                        }
                     }
                 ?>
                 <br/>

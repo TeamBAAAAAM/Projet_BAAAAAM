@@ -24,12 +24,43 @@ function connexionMySQL() {
         echo "Erreur de débogage : ".utf8_encode(mysqli_connect_error())."<br>";
         exit;
     }
+    else
+        {
+        if (mysqli_select_db($link,BD_MYSQL)==null)
+            {
+            echo("<p> Vérifier que la base de données est bien sur MariaDB </p>");
+            return null;
+            }
+        }
     if(mysqli_select_db($link, BD_MYSQL) == NULL) {
         echo "Erreur : Impossible de se connecter à la base de données.";
         exit;
     }
     
     return $link;
+}
+
+/*      FONCTIONS POUR CONNEXION DU TECHNICIEN      */   
+
+//Vérification de l'unicité de la matricule 
+function VerificationMat ($connexion, $matricule)
+{
+    $requete = "SELECT * FROM technicien WHERE Matricule='$matricule'";
+    $curseur = mysqli_query($connexion, $requete);
+    
+    if ($curseur!=null)
+    {
+        if (mysqli_num_rows($curseur)==0)
+        {
+            return "Unique" ;
+        }
+        else
+        {
+            $ligne = mysqli_fetch_array($curseur);
+            echo "La matricule" . $ligne["Matricule"] . "est déjà attribuée" ;
+        }
+    }
+    return "Erreur de vérification du Matricule" ;      
 }
 
 function CharactereAleatoire() {
