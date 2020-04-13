@@ -23,12 +23,6 @@
 		$_SESSION["prenomT"] = $prenomT;
 	}
 
-	// test
-	/* $matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John"; */
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -96,7 +96,7 @@
 				</thead>
 				<tbody>
 				<?php					
-					$reponse = DossiersCorbeilleTechnicien($link);
+					$reponse = DossiersCorbeilleGenerale($link);
 					while ($donnees = $reponse->fetch())
 					{
 						echo ("<tr><td>".$donnees['DateD']."</td>
