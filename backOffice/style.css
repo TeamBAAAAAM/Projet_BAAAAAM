@@ -63,6 +63,7 @@
 
 #panel-pjs .panel-body, #panel-apercu .panel-body {
 	overflow-y: scroll;
+	padding: 0px;
 }
 
 #apercu {
@@ -82,25 +83,32 @@
 	background-color: lightgray;
 }
 
-@media screen and (min-width: 992) {
+@media screen and (min-width: 992px) {
 	#panel-statut a {
 		width: 150px;
 	}
 }
 
-@media screen and (max-width: 992) {
+@media screen and (max-width: 1200px) {
+	#panel-pjs .panel-heading, #panel-apercu .panel-heading {
+		height: 85px;
+	}
 	#panel-pjs .panel-body, #panel-apercu .panel-body {
-		height: 545px;
+		height: 660px;
 	}
 	#panel-pjs > .panel, #panel-apercu > .panel {
-		height: 600px;
+		height: 750px;
 	}
 }
-@media screen and (max-width: 992) {
+
+@media screen and (min-width: 1200px) {	
+	#panel-pjs .panel-heading, #panel-apercu .panel-heading {
+		height: auto;
+	}
 	#panel-pjs .panel-body, #panel-apercu .panel-body {
-		height: 545px;
+		height: 1145px;
 	}
 	#panel-pjs > .panel, #panel-apercu > .panel {
-		height: 600px;
+		height: 1200px;
 	}
 }

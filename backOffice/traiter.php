@@ -181,10 +181,12 @@
                             for ($i = 0; $i < $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
 								$cheminFichier = $justificatif["CheminJ"];
-                                $nomFichier = strrchr($cheminFichier,'/');
+                                $nomFichier = strrchr($cheminFichier, '/');
                                 $nomFichier = substr($nomFichier, 1);
-                                $mnemonique = $justificatif["Mnemonique"];
-                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>$nomFichier</li>");
+                                $extension = strrchr($cheminFichier, '\.');
+                                $extension = substr($extension, 1);
+                                //$mnemonique = $justificatif["Mnemonique"];
+                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><img class='icon icon-$extension'><h5>$nomFichier</h5></li>");
                             }
                         ?>
                         </ul>
