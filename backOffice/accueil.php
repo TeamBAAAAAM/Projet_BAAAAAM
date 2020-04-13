@@ -12,7 +12,7 @@
 		$prenomT = $_SESSION["prenomT"];
 	}else{
 		$matricule = $_POST["matricule"];
-		$technicien = getTechnicienData($link, $matricule);
+		$technicien = DonneesTechnicien($link, $matricule);
 		$codeT = $technicien["CodeTech"];
 		$nomT = $technicien["NomT"];
 		$prenomT = $technicien["PrenomT"];
