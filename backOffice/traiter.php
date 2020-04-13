@@ -5,22 +5,20 @@
     $link = connexionMySQL();
 	
 	// Récupération des données du dossier en cours de traitement
-	if(isset($_GET["codeD"])) {
-		$_SESSION["refD"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
+	if(isset($_GET["codeD"])) {		
+		$_SESSION["codeDossier"] = $_GET["codeD"];	
+		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_SESSION["codeDossier"], $link)["RefD"];
 		RedirigerVers("traiter.php");
 	}
 	if(!isset($_SESSION["refD"])){
 		RedirigerVers("accueil.php");
 	}
 
-    //$codeDossier = $_GET["codeD"];
-    //$refDossier = $_POST["refD"];
-
-	/*if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+	if(!ChangerStatutDossier($link, $_SESSION["codeDossier"], "En cours")){
         echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-	};*/
+	};
 
-	$refDossier = $_SESSION["refD"];
+	$refDossier = $_SESSION["refDossier"];
 
     $dossier = ChercherDossierAvecREF($refDossier, $link);
 	$matricule = "12345";
@@ -183,13 +181,9 @@
                             for ($i = 0; $i < $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
 								$cheminFichier = $justificatif["CheminJ"];
-								$nomFichier = $justificatif["Mnemonique"]."_$i";
-                                //preg_match($pattern, $cheminFichier, $matches);
-                                //$nomFichier = $matches[0][0];
-                                //strstr($cheminFichier,'');
-                                //$nomFichier = strrchr($cheminFichier,'\\');
-                                //$nomFichier = substr($nomFichier, 1);
-                                //$mnemonique = $justificatif["Mnemonique"];
+                                $nomFichier = strrchr($cheminFichier,'/');
+                                $nomFichier = substr($nomFichier, 1);
+                                $mnemonique = $justificatif["Mnemonique"];
                                 echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>$nomFichier</li>");
                             }
                         ?>
