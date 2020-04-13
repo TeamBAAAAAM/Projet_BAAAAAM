@@ -75,19 +75,31 @@
 #panel-pjs li {
 	cursor: pointer;
 }
+#panel-pjs li h5{
+	margin: 0px;
+}
 #panel-pjs li:hover {
+	background-image: none;
 	background-color: gray;
+	box-shadow: 1px 1px 5px black inset;
 	color: white;
 }
 .onclick-pjs-li {	
 	background-color: lightgray;
 }
 
-@media screen and (min-width: 992px) {
-	#panel-statut a {
-		width: 150px;
-	}
+.icon {
+	height: 50px;
+	margin-right: 10px;
 }
+
+.icon-bmp {content: url('../img/icons/bmp-icon.png');}
+.icon-jpeg {content: url('../img/icons/jpeg-icon.png');}
+.icon-jpg {content: url('../img/icons/jpg-icon.png');}
+.icon-pdf {content: url('../img/icons/pdf-icon.png');}
+.icon-png {content: url('../img/icons/png-icon.png');}
+.icon-tiff {content: url('../img/icons/tiff-icon.png');}
+.icon-tif {content: url('../img/icons/tif-icon.png');}
 
 @media screen and (max-width: 1200px) {
 	#panel-pjs .panel-heading, #panel-apercu .panel-heading {

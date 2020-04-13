@@ -150,20 +150,15 @@
 					<div class= "panel panel-default">	
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-sm-2">
+								<div class="col-sm-3 text-center">
 									<span class="titre">Statut</span>
 								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary disabled" role="button">À traiter</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-default" role="button">En Cours</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary" role="button">Classé sans suite</a>
-								</div>
-								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary" role="button">Terminé</a>
+								<div class="col-sm-9">
+									<div class="btn-group btn-group-justified">
+										<a href="#" class="btn btn-default disabled" role="button">En Cours</a>
+										<a href="#" class="btn btn-primary" role="button">Classé sans suite</a>
+										<a href="#" class="btn btn-primary" role="button">Terminé</a>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -172,7 +167,7 @@
 			</div>
 			<div class="row">
 				<div id="panel-pjs" class="col-sm-4">
-					<div class= "panel panel-default">
+					<div class= "panel panel-primary">
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
 						<?php
@@ -183,10 +178,10 @@
 								$cheminFichier = $justificatif["CheminJ"];
                                 $nomFichier = strrchr($cheminFichier, '/');
                                 $nomFichier = substr($nomFichier, 1);
-                                $extension = strrchr($cheminFichier, '\.');
+                                $extension = strrchr($cheminFichier, '.');
                                 $extension = substr($extension, 1);
                                 //$mnemonique = $justificatif["Mnemonique"];
-                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><img class='icon icon-$extension'><h5>$nomFichier</h5></li>");
+                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><h5><img class='icon icon-$extension'>$nomFichier</h5></li>");
                             }
                         ?>
                         </ul>
