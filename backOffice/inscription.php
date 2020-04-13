@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-
 <?php
 
 //Charger les fonctions de connexion dans un autre fichier 
-require('fonctions.php');
+require('../fonctions.php');
 
 //Connexion
 $connexion= connexionMySQL();
@@ -12,7 +10,7 @@ $connexion= connexionMySQL();
 session_start();
 
 ?>
-
+<!DOCTYPE html>
 <html>
     <head>
         <title>Inscription</title>
@@ -25,7 +23,7 @@ session_start();
         <nav class="navbar navbar-default header welcome">
 			<div class="container">
 				<div class="navbar-header">
-                                    <a href="ConnexionTech.php"><h1><strong>Bienvenue</strong></h1></a>
+                                    <a href="se_connecter.php"><h1><strong>Bienvenue</strong></h1></a>
 				</div>
 			</div>
         </nav>
@@ -34,7 +32,7 @@ session_start();
         <h2>Enregistrez-vous en quelques clics et commencez vos traitements.</h2>
         <h3>Veuillez renseigner les informations suivantes:</h3>
         
-        <form action="Verification.php" method='POST'>
+        <form action="confirmation.php" method='POST'>
         
         <div class="form-group">
             <label for="exampleInputEmail1">Matricule(*) :</label>
@@ -49,10 +47,10 @@ session_start();
                     {
                     if ($_GET["msg_erreur"]== "msg_1")
                     {
-                    echo("<p style='color:red' class=\"msg_erreur\">"."<em>La matricule saisie existe déjà dans la base de données. <br/>"
-                        . "Ce la signifie que soit vous êtes déjà inscrit dans la base,"
-                        . " auquel cas <a href='ConnexionTech.html'> vous pouvez directement vous connecter, </a> "
-                        . "ou que la matricule est attribuée à un autre technicien, veuillez vérifier votre saisie.</em> " . "</p>");
+                    echo("<p style='color:red' class=\"msg_erreur\">"."<em>Le matricule saisi existe déjà dans la base de données. <br/>"
+                        . "Cela signifie que vous êtes déjà inscrit dans la base,"
+                        . " auquel cas <a href='index.php'> vous pouvez vous connecter directement, </a> "
+                        . "ou alors que ce matricule est déjà attribué à un autre technicien, veuillez alors vérifier votre saisie.</em> " . "</p>");
                     }
                     }
             ?>
@@ -114,7 +112,7 @@ session_start();
         
         <input type="submit" class="btn btn-primary" value="S'enregistrer">
         
-        <a href="se_connecter.php" class="btn btn-primary" onclick="confirmation(event)" id="annulation">  Annuler</a>
+        <a href="index.php" class="btn btn-primary" onclick="confirmation(event)" id="annulation">  Annuler</a>
         
         <script>
             function confirmation(event) {
