@@ -23,7 +23,7 @@
     $prenomAssure = $dossier["PrenomA"];
     $dateArretMaladie = $dossier["DateAM"];
 
-    // test    
+    // Variables de test (à supprimer par la suite)
 	$matricule = "12345";
 	$codeT = "11111";
 	$nomT = "Doe"; 
