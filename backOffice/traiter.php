@@ -3,28 +3,26 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-	
-	// Récupération des données du dossier en cours de traitement
+
+    // Redirection pour ne pas afficher le code dans l'URL
 	if(isset($_GET["codeD"])) {		
-		$_SESSION["codeDossier"] = $_GET["codeD"];	
-		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_SESSION["codeDossier"], $link)["RefD"];
+		$codeDossier = $_GET["codeD"];	
+        $refDossier = ChercherREFAvecCodeD($codeDossier, $link)["RefD"];
+        /* //Mise en session	    
+        $_SESSION["codeDossier"] = $codeDossier;	
+        $_SESSION["refDossier"] = $refDossier; */
 		RedirigerVers("traiter.php");
-	}
-	if(!isset($_SESSION["refD"])){
+    }    
+
+    // Redirection si la référence n'est pas en session
+	/* if(!isset($_SESSION["refDossier"])){
 		RedirigerVers("accueil.php");
-	}
+    } */
 
-	if(!ChangerStatutDossier($link, $_SESSION["codeDossier"], "En cours")){
-        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-	};
-
-	$refDossier = $_SESSION["refDossier"];
-
+    $refDossier = $_SESSION["refDossier"];
+    // Récupération des données du dossier en cours de traitement
+    
     $dossier = ChercherDossierAvecREF($refDossier, $link);
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "BARBÉ"; 
-	$prenomT = "Sophie";
 	$codeDossier = $dossier["CodeD"];
     $dateReception = $dossier["DateD"];
     $statutDossier = $dossier["StatutD"];
@@ -34,10 +32,10 @@
     $dateArretMaladie = $dossier["DateAM"];
 
     // Variables de test (à supprimer par la suite)
-	//$matricule = "12345";
-	//$codeT = "11111";
-	//$nomT = "Doe"; 
-	//$prenomT = "John";
+	/* $matricule = "12345";
+	$codeT = "11111";
+	$nomT = "BARBÉ"; 
+	$prenomT = "Sophie"; */
 	//$codeDossier = "11111";
 	//$refDossier= "ABCD1111";
     //$dateReception = "13/04/20";
@@ -47,11 +45,12 @@
     //$prenomAssure = "Jean-Michel";
     //$dateArretMaladie = "01/04/20";
 
-    //Mise en session	    
-	$_SESSION["codeDossier"] = $codeDossier;	
-    $_SESSION["refDossier"] = $refDossier;
-    
+    // Passage automatique du statut à "En cours"
+	if(!ChangerStatutDossier($link, $_SESSION["codeDossier"], "En cours")){
+        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
+	};
 
+	
 ?>
 <!DOCTYPE html>
 <html lang="en">
