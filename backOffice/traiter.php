@@ -41,8 +41,6 @@
 	$_SESSION["codeDossier"] = $codeDossier;	
     $_SESSION["refDossier"] = $refDossier;
     
-    // Pattern pour chemin des PJ (selon moyen utilisé pour stocker)
-    //$pattern = '/$\\[alnum]+\.(png|jpg|jpeg|pdf|tiff|bmp)/';
 
 ?>
 <!DOCTYPE html>
@@ -171,9 +169,6 @@
                             for ($i = 0; $i <= $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
                                 $cheminFichier = $justificatif["CheminJ"];
-                                //preg_match($pattern, $cheminFichier, $matches);
-                                //$nomFichier = $matches[0][0];
-                                //strstr($cheminFichier,'');
                                 $nomFichier = strrchr($cheminFichier,'\\');
                                 $nomFichier = substr($nomFichier, 1);
                                 $mnemonique = $justificatif["Mnemonique"];
