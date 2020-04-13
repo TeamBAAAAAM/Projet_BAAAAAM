@@ -8,19 +8,34 @@
 	}
 	
 	 // Récupération des données du dossier en cours de traitement
-    // $codeDossier = $_POST["codeD"];	
-    // $refDossier = $_POST["refD"];
-	// if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
-    //     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-    // };
+    $codeDossier = $_POST["codeD"];	
+    $refDossier = $_POST["refD"];
 
-    // test    
+	if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
+    };
+
+    $dossier = ChercherDossierAvecREF($refDossier, $link);
+    $dateReception = $dossier["DateD"];
+    $statutDossier = $dossier["StatutD"];
+    $nirAssure = $dossier["NirA"];
+    $nomAssure = $dossier["NomA"];
+    $prenomAssure = $dossier["PrenomA"];
+    $dateArretMaladie = $dossier["DateAM"];
+
+    // Variables de test (à supprimer par la suite)
 	$matricule = "12345";
 	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John";
 	$codeDossier = "11111";
 	$refDossier= "ABCD1111";
+    $dateReception = "13/04/20";
+    $statutDossier = "En cours";
+    $nirAssure = "# ## ## ## ### ###";
+    $nomAssure = "DUPONT";
+    $prenomAssure = "Jean-Michel";
+    $dateArretMaladie = "01/04/20";
 
     //Mise en session	    
 	$_SESSION["codeDossier"] = $codeDossier;	
@@ -102,17 +117,17 @@
 				<div id="panel-dossier" class="col-sm-6">
 					<div class="container-fluid panel panel-default">
 						<div class="panel-body">
-							<h3>DOSSIER No&#12296;REFERENCE_DOSSIER&#12297;</h3>
-							<h4>Date de réception : jj/mm/aa</h4>
+							<h3>DOSSIER No&#12296;<?php echo $refDossier;?>&#12297;</h3>
+							<h4>Date de réception :  <?php echo $dateReception;?></h4>
 						</div>
 					</div>
 				</div>
 				<div id="panel-assure" class="col-sm-6">
 					<div class="container-fluid panel panel-default">
 						<div class="panel-body">
-							<h3>NIR : # ## ## ## ### ###</h3>
-							<h4>DUPONT Jean-Michel</h4>
-							<h4>En arrêt de travail depui : jj/mm/aa</h4>
+							<h3>NIR : <?php echo $nirAssure;?></h3>
+							<h4><?php echo "$nomAssure $prenomAssure";?></h4>
+							<h4>En arrêt de travail depuis le : <?php echo $dateArretMaladie;?></h4>
 						</div>
 					</div>
 				</div>
@@ -126,7 +141,7 @@
 									<span class="titre">Statut</span>
 								</div>
 								<div class="col-sm-2">
-									<a href="#" class="btn btn-primary" role="button">À traiter</a>
+									<a href="#" class="btn btn-primary disabled" role="button">À traiter</a>
 								</div>
 								<div class="col-sm-2">
 									<a href="#" class="btn btn-default" role="button">En Cours</a>
