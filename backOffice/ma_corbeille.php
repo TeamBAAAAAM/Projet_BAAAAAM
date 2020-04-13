@@ -13,12 +13,12 @@
 	$nomT = "Doe"; 
 	$prenomT = "John";
 	
-	/* // Récupération des données du technicien
+	// Récupération des données du technicien
 	$matricule = $_SESSION["matricule"];	
 	$technicien = getTechnicienData($link, $matricule);
 	$codeT = $technicien["CodeTech"];
 	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];*/
+	$prenomT = $technicien["PrenomT"];
 
 ?>
 <!DOCTYPE html>

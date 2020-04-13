@@ -8,18 +8,17 @@
 	}
 	
 	// Récupération des données du technicien
-	// $matricule = $_POST["matricule"];	
-	// $result = getTechnicienData($link, $matricule);
-	// $ligne = mysqli_fetch_array($result);
-	// $codeT = $ligne["CodeTech"];
-	// $nomT = $ligne["NomT"];
-	// $prenomT = $ligne["PrenomT"];
+	$matricule = $_POST["matricule"];
+	$technicien = getTechnicienData($link, $matricule);
+	$codeT = $technicien["CodeTech"];
+	$nomT = $technicien["NomT"];
+	$prenomT = $technicien["PrenomT"];
 
 	// test
-	$matricule = "12345";
+	/* $matricule = "12345";
 	$codeT = "11111";
 	$nomT = "Doe"; 
-	$prenomT = "John";
+	$prenomT = "John"; */
 
 	//Mise en session	
 	$_SESSION["matricule"] = $matricule;	
