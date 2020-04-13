@@ -13,7 +13,7 @@
 	}else{
 		$matricule = $_POST["matricule"];
 		$technicien = DonneesTechnicien($link, $matricule);
-		$codeT = $technicien["CodeTech"];
+		$codeT = $technicien["CodeT"];
 		$nomT = $technicien["NomT"];
 		$prenomT = $technicien["PrenomT"];
 		//Mise en session	
@@ -22,7 +22,6 @@
 		$_SESSION["nomT"] = $nomT;
 		$_SESSION["prenomT"] = $prenomT;
 	}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,7 +160,7 @@
 							<tr>							
 								<td class="text-center">
 									<?php 
-										$result = nbDossiersATraiterTotal($link); 
+										$result = nbDossiersATraiterTotal($link);
 										echo $result["nbDossiersAtraiterTotal"];
 									?>
 								</td>

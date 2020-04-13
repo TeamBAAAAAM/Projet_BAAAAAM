@@ -279,8 +279,8 @@ function nbDossiersRecus($link) {
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link) {
-    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";    
-    $result = mysqli_query($link, $query);    
+    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";
+    $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 
@@ -301,7 +301,7 @@ function nbDossiersClasses($link) {
 /*      FONCTIONS POUR TECHNICIEN    */
 
 function DonneesTechnicien($link, $matricule) {
-    $query = "Select CodeTech, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
+    $query = "Select CodeT, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
@@ -329,7 +329,6 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
     $values = substr($values, 0, strlen($values) - 2);
 
     $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
-    echo $query;
     
     if(mysqli_query($link, $query)) {
         if(!ChangerStatutDossier($link, $CodeD, utf8_decode($StatutD))){
