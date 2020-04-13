@@ -17,15 +17,18 @@
 		RedirigerVers("traiter.php");
 	}
 
+	//Changement de statut si un statut est indiqué dans l'URL
 	if(isset($_GET["statut"])) {
 		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
 		RedirigerVers("traiter.php");
 	}
 
+	//S'il n'y a pas de référence dossier en session
 	if(!isset($_SESSION["refDossier"])){
 		RedirigerVers("accueil.php");
 	}
 
+	//Variables du dossier et de l'assuré
 	$dossier = ChercherDossierAvecREF($_SESSION["refDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
@@ -36,33 +39,11 @@
 	$prenomAssure = $dossier["PrenomA"];
 	$dateArretMaladie = $dossier["DateAM"];
 	
-	//Le statut "À traiter" devient "En cours"
+    // Passage automatique du statut à "En cours"
 	if($statutDossier == "À traiter") {
 		TraiterDossier($codeT, $codeDossier, "En cours", $link);
 		$statutDossier = "En cours";
 	}
-
-    // Variables de test (à supprimer par la suite)
-	//$matricule = "12345";
-	//$codeT = "11111";
-	//$nomT = "Doe"; 
-	//$prenomT = "John";
-	//$codeDossier = "11111";
-	//$refDossier= "ABCD1111";
-    //$dateReception = "13/04/20";
-    //$statutDossier = "En cours";
-    //$nirAssure = "# ## ## ## ### ###";
-    //$nomAssure = "DUPONT";
-    //$prenomAssure = "Jean-Michel";
-    //$dateArretMaladie = "01/04/20";
-
-    //Mise en session	    
-	$_SESSION["codeDossier"] = $codeDossier;	
-    $_SESSION["refDossier"] = $refDossier;
-    
-    // Pattern pour chemin des PJ (selon moyen utilisé pour stocker)
-    //$pattern = '/$\\[alnum]+\.(png|jpg|jpeg|pdf|tiff|bmp)/';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
