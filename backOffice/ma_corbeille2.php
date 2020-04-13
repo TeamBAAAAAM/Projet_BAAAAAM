@@ -36,31 +36,31 @@ catch(Exception $e)
    		<nav class="navbar navbar-inverse">
 			<div class="container-fluid">
 				<div class="navbar-header">
-				<a class="navbar-brand" href="#">BackOffice</a>
+				    <a class="navbar-brand" href="#">BackOffice</a>
 				</div>
-				<ul class="nav navbar-nav">
-					
-				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu <span class="caret"></span></a>
-					<ul class="dropdown-menu">
-					<li><a href="#">Accueil</a></li>
-					<li><a href="#">Corbeille générale</a></li>
-					<li><a href="#">Ma corbeille</a></li>
-					</ul>
-				</li>
-				<li ><a href="#">Accueil</a></li>
-				<li ><a href="#">Corbeille générale</a></li>
-				<li class="active"><a href="#">Ma corbeille</a></li>
+				<ul class="nav navbar-nav">					
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu    <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Accueil</a></li>
+                            <li><a href="#">Corbeille générale</a></li>
+                            <li><a href="#">Ma corbeille</a></li>
+                        </ul>
+				    </li>
+                    <li ><a href="#">Accueil</a></li>
+                    <li ><a href="#">Corbeille générale</a></li>
+                    <li class="active"><a href="#">Ma corbeille</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-							<li> <div class="dropdown">
-									<button class="btn btn-default dropdown-toggle"
-										type="button" id="menu1" data-toggle="dropdown">Nom Prénom</button>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-										<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
-										<li role="presentation" class="divider"></li>
-										<li role="presentation"><a role="menuitem" href="#">Déconnexion</a></li>
-								</ul>
-							<img src="avatar.png" class="img-circle" alt="Avatar Image" width="25" height="25">  </li>
+                        <li> <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle"
+                                    type="button" id="menu1" data-toggle="dropdown">Nom Prénom</button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                                    <li role="presentation"><a role="menuitem" href="#">Profil</a></li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li role="presentation"><a role="menuitem" href="#">Déconnexion</a></li>
+                            </ul>
+                        <img src="avatar.png" class="img-circle" alt="Avatar Image" width="25" height="25">  </li>
 				</ul>
 			</div>       
 		</nav>
