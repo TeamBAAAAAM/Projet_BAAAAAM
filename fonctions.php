@@ -279,21 +279,21 @@ function nbDossiersRecus($link) {
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link) {
-    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";
+    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = '".utf8_decode("À traiter")."'";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers restant à traiter à la date courante
 function nbDossiersATraiter($link) {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";    
+    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = '".utf8_decode("À traiter")."' And DATE(d.DateD) = CURDATE()";    
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link) {
-    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";    
+    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = '".utf8_decode("Classé sans suite")."' And DATE(d.DateD) = CURDATE()";    
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
