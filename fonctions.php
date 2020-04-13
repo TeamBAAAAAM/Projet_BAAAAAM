@@ -263,7 +263,7 @@ function ChangerStatutDossier($link, $codeDossier, $statut){
 
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier){
-    $query = "SELECT CodeJ, CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
+    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
         ."WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);    
     return $result;
