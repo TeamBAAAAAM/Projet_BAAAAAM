@@ -95,8 +95,7 @@
 					</tr>    
 				</thead>
 				<tbody>
-				<?php
-					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
+				<?php					
 					$reponse = DossiersCorbeilleTechnicien($link);
 					while ($donnees = $reponse->fetch())
 					{

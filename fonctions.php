@@ -315,6 +315,15 @@ function RecupererPJ($link, $codeDossier){
     return $result;
 }
 
+/*          CORBEILLE GENERALE         */
+
+// Liste des dossiers en cours de traitement par le technicien connecté
+function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
+    $query = "SELECT d.DateD, d.RefD, a.NirA  FROM dossier d, assure a WHERE d.DateD = '$dateReception' AND d.CodeA=a.CodeA"; 
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
+
 /*      CORBEILLE D'UN TECHNICIEN      */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
@@ -323,4 +332,6 @@ function DossiersCorbeilleTechnicien($link) {
     $result = mysqli_query($link, $query);    
     return $result;
 }
+
+
 ?>
