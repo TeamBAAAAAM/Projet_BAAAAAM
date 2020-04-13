@@ -300,7 +300,7 @@ function nbDossiersClasses($link) {
 
 /*      FONCTIONS POUR TECHNICIEN    */
 
-function getTechnicienData($link, $matricule) {
+function DonneesTechnicien($link, $matricule) {
     $query = "Select CodeT, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
