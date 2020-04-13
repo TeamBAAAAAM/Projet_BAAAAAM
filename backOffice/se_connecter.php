@@ -51,7 +51,7 @@ session_start();
                 
                 <div class="inscription">
                     
-                    <a id="inscrire" href='InscriptionTech.php'> Pas enregistré ? </a>             
+                    <a id="inscrire" href='inscription.php'> Pas enregistré ? </a>             
                     <a id="oubli" href=''> Mot de passe oublié ? </a>
                     
                 </div>
