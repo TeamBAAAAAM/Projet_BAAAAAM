@@ -73,7 +73,7 @@ function GenererReferenceDossier($nbChar, $link) {
     return $ref;
 }
 
-//Vérifie si un assuré est déjà enregitré
+//Vérifie si un assuré est déjà enregistré
 function AssureExiste($NirA, $link) {
     $query = "SELECT * FROM Assure WHERE NirA = '".$NirA."'";
     $result = mysqli_query($link, $query);
@@ -119,7 +119,7 @@ function ChercherMnemoniqueAvecMnemonique($Mnemonique, $link) {
 }
 
 //Vérifie si la référence donnée en paramètre n'est pas déjà utilisé
-function DossireExiste($RefD, $link) {    
+function DossierExiste($RefD, $link) {    
     $query = "SELECT RefD FROM Dossier WHERE RefD = '".$RefD."'";
     $result = mysqli_query($link, $query);
     
@@ -149,7 +149,7 @@ function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link) {
     return mysqli_query($link, $query);
 }
 
-//Enregistre un dossier puis renvoie True si la manoeuvre à réussie
+//Enregistre un dossier puis renvoie True si la manoeuvre a réussi
 //False sinon
 function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) { 
     $keys = ""; $values = "";
@@ -198,7 +198,7 @@ function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link) {
 }
 
 //Enregistre les fichiers contenus dans le dossier d'un assuré
-//Revoit une liste avec un ligne pour un fichier
+//Renvoie une liste avec une ligne pour un fichier
 //1er paramètre de type Booléen qui est TRUE si l'enregistrement a réussi, FALSE sinon
 //2ème paramètre de type String qui correspond au nom du fichier téléchargé
 //3ème paramètre correspond au mnémonique complet affilié au fichier
