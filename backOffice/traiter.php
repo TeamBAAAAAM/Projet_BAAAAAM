@@ -8,11 +8,11 @@
 	}
 	
 	 // Récupération des données du dossier en cours de traitement
-    $codeDossier = $_POST["codeD"];	
-    $refDossier = $_POST["refD"];
-	if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
-        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-    };
+    // $codeDossier = $_POST["codeD"];	
+    // $refDossier = $_POST["refD"];
+	// if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+    //     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
+    // };
 
     // test    
 	$matricule = "12345";
@@ -143,9 +143,35 @@
 				</div>
 			</div>
 			<div class="row">
-				<div id="panel-pjs" class="col-sm-12 panel panel-default">
+				<div id="panel-pjs" class="col-sm-6">
+					<div class= "panel panel-default">
+						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
+						<ul class="panel-body list-group">
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_1.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">BS_2.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_3.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">BS_4.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">BS_5.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">JUSTIF_SAL_1.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">JUSTIF_SAL_2.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">ATT_SAL_1.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">ATT_SAL_2.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">ATT_SAL_3.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_1.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_2.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_3.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_4.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_5.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_1.jpg');">PJ_IJ_6.JPG</li>
+							<li class="list-group-item" onClick="apercu('C:\Users\axelt\Documents\4 - Professionnels\DCT_2019-2020\Pièces justificatives\1 46 85 32 465 468\eQW9HI3p\BS_0.png');">PJ_IJ_7.JPG</li>
+						</ul>
+					</div>
 				</div>
-				<div id="panel-apercu" class="col-sm-12 panel panel-default">
+				<div id="panel-apercu" class="col-sm-6">
+					<div class= "panel panel-default">
+						<div class="panel-heading titre text-center">Aperçu</div>
+						<iframe name="apercu" class="panel-body" src=""></iframe>
+					</div>
 				</div>
 			</div>
 		</div>
