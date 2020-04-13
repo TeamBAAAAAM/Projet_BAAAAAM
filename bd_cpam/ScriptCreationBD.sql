@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  lun. 13 avr. 2020 à 14:52
+-- Généré le :  lun. 13 avr. 2020 à 21:51
 -- Version du serveur :  5.7.26
 -- Version de PHP :  5.6.40
 
@@ -39,14 +39,7 @@ CREATE TABLE IF NOT EXISTS `assure` (
   `TelA` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `MailA` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`CodeA`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Déchargement des données de la table `assure`
---
-
-INSERT INTO `assure` (`CodeA`, `NirA`, `NomA`, `PrenomA`, `TelA`, `MailA`) VALUES
-(41, '1 73 09 71 243 714', 'Arnou', 'DUVAL', '01.09.56.95.29', 'ArnouDuval@jourrapide.com');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -64,14 +57,7 @@ CREATE TABLE IF NOT EXISTS `dossier` (
   `CodeA` int(11) NOT NULL,
   PRIMARY KEY (`CodeD`),
   KEY `fk_dossier_assure` (`CodeA`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `dossier`
---
-
-INSERT INTO `dossier` (`CodeD`, `StatutD`, `DateD`, `RefD`, `DateAM`, `CodeA`) VALUES
-(76, 'En cours', '2020-04-13 12:42:52', 'VMdKBzWt', '2020-04-10', 41);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -90,14 +76,7 @@ CREATE TABLE IF NOT EXISTS `justificatif` (
   KEY `fk_justificatif_dossier` (`CodeD`) USING BTREE,
   KEY `fk_justificatif_assure` (`CodeA`) USING BTREE,
   KEY `fk_justificatif_listemnemonique` (`CodeM`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=397 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Déchargement des données de la table `justificatif`
---
-
-INSERT INTO `justificatif` (`CodeJ`, `CheminJ`, `CodeD`, `CodeA`, `CodeM`) VALUES
-(396, '../piecesJustificatives/1 73 09 71 243 714/VMdKBzWt/ATT_SAL_0.png', 76, 41, 3);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -111,17 +90,7 @@ CREATE TABLE IF NOT EXISTS `listemnemonique` (
   `Mnemonique` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `Designation` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`CodeM`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Déchargement des données de la table `listemnemonique`
---
-
-INSERT INTO `listemnemonique` (`CodeM`, `Mnemonique`, `Designation`) VALUES
-(1, 'BS', 'Bulletin de salaire'),
-(2, 'JUSTIF_SAL', 'Autres justificatifs de salaire'),
-(3, 'ATT_SAL', 'Attestation de salaire'),
-(4, 'PJ_IJ', 'Pièces justificatives IJ');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -166,7 +135,7 @@ DROP TABLE IF EXISTS `traiter`;
 CREATE TABLE IF NOT EXISTS `traiter` (
   `CodeT` int(11) NOT NULL,
   `CodeD` int(11) NOT NULL,
-  `DateTraiterD` date NOT NULL,
+  `DateTraiterD` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`CodeT`,`CodeD`) USING BTREE,
   KEY `fk_traiter_dossier` (`CodeD`) USING BTREE,
   KEY `fk_traiter_technicien` (`CodeT`) USING BTREE
@@ -201,3 +170,29 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `listemnemonique`
+--
+
+DROP TABLE IF EXISTS `listemnemonique`;
+CREATE TABLE IF NOT EXISTS `listemnemonique` (
+  `CodeM` int(11) NOT NULL AUTO_INCREMENT,
+  `Mnemonique` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Designation` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`CodeM`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `listemnemonique`
+--
+
+INSERT INTO `listemnemonique` (`CodeM`, `Mnemonique`, `Designation`) VALUES
+(1, 'BS', 'Bulletin de salaire'),
+(2, 'JUSTIF_SAL', 'Autres justificatifs de salaire'),
+(3, 'ATT_SAL', 'Attestation de salaire'),
+(4, 'PJ_IJ', 'Pièces justificatives IJ');
+COMMIT;
