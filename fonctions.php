@@ -8,9 +8,8 @@ define("BD_MYSQL", "bd_cpam");
 define("PORT", "3306");
 
 //Chemin vers l'espace où sont enregistrés les dossiers des dossiers
-define("STORAGE_PATH",
-       "C:/Users/axelt/Documents/4 - Professionnels/DCT_2019-2020/Pièces justificatives"
-);
+//NB : À partir de la racine
+define("STORAGE_PATH", "piecesJustificatives");
 
 // Connexion BD
 function connexionMySQL() {
@@ -135,13 +134,13 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) {
 
 //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
 function CreerDossierNIR($NirA) {
-    $dirname = utf8_decode(STORAGE_PATH)."/".$NirA;
+    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA;
     return mkdir($dirname);
 }
 
 //Créer le dossier de l'arrêt-maladie d'un assuré en local
 function CreerDossierAM($RefD, $NirA) {
-    $dirname = utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
+    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA."/".$RefD;
     return mkdir($dirname);
 }
 
@@ -175,7 +174,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
             if ($Fichier['name'][$i] != "") {
                 $file = basename($Fichier['name'][$i]);
                 
-                $target_dir = utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
+                $target_dir = "../".utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
                 $path = pathinfo($file);
                 $filename = utf8_decode($path['filename']);
                 $ext = $path['extension'];

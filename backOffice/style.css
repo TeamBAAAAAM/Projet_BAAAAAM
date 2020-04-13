@@ -76,8 +76,16 @@ iframe[name="apercu"] {
 	height: 545px;
 }
 
+/* Listes des pièces justificatives */
 #panel-pjs li {
 	cursor: pointer;
+}
+#panel-pjs li:hover {
+	background-color: gray;
+	color: white;
+}
+.onclick-pjs-li {	
+	background-color: lightgray;
 }
 
 @media screen and (min-width: 992) {
