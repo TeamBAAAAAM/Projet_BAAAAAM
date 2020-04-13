@@ -2,8 +2,8 @@
 	session_start();
     require("../fonctions.php");
     // Connexion à la BD
-    $link = connexionMySQL();	
-
+    $link = connexionMySQL();
+	
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
@@ -11,12 +11,6 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	}
-
-	// test
-	/* $matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John"; */
 
 ?>
 <!DOCTYPE html>
@@ -46,7 +40,7 @@
 			});
 		</script>
 
-        <title>PJPE - Réception des documents</title>
+        <title>PJPE - Ma Corbeille</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-default header">
@@ -90,7 +84,31 @@
 		</nav>
 		
 		<div class="container">
-			
+			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
+		
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Date de réception</th>						
+						<th>N° de demande</th>
+						<th>NIR</th>
+					</tr>    
+				</thead>
+				<tbody>
+				<?php
+					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
+					$reponse = DossiersCorbeilleTechnicien($link);
+					while ($donnees = $reponse->fetch())
+					{
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td> 
+									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
+					}
+					$reponse->closeCursor();
+				?>
+				</tbody>
+			</table>
 		</div>
 	</body>	
 </html>
