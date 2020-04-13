@@ -12,7 +12,12 @@ define("STORAGE_PATH",
        "C:/Users/axelt/Documents/4 - Professionnels/DCT_2019-2020/Pièces justificatives"
 );
 
-// Connexion BD
+/* ************************************************ */
+/*              FONCTIONS GENERALES                 */
+/* ************************************************ */
+
+
+//  Connexion a la base de donnees
 function connexionMySQL() {
     //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
     $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
@@ -35,34 +40,23 @@ function connexionMySQL() {
     if(mysqli_select_db($link, BD_MYSQL) == NULL) {
         echo "Erreur : Impossible de se connecter à la base de données.";
         exit;
-    }
-    
+    }    
     return $link;
 }
 
-/*      FONCTIONS POUR CONNEXION DU TECHNICIEN      */   
-
-//Vérification de l'unicité de la matricule 
-function VerificationMat ($connexion, $matricule)
-{
-    $requete = "SELECT * FROM technicien WHERE Matricule='$matricule'";
-    $curseur = mysqli_query($connexion, $requete);
-    
-    if ($curseur!=null)
-    {
-        if (mysqli_num_rows($curseur)==0)
-        {
-            return "Unique" ;
-        }
-        else
-        {
-            $ligne = mysqli_fetch_array($curseur);
-            echo "La matricule" . $ligne["Matricule"] . "est déjà attribuée" ;
-        }
-    }
-    return "Erreur de vérification du Matricule" ;      
+// Redirection vers une page différente du même dossier
+function RedirigerVers($nomPage) {
+    $host = $_SERVER['HTTP_HOST'];
+    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    header("Location: http://$host$uri/$nomPage");
+    exit;
 }
 
+/* ************************************************ */
+/*                  FRONT OFFICE                    */ 
+/* ************************************************ */  
+
+//
 function CharactereAleatoire() {
     $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return $listeChar[rand(0, strlen($listeChar)-1)];
@@ -170,7 +164,7 @@ function CreerDossierNIR($NirA) {
     return mkdir($dirname);
 }
 
-//Créer le dossier de l'arrêt-maladie d'un assuré en local
+//Créer le dossier de l'arrêt maladie d'un assuré en local
 function CreerDossierAM($RefD, $NirA) {
     $dirname = utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
     return mkdir($dirname);
@@ -237,7 +231,36 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
     return $resultats;
 }
 
-/*          FONCTIONS POUR RECAPITULATIF        */
+
+/* ************************************************ */
+/*                  BACK OFFICE                     */ 
+/* ************************************************ */  
+
+
+/*          CONNEXION DU TECHNICIEN                 */ 
+
+//Vérification de l'unicité du matricule 
+function VerificationMat ($connexion, $matricule)
+{
+    $requete = "SELECT * FROM technicien WHERE Matricule='$matricule'";
+    $curseur = mysqli_query($connexion, $requete);
+    
+    if ($curseur!=null)
+    {
+        if (mysqli_num_rows($curseur)==0)
+        {
+            return "Unique" ;
+        }
+        else
+        {
+            $ligne = mysqli_fetch_array($curseur);
+            echo "La matricule" . $ligne["Matricule"] . "est déjà attribuée" ;
+        }
+    }
+    return "Erreur de vérification du Matricule" ;      
+}
+
+/*          REQUETES POUR RECAPITULATIF             */
 
 // Nombre de dossiers recus à la date courante
 function nbDossiersRecus($link) {
@@ -275,15 +298,7 @@ function getTechnicienData($link, $matricule) {
 }
 
 
-// Redirection vers une page différente du même dossier
-function RedirigerVers($nomPage) {
-    $host = $_SERVER['HTTP_HOST'];
-    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-    header("Location: http://$host$uri/$nomPage");
-    exit;
-}
-
-/*      FONCTIONS POUR LE TRAITEMENT  */
+/*      TRAITEMENT D'UN DOSSIER      */
 
 // Changement du statut d'un dossier
 function ChangerStatutDossier($link, $codeDossier, $statut){
@@ -300,4 +315,12 @@ function RecupererPJ($link, $codeDossier){
     return $result;
 }
 
+/*      CORBEILLE D'UN TECHNICIEN      */
+
+// Liste des dossiers en cours de traitement par le technicien connecté
+function DossiersCorbeilleTechnicien($link) {
+    $query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA'; 
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
 ?>
