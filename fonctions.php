@@ -73,6 +73,16 @@ function ChercherDossierAvecREF($RefD, $link) {
     return mysqli_fetch_array($result);
 }
 
+//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
+function ChercherREFAvecCodeD($CodeD, $link) {
+    $query = "SELECT RefD FROM Assure A, Dossier D ";
+    $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '".$CodeD."'";
+    $result = mysqli_query($link, $query);
+    echo $query;
+
+    return mysqli_fetch_array($result);
+}
+
 //Retourne le code correspond au mnémonique entré en paramètre
 function ChercherMnemoniqueAvecMnemonique($Mnemonique, $link) {
     $query = "SELECT * FROM Listemnemonique ";
@@ -262,7 +272,7 @@ function ChangerStatutDossier($link, $codeDossier, $statut){
 
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier){
-    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
+    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l " 
         ."WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);    
     return $result;

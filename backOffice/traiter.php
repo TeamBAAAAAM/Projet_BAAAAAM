@@ -3,19 +3,31 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
-	 // Récupération des données du dossier en cours de traitement
-   /*  $codeDossier = $_POST["codeD"];	
-    $refDossier = $_POST["refD"]; */
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["codeD"])) {
+		$_SESSION["refD"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
+		RedirigerVers("traiter.php");
+	}
+	if(!isset($_SESSION["refD"])){
+		RedirigerVers("accueil.php");
+	}
 
-	if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+    //$codeDossier = $_GET["codeD"];
+    //$refDossier = $_POST["refD"];
+
+	/*if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
         echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-    };
+	};*/
+
+	$refDossier = $_SESSION["refD"];
 
     $dossier = ChercherDossierAvecREF($refDossier, $link);
+	$matricule = "12345";
+	$codeT = "11111";
+	$nomT = "BARBÉ"; 
+	$prenomT = "Sophie";
+	$codeDossier = $dossier["CodeD"];
     $dateReception = $dossier["DateD"];
     $statutDossier = $dossier["StatutD"];
     $nirAssure = $dossier["NirA"];
@@ -24,18 +36,18 @@
     $dateArretMaladie = $dossier["DateAM"];
 
     // Variables de test (à supprimer par la suite)
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
-	$codeDossier = "11111";
-	$refDossier= "ABCD1111";
-    $dateReception = "13/04/20";
-    $statutDossier = "En cours";
-    $nirAssure = "# ## ## ## ### ###";
-    $nomAssure = "DUPONT";
-    $prenomAssure = "Jean-Michel";
-    $dateArretMaladie = "01/04/20";
+	//$matricule = "12345";
+	//$codeT = "11111";
+	//$nomT = "Doe"; 
+	//$prenomT = "John";
+	//$codeDossier = "11111";
+	//$refDossier= "ABCD1111";
+    //$dateReception = "13/04/20";
+    //$statutDossier = "En cours";
+    //$nirAssure = "# ## ## ## ### ###";
+    //$nomAssure = "DUPONT";
+    //$prenomAssure = "Jean-Michel";
+    //$dateArretMaladie = "01/04/20";
 
     //Mise en session	    
 	$_SESSION["codeDossier"] = $codeDossier;	
@@ -118,7 +130,7 @@
 				<div id="panel-dossier" class="col-sm-6">
 					<div class="container-fluid panel panel-default">
 						<div class="panel-body">
-							<h3>DOSSIER No&#12296;<?php echo $refDossier;?>&#12297;</h3>
+							<h3>DOSSIER No <?php echo $refDossier;?></h3>
 							<h4>Date de réception :  <?php echo $dateReception;?></h4>
 						</div>
 					</div>
@@ -159,29 +171,32 @@
 				</div>
 			</div>
 			<div class="row">
-				<div id="panel-pjs" class="col-sm-6">
+				<div id="panel-pjs" class="col-sm-4">
 					<div class= "panel panel-default">
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
 						<?php
                             $result = RecupererPJ($link, $codeDossier);
                             $rows = mysqli_num_rows($result);
-                            for ($i = 0; $i <= $rows; $i++){
+                            for ($i = 0; $i < $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
-                                $cheminFichier = $justificatif["CheminJ"];
-                                $nomFichier = strrchr($cheminFichier,'\\');
-                                $nomFichier = substr($nomFichier, 1);
-                                $mnemonique = $justificatif["Mnemonique"];
-                                echo("<li class='list-group-item' onClick='changePathViewer($cheminFichier)'>$nomFichier</li>");
+								$cheminFichier = $justificatif["CheminJ"];
+								$nomFichier = $justificatif["Mnemonique"]."_$i";
+                                //$nomFichier = strrchr($cheminFichier,'\\');
+                                //$nomFichier = substr($nomFichier, 1);
+                                //$mnemonique = $justificatif["Mnemonique"];
+                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>$nomFichier</li>");
                             }
                         ?>
                         </ul>
 					</div>
 				</div>
-				<div id="panel-apercu" class="col-sm-6">
+				<div id="panel-apercu" class="col-sm-8">
 					<div class= "panel panel-default">
 						<div class="panel-heading titre text-center">Aperçu</div>
-						<iframe name="apercu" class="panel-body" src=""></iframe>
+						<div class="panel-body">
+							<embed id="apercu" class="panel-body">
+						</div>
 					</div>
 				</div>
 			</div>
