@@ -2,7 +2,7 @@
 
 // Informations de connexion 
 define ("ID_MYSQL","root");
-define ("BD_MYSQL","bd_cpam");
+define ("BD_MYSQL","cpam");
 define ("SERVER_MYSQL","localhost");     
         
 // Fonction de connexion 
