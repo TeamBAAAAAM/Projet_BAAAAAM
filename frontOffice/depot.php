@@ -1,3 +1,9 @@
+<?php
+    session_start();
+    
+    if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}  
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -12,13 +18,13 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>BAAAAAM - Dépôt des documents</title>
+        <title>PJPE - Dépôt des documents</title>
     </head>
     <body>
 		<nav class="navbar navbar-default header welcome">
 			<div class="container">
 				<div class="navbar-header">
-					<a href="../index.html"><h1>Bienvenue</h1></a>
+					<a href="../index.html"><h1>PJPE</h1></a>
 				</div>
 			</div>
         </nav>
@@ -62,22 +68,23 @@
             <div class="panel panel-default" id="form_panel">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
-                    <form method="POST" action="#"> 
+                    <form enctype="multipart/form-data" method="POST" action="enregistrement.php"> 
                         <div class="container" id="etat-civil">
                             <h3>Identification :</h3>
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                        <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
                                         <input id="nir" type="text" class="form-control" name="nir"
-                                            pattern="[0-9]( [0-9]{2}){3}( [0-9]{3}){2} [0-9]{2}"
-                                            placeholder="# ## ## ## ### ### ##"
+                                            pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
+                                            placeholder="# ## ## ## ### ###"
+                                            onKeyUp='checkFormatNir("# ## ## ## ### ###");'
                                             required
                                         >
                                     </div>
                                 </div>
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                     <button type="button" class="btn btn-light" id="btn-modal"  data-toggle="modal" data-target=".bs-example-modal-sm" title="Où puis-je trouver mon numéro de sécurité sociale ?">?</button>
                                     <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
                                         <div class="modal-dialog modal-lg" role="document">
@@ -119,6 +126,30 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-6">
+                                    <label for="nom" class="control-label">Référence du dossier en cours :</label>    
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="	glyphicon glyphicon-folder-close"></i></span>
+                                                <input onKeyUp="checkFormatRefD();" id="refD" type="text" class="form-control" name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button id="checkref" type="button" class="btn btn-primary" onClick="verifierRef();">
+                                                <strong>&#128272;</strong> Vérifier
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <span class="note">
+                                                À ne remplir uniquement que si vous avez déjà envoyé des justificatifs via ce formulaire.
+                                                Il vous a été délivré lors de la confirmation de la prise en charge de votre demande.
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>  
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">
@@ -145,67 +176,58 @@
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre adresse email à des fins commerciales.</span>
                                 </div>
+                                <div class="col-sm-4">
+                                    <label for="tel" class="control-label">Numéro de téléphone : </label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
+                                        <input id="tel" type="tel" class="form-control" name="tel" placeholder="0#########">
+                                    </div>
+                                    <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre numéro de téléphone à des fins commerciales.</span>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">                            
-                                    <label for="date-arret" class="control-label">Je n'exerce plus d'activité depuis le :</label>
-                                    <input type="date" id="date-arret" class="form-control" name="date-arret">
+                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : (*)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                        <input type="date" id="date_arret" class="form-control" name="date_arret" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="container" id="pj">
                             <h3>Pièces justificatives à déposer:</h3>
-                            <!-- <div class="custom-file mb-3">
-                                <div class="col-sm-12">
-                                <label class="custom-file-label" for="ATT_SAL">Choose file</label>
-                                <input type="file" class="custom-file-input" id="ATT_SAL" name="ATT_SAL">
-                            </div> -->
                             <div class="row pj salarie">
                                 <div class="col-sm-12">
-                                    <label for="ATT_SAL" class="custom-file-label">Attestation de salaire délivrée par votre employeur (*) :</label>
-                                    <div class="file-upload-wrapper">
-                                        <input type="file" id="ATT_SAL" name="ATT_SAL" class="file-upload">
-                                    </div>
-                                    <!-- Ajouter ou BS  -->
+                                    <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur (*) :</label>
+                                    <input type="file" id="ATT_SAL" name="ATT_SAL[]" multiple>
                                 </div>
                             </div>
                             <div class="row pj interim cesu pole-emploi pole-emploiC">
                                 <div class="col-sm-12">
-                                    <label for="BS" class="custom-file-label">Les bulletins de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) (*) : </label>
-                                    <input type="file" id="BS" name="BS" multiple>
+                                    <label for="BS">Les bulletins de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) (*) : </label>
+                                    <input type="file" id="BS" name="BS[]" multiple>
                                 </div>
                             </div>
-                            <!-- <div class="row pj cesu">
-                                <label for="ATT_CESU" class="custom-file-label">Attestation d'emploi chèque emploi service : </label>
-                                <input type="file" id="ATT_CESU" name="JUSTIF_SAL">
-                            </div> -->
-                            <!-- <div class="row pj ">
-                                <label for="CT_TRAVAIL" class="custom-file-label">Contrat de travail ou Certificat de travail : </label>
-                                <input type="file" id="CT_TRAVAIL" name="JUSTIF_SAL">
-                            </div> -->
                             <div class="row pj intermit">
                                 <div class="col-sm-12">
-                                    <label for="CACHET_GUSO" class="custom-file-label">Cachet du GUSO (*): </label>
-                                    <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL">
+                                    <label for="CACHET_GUSO">Cachet du GUSO (*): </label>
+                                    <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL[]" multiple>
                                 </div>
                             </div>
-                            <!-- <div class="row pj">
-                                <div class="col-sm-12">
-                                    <label for="RECU_STC" class="custom-file-label">Reçu pour solde tout compte : </label>
-                                    <input type="file" id="RECU_STC" name="JUSTIF_SAL">
-                                </div>
-                            </div> -->
                             <div class="row pj art-aut">
                                 <div class="col-sm-12">
-                                    <label for="DOC_AGESSA" class="custom-file-label">Imprimé délivré par AGESSA (*) : </label>
-                                    <input type="file" id="DOC_AGESSA" name="PJ_IJ">
+                                    <label for="DOC_AGESSA">Imprimé délivré par AGESSA (*) : </label>
+                                    <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
                             </div>                   
 
                             <div id="champ_obligatoire" class="container">                    
                                 <p>(*) : Champs obligatoires</p>
                             </div>
+
+                            <input name="page" type="hidden" value="depot.html">
                             <input type="submit" class="btn btn-info" value="Envoyer">
                         </div>
                     </form>
@@ -260,16 +282,16 @@
 			</div>
 			<div id="juridique" class="row">				
 				<div class="col-sm-3">
-					<a href="#" target="_blank">Conditions Générales d'Utilisation</a>
+					<a href="../documentation-juridique/cgu.html" target="_blank">Conditions Générales d'Utilisation</a>
 				</div>				
 				<div class="col-sm-3">
-					<a href="#" target="_blank">Politique de traitement des données personnelles</a>
+					<a href="../documentation-juridique/politiquedp.html" target="_blank">Politique de traitement des données personnelles</a>
 				</div>				
 				<div class="col-sm-3">
-					<a href="#" target="_blank">Politique de traitement des cookies</a>
+					<a href="../documentation-juridique/politiquecookies.html" target="_blank">Politique de traitement des cookies</a>
 				</div>				
 				<div class="col-sm-3">
-					<a href="#" target="_blank">Mentions Légales</a>
+					<a href="../documentation-juridique/mentionslegales.html" target="_blank">Mentions Légales</a>
 				</div>
 			</div>
 			<div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>

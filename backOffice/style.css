@@ -5,6 +5,7 @@
 	background-color: #339966;
 	color: white;
 	box-shadow: 1px 1px 10px grey;
+	margin-bottom: 0px;
 }
 
 .header img {
@@ -49,6 +50,42 @@
 	margin-left: 35px;
 }
 
-tr:nth-child(2n) {
-	background-color: #e6fff2;
+.container-accueil {
+	margin: 5% 0%;
+}
+
+.glyphicon {
+	margin: 0px 5px;
+}
+
+.police {
+	font-size: 17px;
+}
+.titre {
+	font-size: 23px;
+}
+
+#panel-pjs > .panel, #panel-apercu > .panel {
+	height: 600px;
+}
+
+#panel-pjs .panel-body {
+	overflow: auto;
+	height: 545px;
+}
+
+iframe[name="apercu"] {
+	border: none;
+	width: 100%;
+	height: 545px;
+}
+
+#panel-pjs li {
+	cursor: pointer;
+}
+
+@media screen and (min-width: 992) {
+	#panel-statut a {
+		width: 150px;
+	}
 }
