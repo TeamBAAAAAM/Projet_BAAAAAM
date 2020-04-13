@@ -17,7 +17,7 @@
 
 	// test
 	$matricule = "12345";
-	$codeT = "Code";
+	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John";
 
@@ -117,7 +117,7 @@
 		</nav>
 		
 		<div class="container">
-			<div class="row">
+			<div class="row container-accueil">
 				<div class="col-sm-6 ">          
 					<table class="table table-striped police">
 						<thead class="titre"> 
@@ -129,9 +129,8 @@
 								<td><span class="glyphicon glyphicon-download"></span> Dossiers reçus </td>
 								<td>
 									<?php 
-										$result = nbDossiersRecus($link);                                                                
-										$ligne = mysqli_fetch_array($result);
-										echo $ligne["nbDossiersRecus"];
+										$result = nbDossiersRecus($link);
+										echo $result["nbDossiersRecus"];
 									?>
 								</td>
 							</tr>
@@ -140,8 +139,7 @@
 								<td>
 									<?php 
 										$result = nbDossiersATraiter($link);
-										$ligne = mysqli_fetch_array($result);
-										echo $ligne["nbDossiersAtraiter"];
+										echo $result["nbDossiersAtraiter"];
 									?>
 								</td>
 							</tr>
@@ -150,8 +148,7 @@
 								<td>
 									<?php 
 										$result = nbDossiersClasses($link);
-										$ligne = mysqli_fetch_array($result);
-										echo $ligne["nbDossiersClasses"];
+										echo $result["nbDossiersClasses"];
 									?>
 								</td>
 							</tr>
@@ -168,9 +165,8 @@
 							<tr>							
 								<td class="text-center">
 									<?php 
-										$result = nbDossiersATraiterTotal($link);                                                                
-										$ligne = mysqli_fetch_array($result);
-										echo $ligne["nbDossiersAtraiterTotal"];
+										$result = nbDossiersATraiterTotal($link); 
+										echo $result["nbDossiersAtraiterTotal"];
 									?>
 								</td>
 							</tr>
