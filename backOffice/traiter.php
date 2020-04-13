@@ -4,34 +4,43 @@
     // Connexion à la BD
     $link = connexionMySQL();
 	
-	// Récupération des données du dossier en cours de traitement
-	if(isset($_GET["codeD"])) {		
-		$_SESSION["codeDossier"] = $_GET["codeD"];	
-		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_SESSION["codeDossier"], $link)["RefD"];
-		RedirigerVers("traiter.php");
-	}
-	if(!isset($_SESSION["refD"])){
-		RedirigerVers("accueil.php");
-	}
-
-	if(!ChangerStatutDossier($link, $_SESSION["codeDossier"], "En cours")){
-        echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans le changement du statut du dossier !</div>";
-	};
-
-	$refDossier = $_SESSION["refDossier"];
-
-    $dossier = ChercherDossierAvecREF($refDossier, $link);
+	//Variable du technicien
 	$matricule = "12345";
 	$codeT = "11111";
 	$nomT = "BARBÉ"; 
 	$prenomT = "Sophie";
+
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["codeD"])) {
+		$_SESSION["codeDossier"] = $_GET["codeD"];
+		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
+		RedirigerVers("traiter.php");
+	}
+
+	if(isset($_GET["statut"])) {
+		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		RedirigerVers("traiter.php");
+	}
+
+	if(!isset($_SESSION["refDossier"])){
+		RedirigerVers("accueil.php");
+	}
+
+	$dossier = ChercherDossierAvecREF($_SESSION["refDossier"], $link);
+	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
-    $dateReception = $dossier["DateD"];
-    $statutDossier = $dossier["StatutD"];
-    $nirAssure = $dossier["NirA"];
-    $nomAssure = $dossier["NomA"];
-    $prenomAssure = $dossier["PrenomA"];
-    $dateArretMaladie = $dossier["DateAM"];
+	$dateReception = $dossier["DateD"];
+	$statutDossier = utf8_encode($dossier["StatutD"]);
+	$nirAssure = $dossier["NirA"];
+	$nomAssure = $dossier["NomA"];
+	$prenomAssure = $dossier["PrenomA"];
+	$dateArretMaladie = $dossier["DateAM"];
+	
+	//Le statut "À traiter" devient "En cours"
+	if($statutDossier == "À traiter") {
+		TraiterDossier($codeT, $codeDossier, "En cours", $link);
+		$statutDossier = "En cours";
+	}
 
     // Variables de test (à supprimer par la suite)
 	//$matricule = "12345";
@@ -108,7 +117,6 @@
 						<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
 						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
 					</ul>
-
 					<ul class="nav navbar-nav navbar-right dropdown">
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -155,9 +163,15 @@
 								</div>
 								<div class="col-sm-9">
 									<div class="btn-group btn-group-justified">
-										<a href="#" class="btn btn-default disabled" role="button">En Cours</a>
-										<a href="#" class="btn btn-primary" role="button">Classé sans suite</a>
-										<a href="#" class="btn btn-primary" role="button">Terminé</a>
+										<a href="traiter.php?statut=En cours"
+											class="<?php ClassBoutonTraiter($statutDossier, "En cours");?>"
+											role="button">En cours</a>
+										<a href="traiter.php?statut=Classé sans suite"
+											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite");?>" 
+											role="button">Classé sans suite</a>
+										<a href="traiter.php?statut=Terminé"
+											class="<?php ClassBoutonTraiter($statutDossier, "Terminé");?>"
+											role="button">Terminé</a>
 									</div>
 								</div>
 							</div>

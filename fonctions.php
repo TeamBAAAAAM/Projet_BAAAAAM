@@ -278,4 +278,79 @@ function RecupererPJ($link, $codeDossier){
     return $result;
 }
 
+//Active ou désactive un bouton permettant de modifier le statut d'un dossier
+//Appelée dans la page 'traiter.php'
+//$sessionValue = $_SESSION['statut'] (statut actuel)
+//$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
+function ClassBoutonTraiter($sessionValue, $buttonValue) {
+    switch($sessionValue) {
+        case "En cours":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn btn-primary disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-primary";
+                    break;
+                case "Terminé":
+                    echo "btn btn-primary";
+                    break;
+            }
+            break;
+        case "Classé sans suite":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-danger disabled";
+                    break;
+                case "Terminé":
+                    echo "btn disabled";
+                    break;
+            }
+            break;
+        case "Terminé":
+            switch($buttonValue) {
+                case "En cours":
+                    echo "btn disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn disabled";
+                    break;
+                case "Terminé":
+                    echo "btn btn-success disabled";
+                    break;
+            }
+            break;
+    }
+}
+
+//Traite un dossier en indiquant dans la BD, le nom du technicien
+//Et modifie le statut d'un dossier
+function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
+    $keys = ""; $values = "";
+    if($CodeT != NULL) {$keys .= "CodeT, "; $values .= $CodeT.", ";}
+    if($CodeD != NULL) {$keys .= "CodeD, "; $values .= $CodeD.", ";}
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
+    echo $query;
+    
+    if(mysqli_query($link, $query)) {
+        if(!ChangerStatutDossier($link, $CodeD, utf8_decode($StatutD))){
+            echo "<div class='alert alert-danger'><strong>Alerte !".
+            "</strong> Erreur dans le changement du statut du dossier !</div>";
+            return False;
+        }
+        else return True;
+    }
+    else {
+        return False;
+    }
+}
 ?>
