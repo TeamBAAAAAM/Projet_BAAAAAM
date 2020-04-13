@@ -206,7 +206,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
     return $resultats;
 }
 
-// FONCTIONS POUR RECAPITULATIF
+/*          FONCTIONS POUR RECAPITULATIF        */
 
 // Nombre de dossiers recus à la date courante
 function nbDossiersRecus($link) {
@@ -235,13 +235,14 @@ function nbDossiersClasses($link) {
     return mysqli_fetch_array($result);
 }
 
-// FONCTIONS POUR TECHNICIEN
+/*      FONCTIONS POUR TECHNICIEN    */
 
 function getTechnicienData($link, $matricule) {
     $query = "Select CodeTech, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
+
 
 // Redirection vers une page différente du même dossier
 function RedirigerVers($nomPage) {
@@ -250,4 +251,22 @@ function RedirigerVers($nomPage) {
     header("Location: http://$host$uri/$nomPage");
     exit;
 }
+
+/*      FONCTIONS POUR LE TRAITEMENT  */
+
+// Changement du statut d'un dossier
+function ChangerStatutDossier($link, $codeDossier, $statut){
+    $query = "UPDATE dossier SET StatutD = '$statut' Where CodeD = '$codeDossier'";
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
+
+// Récupération des fichiers d'un dossier
+function RecupererPJ($link, $codeDossier){
+    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l" 
+        ."WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
+    $result = mysqli_query($link, $query);    
+    return $result;
+}
+
 ?>
