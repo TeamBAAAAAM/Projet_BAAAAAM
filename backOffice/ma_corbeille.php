@@ -3,22 +3,20 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
-	
-	// test
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
 	
 	// Récupération des données du technicien
-	$matricule = $_SESSION["matricule"];	
-	$technicien = getTechnicienData($link, $matricule);
-	$codeT = $technicien["CodeTech"];
-	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}
+
+	// test
+	/* $matricule = "12345";
+	$codeT = "11111";
+	$nomT = "Doe"; 
+	$prenomT = "John"; */
 
 ?>
 <!DOCTYPE html>

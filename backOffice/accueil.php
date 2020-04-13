@@ -3,28 +3,31 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
 	// Récupération des données du technicien
-	$matricule = $_POST["matricule"];
-	$technicien = getTechnicienData($link, $matricule);
-	$codeT = $technicien["CodeTech"];
-	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}else{
+		$matricule = $_POST["matricule"];
+		$technicien = getTechnicienData($link, $matricule);
+		$codeT = $technicien["CodeTech"];
+		$nomT = $technicien["NomT"];
+		$prenomT = $technicien["PrenomT"];
+		//Mise en session	
+		$_SESSION["matricule"] = $matricule;	
+		$_SESSION["codeT"] = $codeT;
+		$_SESSION["nomT"] = $nomT;
+		$_SESSION["prenomT"] = $prenomT;
+	}
 
 	// test
 	/* $matricule = "12345";
 	$codeT = "11111";
 	$nomT = "Doe"; 
 	$prenomT = "John"; */
-
-	//Mise en session	
-	$_SESSION["matricule"] = $matricule;	
-	$_SESSION["codeT"] = $codeT;
-	$_SESSION["nomT"] = $nomT;
-	$_SESSION["prenomT"] = $prenomT;
 
 ?>
 <!DOCTYPE html>
