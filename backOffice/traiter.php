@@ -43,8 +43,13 @@
 	
     // Passage automatique du statut à "En cours"
 	if($statutDossier == "À traiter") {
-		TraiterDossier($codeT, $codeDossier, "En cours", $link);
-		$statutDossier = "En cours";
+        if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
+            echo "<div class='alert alert-danger'><strong>Alerte !".
+            "</strong> Erreur dans le changement du statut du dossier !</div>";
+		}
+		else {
+			$statutDossier = "En cours";
+		}
 	}
 ?>
 <!DOCTYPE html>
