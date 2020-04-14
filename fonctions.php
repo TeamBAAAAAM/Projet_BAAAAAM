@@ -68,7 +68,7 @@ function GenererReferenceDossier($nbChar, $link) {
         for($i = 0 ; $i < $nbChar ; $i++) {
             $ref .= CharactereAleatoire();
         }
-    } while(DossireExiste($ref, $link));
+    } while(DossierExiste($ref, $link));
     
     return $ref;
 }
