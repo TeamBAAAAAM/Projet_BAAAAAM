@@ -4,12 +4,14 @@
     // Connexion à la BD
     $link = connexionMySQL();
 	
-	//Variable du technicien
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "BARBÉ"; 
-	$prenomT = "Sophie";
-
+	// Récupération des données du technicien
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}
+	
 	// Récupération des données du dossier en cours de traitement
 	if(isset($_GET["codeD"])) {
 		$_SESSION["codeDossier"] = $_GET["codeD"];
