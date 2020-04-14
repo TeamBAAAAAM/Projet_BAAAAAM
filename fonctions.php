@@ -404,7 +404,8 @@ function ClassBoutonTraiter($sessionValue, $buttonValue) {
 
 // Liste des dossiers en cours de traitement par le technicien connecté
 function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
-    $query = "SELECT d.DateD, d.RefD, a.NirA  FROM dossier d, assure a WHERE d.DateD = '$dateReception' AND d.CodeA=a.CodeA"; 
+    //$query = "SELECT d.DateD, d.RefD, a.NirA  FROM dossier d, assure a WHERE d.DateD = '$dateReception' AND d.CodeA = a.CodeA"; 
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
     $result = mysqli_query($link, $query);    
     return $result;
 }
