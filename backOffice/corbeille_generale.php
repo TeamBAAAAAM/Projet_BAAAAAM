@@ -99,7 +99,7 @@
 						<th>Statut</th>
 					</tr>    
 				</thead>
-				<tbody>
+				<tbody id="data-list">
 				<?php					
 					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
 					/* while ($donnees = $reponse->fetch())

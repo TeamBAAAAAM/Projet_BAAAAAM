@@ -95,7 +95,7 @@
 						<th>Statut</th>
 					</tr>    
 				</thead>
-				<tbody>
+				<tbody id="data-list">
 				<?php
 					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
 					$reponse = DossiersCorbeilleTechnicien($link);
