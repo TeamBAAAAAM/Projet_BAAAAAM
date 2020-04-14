@@ -35,7 +35,7 @@
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
 	$dateReception = $dossier["DateD"];
-	$statutDossier = $dossier["StatutD"];
+	$statutDossier = utf8_encode($dossier["StatutD"]);
 	$nirAssure = $dossier["NirA"];
 	$nomAssure = $dossier["NomA"];
 	$prenomAssure = $dossier["PrenomA"];
