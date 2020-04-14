@@ -20,12 +20,13 @@ define("STORAGE_PATH", "piecesJustificatives");
 function connexionMySQL() {
     //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
     $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
-    
+    mysqli_query($link,'SET NAMES utf8');
+
     /* Vérification de la connexion */
     if ($link == NULL) {
         echo "Erreur : Impossible de se connecter à MySQL."."<br>";
-        echo "Errno de débogage : ".utf8_encode(mysqli_connect_errno())."<br>";
-        echo "Erreur de débogage : ".utf8_encode(mysqli_connect_error())."<br>";
+        echo "Errno de débogage : ".mysqli_connect_errno()."<br>";
+        echo "Erreur de débogage : ".mysqli_connect_error()."<br>";
         exit;
     }
     else
@@ -39,8 +40,8 @@ function connexionMySQL() {
     if(mysqli_select_db($link, BD_MYSQL) == NULL) {
         echo "Erreur : Impossible de se connecter à la base de données.";
         exit;
-    }    
-    
+    }
+
     return $link;
 }
 
@@ -170,13 +171,13 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link) {
 
 //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
 function CreerDossierNIR($NirA) {
-    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA;
+    $dirname = dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH)."/".$NirA;
     return mkdir($dirname);
 }
 
 //Créer le dossier de l'arrêt maladie d'un assuré en local
 function CreerDossierAM($RefD, $NirA) {
-    $dirname = utf8_decode(dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH))."/".$NirA."/".$RefD;
+    $dirname = dirname("../".STORAGE_PATH)."/".basename("../".STORAGE_PATH)."/".$NirA."/".$RefD;
     return mkdir($dirname);
 }
 
@@ -210,9 +211,9 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
             if ($Fichier['name'][$i] != "") {
                 $file = basename($Fichier['name'][$i]);
                 
-                $target_dir = "../".utf8_decode(STORAGE_PATH)."/".$NirA."/".$RefD;
+                $target_dir = "../".STORAGE_PATH."/".$NirA."/".$RefD;
                 $path = pathinfo($file);
-                $filename = utf8_decode($path['filename']);
+                $filename = $path['filename'];
                 $ext = $path['extension'];
 
                 $CheminJ = "$target_dir/$Key"."_$i.$ext";
@@ -280,21 +281,21 @@ function nbDossiersRecus($link) {
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link) {
-    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = '".utf8_decode("À traiter")."'";
+    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers restant à traiter à la date courante
 function nbDossiersATraiter($link) {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = '".utf8_decode("À traiter")."' And DATE(d.DateD) = CURDATE()";    
+    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";    
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link) {
-    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = '".utf8_decode("Classé sans suite")."' And DATE(d.DateD) = CURDATE()";    
+    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";    
     $result = mysqli_query($link, $query);    
     return mysqli_fetch_array($result);
 }
@@ -332,7 +333,7 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
     $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
     
     if(mysqli_query($link, $query)) {
-        if(!ChangerStatutDossier($link, $CodeD, utf8_decode($StatutD))){
+        if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
             echo "<div class='alert alert-danger'><strong>Alerte !".
             "</strong> Erreur dans le changement du statut du dossier !</div>";
             return False;
