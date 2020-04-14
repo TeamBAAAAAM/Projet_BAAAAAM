@@ -40,6 +40,7 @@ function connexionMySQL() {
         echo "Erreur : Impossible de se connecter à la base de données.";
         exit;
     }    
+    
     return $link;
 }
 
