@@ -418,7 +418,8 @@ function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
 
 // Liste des dossiers en cours de traitement par le technicien connecté
 function DossiersCorbeilleTechnicien($link) {
-    $query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA'; 
+    //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA';
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours'";
     $result = mysqli_query($link, $query);    
     return $result;
 }
