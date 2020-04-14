@@ -35,7 +35,7 @@
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
 	$dateReception = $dossier["DateD"];
-	$statutDossier = utf8_encode($dossier["StatutD"]);
+	$statutDossier = $dossier["StatutD"];
 	$nirAssure = $dossier["NirA"];
 	$nomAssure = $dossier["NomA"];
 	$prenomAssure = $dossier["PrenomA"];
@@ -168,8 +168,10 @@
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
 						<?php
-                            $result = RecupererPJ($link, $codeDossier);
-                            $rows = mysqli_num_rows($result);
+							$result = RecupererPJ($link, $codeDossier);
+							if ($result != NULL)
+								$rows = mysqli_num_rows($result);
+							else $rows = 0;
                             for ($i = 0; $i < $rows; $i++){
                                 $justificatif = mysqli_fetch_array($result);
 								$cheminFichier = $justificatif["CheminJ"];
