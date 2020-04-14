@@ -12,6 +12,10 @@
 		$prenomT = $_SESSION["prenomT"];
 	}
 
+	// Variables de test (à supprimer par la suite)
+	$dateReception = "10/10/20";
+	$statut = "À traiter";
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +44,7 @@
 			});
 		</script>
 
-        <title>PJPE - Ma Corbeille</title>
+        <title>PJPE - Corbeille Générale</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-default header">
@@ -90,21 +94,33 @@
 				<thead>
 					<tr>
 						<th>Date de réception</th>						
-						<th>N° de demande</th>
+						<th>Référence du dossier</th>
 						<th>NIR</th>
+						<th>Statut</th>
 					</tr>    
 				</thead>
 				<tbody>
 				<?php					
-					$reponse = DossiersCorbeilleGenerale($link);
-					while ($donnees = $reponse->fetch())
+					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					/* while ($donnees = $reponse->fetch())
 					{
 						echo ("<tr><td>".$donnees['DateD']."</td>
 									<td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td> 
 									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
 					}
-					$reponse->closeCursor();
+					$reponse->closeCursor(); */
+					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					$rows = mysqli_num_rows($result);
+                    for ($i = 0; $i < $rows; $i++){
+						$donnees = mysqli_fetch_array($result);
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td>
+									<td>".$donnees['StatutD']."</td> 
+									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></a></td></tr>");
+					}
+
 				?>
 				</tbody>
 			</table>
