@@ -92,20 +92,33 @@
 						<th>Date de réception</th>						
 						<th>N° de demande</th>
 						<th>NIR</th>
+						<th>Statut</th>
 					</tr>    
 				</thead>
 				<tbody>
 				<?php
 					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
 					$reponse = DossiersCorbeilleTechnicien($link);
-					while ($donnees = $reponse->fetch())
+					/* while ($donnees = $reponse->fetch())
 					{
 						echo ("<tr><td>".$donnees['DateD']."</td>
 									<td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td> 
 									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
 					}
-					$reponse->closeCursor();
+					$reponse->closeCursor(); */
+					$result = DossiersCorbeilleTechnicien($link);	
+					if ($result != NULL)
+						$rows = mysqli_num_rows($result);
+					else $rows = 0;
+                    for ($i = 0; $i < $rows; $i++){
+						$donnees = mysqli_fetch_array($result);
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td>
+									<td>".$donnees['StatutD']."</td> 
+									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></a></td></tr>");
+					}
 				?>
 				</tbody>
 			</table>
