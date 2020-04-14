@@ -3,22 +3,18 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
-	// test
-	$matricule = "12345";
-	$codeT = "Code";
-	$nomT = "Doe"; 
-	$prenomT = "John";
+	// Récupération des données du technicien
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}
 
-	/* // Récupération des données du technicien
-	$matricule = $_SESSION["matricule"];	
-	$technicien = getTechnicienData($link, $matricule);
-	$codeT = $technicien["CodeTech"];
-	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];*/
+	// Variables de test (à supprimer par la suite)
+	$dateReception = "10/10/20";
+	$statut = "À traiter";
 
 ?>
 <!DOCTYPE html>
@@ -48,7 +44,7 @@
 			});
 		</script>
 
-        <title>PJPE - Réception des documents</title>
+        <title>PJPE - Corbeille Générale</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-default header">
@@ -92,7 +88,42 @@
 		</nav>
 		
 		<div class="container">
-			
+			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
+		
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Date de réception</th>						
+						<th>Référence du dossier</th>
+						<th>NIR</th>
+						<th>Statut</th>
+					</tr>    
+				</thead>
+				<tbody>
+				<?php					
+					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					/* while ($donnees = $reponse->fetch())
+					{
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td> 
+									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
+					}
+					$reponse->closeCursor(); */
+					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					$rows = mysqli_num_rows($result);
+                    for ($i = 0; $i < $rows; $i++){
+						$donnees = mysqli_fetch_array($result);
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td>
+									<td>".$donnees['StatutD']."</td> 
+									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></a></td></tr>");
+					}
+
+				?>
+				</tbody>
+			</table>
 		</div>
 	</body>	
 </html>

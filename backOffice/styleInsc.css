@@ -1,0 +1,37 @@
+
+.Renseignement{
+    width:83%;
+    margin:0 auto;
+    margin-top:auto;
+}
+
+form {
+    padding: 25px;
+    width:83%;
+    margin:0 auto;
+    margin-top:auto;
+   
+}
+body{
+    background-color: WhiteSmoke;
+    font-family: Helvetica,sans-serif;
+    overflow-x: hidden;
+}
+#annulation{
+    float:right;
+}
+a:hover{
+    text-decoration: none;
+}
+.header {
+	padding: 8px 32px;
+	border: none;
+	border-radius: 0px;
+	background-color: #EFF6FB;
+	color: white;
+	box-shadow: 1px 1px 10px grey;
+}
+#champ_obligatoire{
+    font-style: italic;
+    color: #03057B;
+}
