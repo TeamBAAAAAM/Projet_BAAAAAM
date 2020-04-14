@@ -111,7 +111,7 @@ function ChercherREFAvecCodeD($CodeD, $link) {
 }
 
 //Retourne le code correspond au mnémonique entré en paramètre
-function ChercherMnemoniqueAvecMnemonique($Mnemonique, $link) {
+function ChercherObjetMnemoAvecMnemo($Mnemonique, $link) {
     $query = "SELECT * FROM Listemnemonique ";
     $query .= "WHERE Mnemonique = '".$Mnemonique."'";
     
@@ -206,7 +206,8 @@ function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link) {
 //3ème paramètre correspond au mnémonique complet affilié au fichier
 function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
     $resultats = array();
-    foreach($ListeFichiers as $Key => $Fichier) {        
+    foreach($ListeFichiers as $Key => $Fichier) { 
+        $j = 1;      
         for($i = 0 ; $i < count($Fichier['name']) ; $i++) {
             if ($Fichier['name'][$i] != "") {
                 $file = basename($Fichier['name'][$i]);
@@ -216,11 +217,11 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
                 $filename = $path['filename'];
                 $ext = $path['extension'];
 
-                $CheminJ = "$target_dir/$Key"."_$i.$ext";
+                $CheminJ = "$target_dir/$Key"."_$j.$ext";
                 $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
                 $CodeD = ChercherDossierAvecREF($RefD, $link)["CodeD"];
-                $Mnemonique = ChercherMnemoniqueAvecMnemonique($Key, $link);
-                $Designation = $Mnemonique["Designation"] . " No. " . $i;
+                $Mnemonique = ChercherObjetMnemoAvecMnemo($Key, $link);
+                $Designation = $Mnemonique["Designation"] . " No. " . $j;
                 
                 if(EnregistrerFichier($CheminJ, $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
                     if(move_uploaded_file(
@@ -228,6 +229,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
                         $CheminJ
                     )) {
                         $resultats[] = array(TRUE, $file, $Designation);
+                        $j++;
                     }
                     else {
                         $resultats[] = array(FALSE, $file, $Designation);
@@ -236,7 +238,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link) {
                 else {
                     $resultats[] = array(FALSE, $file, $Designation);
                 }
-            }   
+            }
         }
     }
     return $resultats;
