@@ -87,8 +87,11 @@
 			</div>
 		</nav>
 		
-		<div class="container">
-			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
+		<div class="container">			
+			<div class="input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+				<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+			</div>
 		
 			<table class="table table-striped">
 				<thead>
@@ -114,11 +117,29 @@
 					$rows = mysqli_num_rows($result);
                     for ($i = 0; $i < $rows; $i++){
 						$donnees = mysqli_fetch_array($result);
-						echo ("<tr><td>".$donnees['DateD']."</td>
-									<td>".$donnees['RefD']."</td>
+						echo("<tr><td>".$donnees['DateD']."</td>
+								    <td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td>
-									<td>".$donnees['StatutD']."</td> 
-									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></a></td></tr>");
+									<td>".$donnees['StatutD']."</td>
+									<td>");
+								
+						if($donnees['StatutD'] == "En cours") {
+							$class =  "btn btn-warning disabled";
+							$icon = "glyphicon-lock";	
+						}
+						else if($donnees['StatutD'] == "À traiter")  {
+							$class =  "btn btn-success";
+							$icon = "glyphicon-plus";			
+						}
+						else {
+							$class =  "btn btn-primary";
+							$icon = "glyphicon-search";
+						}
+						
+						echo("<a href='traiter.php?codeD=".$donnees['CodeD']."' class='$class' role='button'>
+							<span class='glyphicon $icon'></span>
+						</a>");
+						echo "</td></tr>";
 					}
 
 				?>

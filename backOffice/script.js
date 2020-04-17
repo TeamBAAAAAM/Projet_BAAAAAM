@@ -14,12 +14,54 @@ $(document).ready(function(){
     $("#panel-pjs li").click(clickOnPjsLi($(this)));
 });
 
-//Fonction pour la barre de recherche
+//Initialisation des écouteurs pour la recherche
 $(document).ready(function(){
-    $("#research").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#data-list tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
+    $("#recherche").on("keyup", function() {
+        const ecouteurs = [$("#recherche"), $("#date_debut"), $("#date_fin"), $("#statut")];
+
+        for(i = 0 ; i < ecouteurs.length ; i++) {
+            var value = ecouteurs[i].val().toLowerCase();
+            if(value != "") {
+                $("#data-list tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            }
+        }
+    });
+    $("#date_debut").change(function() {
+        const ecouteurs = [$("#recherche"), $("#date_debut"), $("#date_fin"), $("#statut")];
+
+        for(i = 0 ; i < ecouteurs.length ; i++) {
+            var value = ecouteurs[i].val().toLowerCase();
+            if(value != "") {
+                $("#data-list tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            }
+        }
+    });
+    $("#date_fin").change(function() {
+        const ecouteurs = [$("#recherche"), $("#date_debut"), $("#date_fin"), $("#statut")];
+
+        for(i = 0 ; i < ecouteurs.length ; i++) {
+            var value = ecouteurs[i].val().toLowerCase();
+            if(value != "") {
+                $("#data-list tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            }
+        }
+    });
+    $("#statut").change(function() {
+        const ecouteurs = [$("#recherche"), $("#date_debut"), $("#date_fin"), $("#statut")];
+
+        for(i = 0 ; i < ecouteurs.length ; i++) {
+            var value = ecouteurs[i].val().toLowerCase();
+            if(value != "") {
+                $("#data-list tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            }
+        }
     });
 });

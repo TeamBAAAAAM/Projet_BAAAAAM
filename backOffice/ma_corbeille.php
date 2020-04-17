@@ -83,8 +83,40 @@
 			</div>
 		</nav>
 		
-		<div class="container">
-			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
+		<div class="container">	
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+						<input id="recherche" type="text" class="form-control" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+					</div>
+				</div>
+			</div>			
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Début</span>
+						<input id="date_debut" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Fin</span>
+						<input id="date_fin" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group">
+						<span class="input-group-addon">Statut</span>
+						<select  class="form-control" id="statut">
+							<option>À traiter</option>
+							<option>En cours</option>
+							<option>Classé sans suite</option>
+							<option>Terminé</option>
+						</select>
+					</div>
+				</div>
+			</div>
 		
 			<table class="table table-striped">
 				<thead>
@@ -98,7 +130,7 @@
 				<tbody id="data-list">
 				<?php
 					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
-					$reponse = DossiersCorbeilleTechnicien($link);
+					//$reponse = DossiersCorbeilleTechnicien($link);
 					/* while ($donnees = $reponse->fetch())
 					{
 						echo ("<tr><td>".$donnees['DateD']."</td>
@@ -116,8 +148,10 @@
 						echo ("<tr><td>".$donnees['DateD']."</td>
 									<td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td>
-									<td>".$donnees['StatutD']."</td> 
-									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></a></td></tr>");
+									<td>".$donnees['StatutD']."</td>
+									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-warning' role='button'>
+								<span class='glyphicon glyphicon-search'></span></a>
+							</tr></td>");
 					}
 				?>
 				</tbody>

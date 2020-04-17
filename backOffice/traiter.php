@@ -1,6 +1,6 @@
 <?php 
 	session_start();
-    require("../fonctions.php");
+    require_once("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
 	
@@ -22,6 +22,7 @@
 	//Changement de statut si un statut est indiqué dans l'URL
 	if(isset($_GET["statut"])) {
 		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		RetirerDossierCorbeille($_SESSION["codeDossier"]);
 		RedirigerVers("traiter.php");
 	}
 
@@ -48,6 +49,7 @@
             "</strong> Erreur dans le changement du statut du dossier !</div>";
 		}
 		else {
+			AffecterDossier($codeDossier);
 			$statutDossier = "En cours";
 		}
 	}

@@ -92,6 +92,14 @@
 	background-color: lightgray;
 }
 
+.row {
+	margin-bottom: 15px;
+}
+
+.input-date, .input-date input[type="date"] {
+	width: 150px;
+}
+
 .icon {
 	height: 50px;
 	margin-right: 10px;
