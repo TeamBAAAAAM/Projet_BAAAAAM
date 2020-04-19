@@ -45,6 +45,7 @@
 	$matricule_dossier = $dossier["Matricule"];
 	$nomT_dossier = $dossier["NomT"];
 	$prenomT_dossier = $dossier["PrenomT"];
+	$dateTraite = $dossier["DateTraiterD"];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,6 +124,7 @@
 							<h3>DOSSIER No <?php echo $refDossier;?></h3>
 							<h4>Date de réception :  <?php echo $dateReception;?></h4>
 							<h4>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h4>
+							<?php if ($statutDossier != "En cours") echo "<h4>Traité le :   $dateTraite</h4>"; else echo "<h4>Depuis le :   $dateTraite</h4>"; ?>
 						</div>
 					</div>
 				</div>
