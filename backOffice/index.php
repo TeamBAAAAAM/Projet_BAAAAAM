@@ -10,6 +10,7 @@ $connexion= connexionMySQL();
 session_start();
 
 //Déconnexion
+$_SESSION = array();
 session_destroy();
 
 

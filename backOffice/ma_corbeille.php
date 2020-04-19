@@ -139,7 +139,7 @@
 									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
 					}
 					$reponse->closeCursor(); */
-					$result = DossiersCorbeilleTechnicien($link);	
+					$result = DossiersCorbeilleTechnicien($link, $codeT);	
 					if ($result != NULL)
 						$rows = mysqli_num_rows($result);
 					else $rows = 0;

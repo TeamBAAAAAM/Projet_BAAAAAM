@@ -4,7 +4,7 @@
     // Connexion à la BD
 	$link = connexionMySQL();
 
-	// Récupération des données du technicien
+	// Récupération des données du technicien connecté
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
@@ -41,6 +41,7 @@
 	$nomAssure = $dossier["NomA"];
 	$prenomAssure = $dossier["PrenomA"];
 	$dateArretMaladie = $dossier["DateAM"];
+	$codeT_dossier = $dossier["CodeT"];
 	$matricule_dossier = $dossier["Matricule"];
 	$nomT_dossier = $dossier["NomT"];
 	$prenomT_dossier = $dossier["PrenomT"];
@@ -146,13 +147,13 @@
 								<div class="col-sm-9">
 									<div class="btn-group btn-group-justified">
 										<a href="traiter.php?statut=En cours"
-											class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT, $_SESSION["codeT"]);?>"
+											class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 											role="button">En cours</a>
 										<a href="traiter.php?statut=Classé sans suite"
-											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT, $_SESSION["codeT"]);?>" 
+											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
 											role="button">Classé sans suite</a>
 										<a href="traiter.php?statut=Terminé"
-											class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT, $_SESSION["codeT"]);?>"
+											class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
 											role="button">Terminé</a>
 									</div>
 								</div>

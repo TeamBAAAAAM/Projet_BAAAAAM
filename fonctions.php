@@ -352,6 +352,9 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
         else return True;
     }
     else {
+        echo "<div class='alert alert-danger'><strong>Alerte !".
+            "</strong> Erreur dans l'insertion dans traiter !</div>";
+            return False;
         return False;
     }
 }
@@ -388,7 +391,7 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
                         break;
                 }
             }
-            else {
+            else { // désactiver les boutons si en cours de traitement par un autre technicien
                 switch($buttonValue) {
                     case "En cours":
                         echo "btn btn-primary disabled";
@@ -444,7 +447,7 @@ function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
 /*      CORBEILLE D'UN TECHNICIEN      */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
-function DossiersCorbeilleTechnicien($link) {
+function DossiersCorbeilleTechnicien($link, $codeT) {
     //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA';
 
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
@@ -452,6 +455,7 @@ function DossiersCorbeilleTechnicien($link) {
     $query .= "WHERE d.CodeA = a.CodeA ";
     $query .= "AND d.CodeD = tr.CodeD ";
     $query .= "AND t.CodeT = tr.CodeT ";
+    $query .= "AND t.CodeT = '$codeT' ";
     $query .= "AND d.StatutD = 'En cours' ";
 
     //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
