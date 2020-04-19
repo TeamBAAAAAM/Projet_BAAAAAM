@@ -104,7 +104,7 @@
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 								<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
 								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="#">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
