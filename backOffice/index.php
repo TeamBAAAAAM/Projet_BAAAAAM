@@ -3,15 +3,11 @@
 //Charger les fonctions de connexion dans un autre fichier 
 require('../fonctions.php');
 
-//Connexion à la base de données
+//Connexion
 $connexion= connexionMySQL();
 
 // On démarre la session
 session_start();
-
-//Déconnexion
-session_destroy();
-
 
 ?>
 <!DOCTYPE html>
