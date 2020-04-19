@@ -142,7 +142,7 @@
 				<div id="panel-statut" class="col-sm-12">
 					<div class= "panel panel-default">	
 						<div class="panel-body">
-							<div class="row">
+							<div class="row" style="margin-bottom:0px;">
 								<div class="col-sm-3 text-center">
 									<span class="titre">Statut</span>
 								</div>

@@ -46,7 +46,7 @@
 
         <title>PJPE - Corbeille Générale</title>
 	</head>
-	<body>
+	<body onload="TrierTableau();">
 		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">

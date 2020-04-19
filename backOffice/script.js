@@ -20,7 +20,6 @@ $(document).ready(function(){
     $("#statut").change(function() {TrierTableau()});
     $("#date_debut").change(function() {TrierTableau()});
     $("#date_fin").change(function() {TrierTableau()});
-    TrierTableau();
 });
 
 function DateToNumber(date) {
