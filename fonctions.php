@@ -419,55 +419,20 @@ function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
 // Liste des dossiers en cours de traitement par le technicien connecté
 function DossiersCorbeilleTechnicien($link) {
     //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA';
-    $dossiers = "";
 
-    if(isset($_SESSION['codeT'])) {
-        $codeT = $_SESSION['codeT'];
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
+    $query .= "FROM dossier d, assure a, technicien t, traiter tr ";
+    $query .= "WHERE d.CodeA = a.CodeA ";
+    $query .= "AND d.CodeD = tr.CodeD ";
+    $query .= "AND t.CodeT = tr.CodeT ";
+    $query .= "AND d.StatutD = 'En cours' ";
+    $query .= "GROUP BY d.CodeD ";
+    $query .= "HAVING MAX(tr.DateTraiterD)";
 
-        $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-        if(isset($_SESSION[$index])){    
-            foreach($_SESSION[$index] as $codeD) {
-                $dossiers .= "d.CodeD = $codeD OR ";
-            }
-
-            if($dossiers != "") $dossiers = "AND (".substr($dossiers, 0, (count($dossiers) - 4)).")";
-        }
-    }
-    
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
+    //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
 
     $result = mysqli_query($link, $query);    
     return $result;
-}
-
-// Affectation d'un dossier à un technicien
-function AffecterDossier($codeD) {
-    if(isset($_SESSION['codeT'])) {
-        $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-
-        if(!isset($_SESSION[$index])) {
-            $_SESSION[$index] = array();
-        }
-
-        $_SESSION[$index][] = $codeD;
-        return True;
-    }
-    else {
-        return False;
-    }
-}
-
-// Retrait d'un dossier de la corbeille d'un technicien
-function RetirerDossierCorbeille($codeD) {
-    unset($_SESSION[array_search($codeD, $_SESSION)]);
-}
-
-// Vide la corbeille d'un assuré
-function ViderCorbeilleTechnicien($codeT) {
-    $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-    foreach($_SESSION[$index] as $codeD) {
-        RetirerDossier($codeD);
-    }
 }
 
 // Envoie un mail de confirmation d'enregistrement

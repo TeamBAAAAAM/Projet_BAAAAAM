@@ -16,13 +16,14 @@
 	if(isset($_GET["codeD"])) {
 		$_SESSION["codeDossier"] = $_GET["codeD"];
 		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
-		RedirigerVers("traiter.php");
-	}
 
-	//Changement de statut si un statut est indiqué dans l'URL
-	if(isset($_GET["statut"])) {
-		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
-		RetirerDossierCorbeille($_SESSION["codeDossier"]);
+		//Changement de statut si un statut est indiqué dans l'URL
+		if(isset($_GET["statut"])) {
+			TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+			RetirerDossierCorbeille($_SESSION["codeDossier"]);
+		}
+
+		//Suppression des variables transmises par la méthode GET
 		RedirigerVers("traiter.php");
 	}
 

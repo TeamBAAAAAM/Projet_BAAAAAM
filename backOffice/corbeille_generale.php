@@ -123,11 +123,7 @@
 									<td>".$donnees['StatutD']."</td>
 									<td>");
 								
-						if($donnees['StatutD'] == "En cours") {
-							$class =  "btn btn-warning disabled";
-							$icon = "glyphicon-lock";	
-						}
-						else if($donnees['StatutD'] == "À traiter")  {
+						if($donnees['StatutD'] == "À traiter")  {
 							$class =  "btn btn-success";
 							$icon = "glyphicon-plus";			
 						}
