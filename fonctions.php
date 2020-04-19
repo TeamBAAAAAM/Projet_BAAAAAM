@@ -342,8 +342,6 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
     $values = substr($values, 0, strlen($values) - 2);
 
     $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
-    
-    echo $query;
 
     if(mysqli_query($link, $query)) {
         if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
