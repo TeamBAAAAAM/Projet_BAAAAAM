@@ -375,7 +375,7 @@ function RecupererPJ($link, $codeDossier){
 function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
-            if($codeT_dossier = $codeT_courant) {
+            if($codeT_dossier == $codeT_courant) {
                 switch($buttonValue) {
                     case "En cours":
                         echo "btn btn-primary disabled";
