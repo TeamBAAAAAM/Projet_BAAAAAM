@@ -4,6 +4,23 @@
     // Connexion à la BD
     $link = connexionMySQL();
 	
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["codeD"])) {
+		$_SESSION["codeDossier"] = $_GET["codeD"];
+
+		//Changement de statut si un statut est indiqué dans l'URL
+		if(isset($_GET["statut"])) {
+			TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		}
+
+		//Suppression des variables transmises par la méthode GET
+		RedirigerVers("traiter.php");
+	}
+	else if(!isset($_SESSION["codeDossier"])) {		
+		//S'il n'y a pas de code dossier
+		RedirigerVers("accueil.php");
+	}
+	
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
@@ -11,29 +28,9 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	}
-	
-	// Récupération des données du dossier en cours de traitement
-	if(isset($_GET["codeD"])) {
-		$_SESSION["codeDossier"] = $_GET["codeD"];
-		$_SESSION["refDossier"] = ChercherREFAvecCodeD($_GET["codeD"], $link)["RefD"];
-
-		//Changement de statut si un statut est indiqué dans l'URL
-		if(isset($_GET["statut"])) {
-			TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
-			RetirerDossierCorbeille($_SESSION["codeDossier"]);
-		}
-
-		//Suppression des variables transmises par la méthode GET
-		RedirigerVers("traiter.php");
-	}
-
-	//S'il n'y a pas de référence dossier en session
-	if(!isset($_SESSION["refDossier"])){
-		RedirigerVers("accueil.php");
-	}
 
 	//Variables du dossier et de l'assuré
-	$dossier = ChercherDossierAvecREF($_SESSION["refDossier"], $link);
+	$dossier = ChercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
 	$dateReception = $dossier["DateD"];
@@ -42,18 +39,9 @@
 	$nomAssure = $dossier["NomA"];
 	$prenomAssure = $dossier["PrenomA"];
 	$dateArretMaladie = $dossier["DateAM"];
-	
-    // Passage automatique du statut à "En cours"
-	if($statutDossier == "À traiter") {
-        if(!ChangerStatutDossier($link, $codeDossier, "En cours")){
-            echo "<div class='alert alert-danger'><strong>Alerte !".
-            "</strong> Erreur dans le changement du statut du dossier !</div>";
-		}
-		else {
-			AffecterDossier($codeDossier);
-			$statutDossier = "En cours";
-		}
-	}
+	$matricule_dossier = $dossier["Matricule"];
+	$nomT_dossier = $dossier["NomT"];
+	$prenomT_dossier = $dossier["PrenomT"];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,6 +119,7 @@
 						<div class="panel-body">
 							<h3>DOSSIER No <?php echo $refDossier;?></h3>
 							<h4>Date de réception :  <?php echo $dateReception;?></h4>
+							<h4>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h4>
 						</div>
 					</div>
 				</div>
@@ -155,13 +144,13 @@
 								<div class="col-sm-9">
 									<div class="btn-group btn-group-justified">
 										<a href="traiter.php?statut=En cours"
-											class="<?php ClassBoutonTraiter($statutDossier, "En cours");?>"
+											class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT, $_SESSION["codeT"]);?>"
 											role="button">En cours</a>
 										<a href="traiter.php?statut=Classé sans suite"
-											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite");?>" 
+											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT, $_SESSION["codeT"]);?>" 
 											role="button">Classé sans suite</a>
 										<a href="traiter.php?statut=Terminé"
-											class="<?php ClassBoutonTraiter($statutDossier, "Terminé");?>"
+											class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT, $_SESSION["codeT"]);?>"
 											role="button">Terminé</a>
 									</div>
 								</div>

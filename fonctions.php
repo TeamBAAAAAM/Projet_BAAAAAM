@@ -100,12 +100,21 @@ function ChercherDossierAvecREF($RefD, $link) {
     return mysqli_fetch_array($result);
 }
 
+//Renvoie les informations d'un dossier traité ou en cours de traitemnet
+function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
+    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
+    $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
+    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
 //Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
 function ChercherREFAvecCodeD($CodeD, $link) {
     $query = "SELECT RefD FROM Assure A, Dossier D ";
     $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '".$CodeD."'";
     $result = mysqli_query($link, $query);
-    echo $query;
 
     return mysqli_fetch_array($result);
 }
@@ -334,6 +343,8 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
 
     $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
     
+    echo $query;
+
     if(mysqli_query($link, $query)) {
         if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
             echo "<div class='alert alert-danger'><strong>Alerte !".
@@ -359,19 +370,38 @@ function RecupererPJ($link, $codeDossier){
 //Appelée dans la page 'traiter.php'
 //$sessionValue = $_SESSION['statut'] (statut actuel)
 //$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
-function ClassBoutonTraiter($sessionValue, $buttonValue) {
+//$codeT_dossier est le code du technicien qui traite le dossier courant
+//$codeT_dossier est le code du technicien qui est actuellement connecté
+//Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier
+//Le statut du dossier courant
+function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
-            switch($buttonValue) {
-                case "En cours":
-                    echo "btn btn-primary disabled";
-                    break;
-                case "Classé sans suite":
-                    echo "btn btn-primary";
-                    break;
-                case "Terminé":
-                    echo "btn btn-primary";
-                    break;
+            if($codeT_dossier = $codeT_courant) {
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn btn-primary";
+                        break;
+                    case "Terminé":
+                        echo "btn btn-primary";
+                        break;
+                }
+            }
+            else {
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn disabled";
+                        break;
+                    case "Terminé":
+                        echo "btn disabled";
+                        break;
+                }
             }
             break;
         case "Classé sans suite":
@@ -403,7 +433,6 @@ function ClassBoutonTraiter($sessionValue, $buttonValue) {
     }
 }
 
-
 /*          CORBEILLE GENERALE         */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
@@ -426,8 +455,6 @@ function DossiersCorbeilleTechnicien($link) {
     $query .= "AND d.CodeD = tr.CodeD ";
     $query .= "AND t.CodeT = tr.CodeT ";
     $query .= "AND d.StatutD = 'En cours' ";
-    $query .= "GROUP BY d.CodeD ";
-    $query .= "HAVING MAX(tr.DateTraiterD)";
 
     //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
 

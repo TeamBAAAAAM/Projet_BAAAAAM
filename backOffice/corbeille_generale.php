@@ -115,7 +115,7 @@
 					$reponse->closeCursor(); */
 					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
 					$rows = mysqli_num_rows($result);
-                    for ($i = 0; $i < $rows; $i++){
+                    for ($i = 0; $i < $rows; $i++) {
 						$donnees = mysqli_fetch_array($result);
 						echo("<tr><td>".$donnees['DateD']."</td>
 								    <td>".$donnees['RefD']."</td>
@@ -125,14 +125,16 @@
 								
 						if($donnees['StatutD'] == "À traiter")  {
 							$class =  "btn btn-success";
-							$icon = "glyphicon-plus";			
+							$icon = "glyphicon-plus";
+							$variables = "codeD=".$donnees['CodeD']."&statut=En cours";
 						}
 						else {
 							$class =  "btn btn-primary";
 							$icon = "glyphicon-search";
+							$variables = "codeD=".$donnees['CodeD'];
 						}
 						
-						echo("<a href='traiter.php?codeD=".$donnees['CodeD']."' class='$class' role='button'>
+						echo("<a href='traiter.php?$variables' class='$class' role='button'>
 							<span class='glyphicon $icon'></span>
 						</a>");
 						echo "</td></tr>";
