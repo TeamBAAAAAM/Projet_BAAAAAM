@@ -2,24 +2,7 @@
 	session_start();
     require_once("../fonctions.php");
     // Connexion à la BD
-    $link = connexionMySQL();
-	
-	// Récupération des données du dossier en cours de traitement
-	if(isset($_GET["codeD"])) {
-		$_SESSION["codeDossier"] = $_GET["codeD"];
-
-		//Changement de statut si un statut est indiqué dans l'URL
-		if(isset($_GET["statut"])) {
-			TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
-		}
-
-		//Suppression des variables transmises par la méthode GET
-		RedirigerVers("traiter.php");
-	}
-	else if(!isset($_SESSION["codeDossier"])) {		
-		//S'il n'y a pas de code dossier
-		RedirigerVers("accueil.php");
-	}
+	$link = connexionMySQL();
 	
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
@@ -27,6 +10,25 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
+	}
+	
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["codeD"])) {
+		$_SESSION["codeDossier"] = $_GET["codeD"];
+		//Suppression des variables transmises par la méthode GET
+		RedirigerVers("traiter.php");
+	}
+		
+	//S'il n'y a pas de code dossier
+	if(!isset($_SESSION["codeDossier"])) {	
+		RedirigerVers("accueil.php");
+	}
+
+	//Changement de statut si un statut est indiqué dans l'URL
+	if(isset($_GET["statut"])) {
+		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		//Suppression des variables transmises par la méthode GET
+		//RedirigerVers("traiter.php");
 	}
 
 	//Variables du dossier et de l'assuré
