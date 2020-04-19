@@ -87,10 +87,40 @@
 			</div>
 		</nav>
 		
-		<div class="container">			
-			<div class="input-group">
-				<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
-				<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+		<div class="container">		
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+						<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+					</div>		
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Début</span>
+						<input id="date_debut" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Fin</span>
+						<input id="date_fin" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group">
+						<span class="input-group-addon">Statut</span>
+						<select  class="form-control" id="statut">
+							<option>Tous</option>
+							<option selected>À traiter</option>
+							<option>En cours</option>
+							<option>Classé sans suite</option>
+							<option>Terminé</option>
+						</select>
+					</div>
+				</div>
 			</div>
 		
 			<table class="table table-striped">
