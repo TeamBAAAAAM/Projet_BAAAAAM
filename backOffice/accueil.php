@@ -3,35 +3,29 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
 	// Récupération des données du technicien
-	// $matricule = $_POST["matricule"];	
-	// $result = getTechnicienData($link, $matricule);
-	// $ligne = mysqli_fetch_array($result);
-	// $codeT = $ligne["CodeTech"];
-	// $nomT = $ligne["NomT"];
-	// $prenomT = $ligne["PrenomT"];
-
-	// test
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
-
-	//Mise en session	
-	$_SESSION["matricule"] = $matricule;	
-	$_SESSION["codeT"] = $codeT;
-	$_SESSION["nomT"] = $nomT;
-	$_SESSION["prenomT"] = $prenomT;
-
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}else{
+		$matricule = $_POST["matricule"];
+		$technicien = DonneesTechnicien($link, $matricule);
+		$codeT = $technicien["CodeT"];
+		$nomT = $technicien["NomT"];
+		$prenomT = $technicien["PrenomT"];
+		//Mise en session	
+		$_SESSION["matricule"] = $matricule;	
+		$_SESSION["codeT"] = $codeT;
+		$_SESSION["nomT"] = $nomT;
+		$_SESSION["prenomT"] = $prenomT;
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		
+	<head>		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
@@ -106,9 +100,8 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
 								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="#">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -165,7 +158,7 @@
 							<tr>							
 								<td class="text-center">
 									<?php 
-										$result = nbDossiersATraiterTotal($link); 
+										$result = nbDossiersATraiterTotal($link);
 										echo $result["nbDossiersAtraiterTotal"];
 									?>
 								</td>

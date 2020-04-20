@@ -3,22 +3,18 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
-	}
 	
-	// test
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
+	// Récupération des données du technicien
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
+	}
 
-	/* // Récupération des données du technicien
-	$matricule = $_SESSION["matricule"];	
-	$technicien = getTechnicienData($link, $matricule);
-	$codeT = $technicien["CodeTech"];
-	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];*/
+	// Variables de test (à supprimer par la suite)
+	$dateReception = "10/10/20";
+	$statut = "À traiter";
 
 ?>
 <!DOCTYPE html>
@@ -48,7 +44,7 @@
 			});
 		</script>
 
-        <title>PJPE - Réception des documents</title>
+        <title>PJPE - Corbeille Générale</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-default header">
@@ -81,9 +77,8 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
 								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="#">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -91,8 +86,64 @@
 			</div>
 		</nav>
 		
-		<div class="container">
-			
+		<div class="container">			
+			<div class="input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+				<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+			</div>
+		
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Date de réception</th>						
+						<th>Référence du dossier</th>
+						<th>NIR</th>
+						<th>Statut</th>
+					</tr>    
+				</thead>
+				<tbody id="data-list">
+				<?php					
+					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					/* while ($donnees = $reponse->fetch())
+					{
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td> 
+									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
+					}
+					$reponse->closeCursor(); */
+					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					$rows = mysqli_num_rows($result);
+                    for ($i = 0; $i < $rows; $i++){
+						$donnees = mysqli_fetch_array($result);
+						echo("<tr><td>".$donnees['DateD']."</td>
+								    <td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td>
+									<td>".$donnees['StatutD']."</td>
+									<td>");
+								
+						if($donnees['StatutD'] == "En cours") {
+							$class =  "btn btn-warning disabled";
+							$icon = "glyphicon-lock";	
+						}
+						else if($donnees['StatutD'] == "À traiter")  {
+							$class =  "btn btn-success";
+							$icon = "glyphicon-plus";			
+						}
+						else {
+							$class =  "btn btn-primary";
+							$icon = "glyphicon-search";
+						}
+						
+						echo("<a href='traiter.php?codeD=".$donnees['CodeD']."' class='$class' role='button'>
+							<span class='glyphicon $icon'></span>
+						</a>");
+						echo "</td></tr>";
+					}
+
+				?>
+				</tbody>
+			</table>
 		</div>
 	</body>	
 </html>

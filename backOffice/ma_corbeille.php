@@ -3,22 +3,14 @@
     require("../fonctions.php");
     // Connexion à la BD
     $link = connexionMySQL();
-    if ($link == NULL){
-        //Redirection
+	
+	// Récupération des données du technicien
+	if(isset($_SESSION["matricule"])){
+		$matricule = $_SESSION["matricule"];
+		$codeT = $_SESSION["codeT"];
+		$nomT = $_SESSION["nomT"];
+		$prenomT = $_SESSION["prenomT"];
 	}
-	
-	// test
-	$matricule = "12345";
-	$codeT = "11111";
-	$nomT = "Doe"; 
-	$prenomT = "John";
-	
-	/* // Récupération des données du technicien
-	$matricule = $_SESSION["matricule"];	
-	$technicien = getTechnicienData($link, $matricule);
-	$codeT = $technicien["CodeTech"];
-	$nomT = $technicien["NomT"];
-	$prenomT = $technicien["PrenomT"];*/
 
 ?>
 <!DOCTYPE html>
@@ -48,7 +40,7 @@
 			});
 		</script>
 
-        <title>PJPE - Réception des documents</title>
+        <title>PJPE - Ma Corbeille</title>
 	</head>
 	<body>
 		<nav class="navbar navbar-default header">
@@ -81,9 +73,8 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="#">Profil</a></li>
 								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="#">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -91,107 +82,79 @@
 			</div>
 		</nav>
 		
-		<div class="container">
-		<!DOCTYPE html>
-<?php
-// Connexion base de données
-try
-{
-	$bdd = new PDO('mysql:host=localhost;dbname=bd_cpam;charset=utf8', 'root', 'root');
-}
-catch(Exception $e)
-{
-        die('Erreur : '.$e->getMessage());
-}
-?>
-<html>
-    <head>
-        <meta charset="UTF-8">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="style.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-	<script src="script.js"></script>
-        
-        <script>
-			$(document).ready(function(){
-			  $("#research").on("keyup", function() {
-				var value = $(this).val().toLowerCase();
-				$("#data-list tr").filter(function() {
-				  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-				});
-			  });
-			});
-		</script>
-        <title>Ma Corbeille </title>
-    </head>
-    <body>
-   <nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">BackOffice</a>
-    </div>
-    <ul class="nav navbar-nav">
-        
-      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Accueil</a></li>
-          <li><a href="#">Corbeille générale</a></li>
-          <li><a href="#">Ma corbeille</a></li>
-        </ul>
-      </li>
-      <li ><a href="#">Accueil</a></li>
-      <li ><a href="#">Corbeille générale</a></li>
-      <li class="active"><a href="#">Ma corbeille</a></li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-                <li> <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle"
-                            type="button" id="menu1" data-toggle="dropdown">Nom Prénom</button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                            <li role="presentation"><a role="menuitem" href="#">Profil</a></li>
-                            <li role="presentation" class="divider"></li>
-                            <li role="presentation"><a role="menuitem" href="#">Déconnexion</a></li>
-                    </ul>
-                 <img src="avatar.png" class="img-circle" alt="Avatar Image" width="25" height="25">  </li>
-    </ul>
-    </div>       
-</nav>
-    <div class="container">
-			<input class="form-control" id="research" type="text" placeholder="Rechercher ...">
-    
-    <table class="table table-striped">
-     <thead>
-    <tr>
-    <th>Date récep</th>
-    
-    <th>N° de demande</th>
-    <th>Nir</th>
-    <th></th>
-    </tr>    
-    </thead> 
-     <?php
-        $reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a '
-                . 'where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
-
-while ($donnees = $reponse->fetch())
-{
-	echo ("<tr><td>".$donnees['DATED']."</td>
-                  <td>".$donnees['REFD']."</td>
-                  <td>".$donnees['NIRA']."</td> 
-                  <td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td> 
-                   
-                </tr>");
-}
-
-$reponse->closeCursor();
-
-     ?>
-</table>
-
-
-	
+		<div class="container">	
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+						<input id="recherche" type="text" class="form-control" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+					</div>
+				</div>
+			</div>			
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Début</span>
+						<input id="date_debut" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Fin</span>
+						<input id="date_fin" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="input-group">
+						<span class="input-group-addon">Statut</span>
+						<select  class="form-control" id="statut">
+							<option>À traiter</option>
+							<option>En cours</option>
+							<option>Classé sans suite</option>
+							<option>Terminé</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Date de réception</th>						
+						<th>N° de demande</th>
+						<th>NIR</th>
+						<th>Statut</th>
+					</tr>    
+				</thead>
+				<tbody id="data-list">
+				<?php
+					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
+					//$reponse = DossiersCorbeilleTechnicien($link);
+					/* while ($donnees = $reponse->fetch())
+					{
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td> 
+									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
+					}
+					$reponse->closeCursor(); */
+					$result = DossiersCorbeilleTechnicien($link);	
+					if ($result != NULL)
+						$rows = mysqli_num_rows($result);
+					else $rows = 0;
+                    for ($i = 0; $i < $rows; $i++){
+						$donnees = mysqli_fetch_array($result);
+						echo ("<tr><td>".$donnees['DateD']."</td>
+									<td>".$donnees['RefD']."</td>
+									<td>".$donnees['NirA']."</td>
+									<td>".$donnees['StatutD']."</td>
+									<td><a href='traiter.php?codeD=".$donnees['CodeD']."' class='btn btn-warning' role='button'>
+								<span class='glyphicon glyphicon-search'></span></a>
+							</tr></td>");
+					}
+				?>
+				</tbody>
+			</table>
 		</div>
 	</body>	
 </html>

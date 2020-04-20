@@ -51,7 +51,7 @@
                 <hr>
 
                 <div class="container-fluid">
-                    <?php               
+                    <?php
                         if(empty($_POST) && empty($_GET)) RedirigerVers("depot.php");
 
                         if(!AssureExiste($_POST["nir"], $link)) {

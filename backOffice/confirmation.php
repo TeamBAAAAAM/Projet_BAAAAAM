@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-
 <?php
 
 //Charger les fonctions de connexion dans un autre fichier 
-require('Fonctions.php');
+require('../fonctions.php');
 
 //Connexion
 $connexion= connexionMysql();
-if ($connexion==null)
-    //Redirection 
-        ;
+
 // Récupération du matricule 
 $matricule= $_POST['matricule'];
 $nom = $_POST['nom'];
@@ -26,7 +22,7 @@ $_SESSION['prenom'] = $prenom;
 $_SESSION['mdp']=$mot_de_passe;
 
 ?>
-
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -67,9 +63,9 @@ $_SESSION['mdp']=$mot_de_passe;
 				//echo("<p><b>Ordre SQL :</b> $insertTech</p>");
 				//echo(mysqli_affected_rows($connexion) . " client(s) ajout&eacute;(s)");
                             echo ("Votre enregistrement s'est fait avec succès");
-                            echo ("<p>". "<a href='ConnexionTech.php'>". "Connectez vous maintenant!"."</p>"."</a>" );
+                            echo ("<p>". "<a href='se_connecter.php'>". "Connectez vous maintenant!"."</p>"."</a>" );
                                  //$message= 'Votre connef';       
-                                 //header('Refresh:5;url=ConnexionTech.php?id=2');
+                                 //header('Refresh:5;url=se_connecter.php?id=2');
                                  //echo $message;
 				}
 			else
@@ -84,14 +80,14 @@ $_SESSION['mdp']=$mot_de_passe;
                         // Dans ce  dernier cas , on le redirige vers la page d'inscription 
                         {
                             $msg_erreur = msg_1;
-                            header("Location:InscriptionTech.php?msg_erreur=$msg_erreur");
+                            header("Location:inscription.php?msg_erreur=$msg_erreur");
                         }
                 }
             else
                 // Les 2 mot de passe sont différents 
                 {
                 $msg_erreur_mdp = msg_2;
-                header("Location:InscriptionTech.php?msg_erreur_mdp=$msg_erreur_mdp");
+                header("Location:inscription.php?msg_erreur_mdp=$msg_erreur_mdp");
                 }
             }
         ?>

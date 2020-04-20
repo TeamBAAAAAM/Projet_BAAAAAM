@@ -1,6 +1,10 @@
 <?php
     session_start();
+    require_once("../fonctions.php");
     
+    if(isset($_GET)) {
+        //$RefD = $_GET["RefD"];
+    }
     if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}  
 ?>
 
@@ -63,6 +67,15 @@
         <div id="info-status" class="alert alert-info">
             <strong>Attention ! </strong><span id="message">Mon message ici ...</span>
         </div>
+
+        <?php
+            if(EnvoyerMailConfirmationEnregistrement("alt.hq-3o2ak43d@yopmail.com", "dfDFQqf121ddf")) {
+                echo "<p>Bon</p>";
+            }
+            else {
+                echo "<p>Pas bon</p>";
+            }
+        ?>
 
         <div class="container">
             <div class="panel panel-default" id="form_panel">
