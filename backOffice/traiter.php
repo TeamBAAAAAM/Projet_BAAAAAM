@@ -22,7 +22,13 @@
 	//Changement de statut si un statut est indiqué dans l'URL
 	if(isset($_GET["statut"])) {
 		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
-		RetirerDossierCorbeille($_SESSION["codeDossier"]);
+		//Suppression des variables transmises par la méthode GET
+		RedirigerVers("traiter.php");
+	}
+	// Récupération des données du dossier en cours de traitement
+	else if(isset($_GET["codeD"])) {
+		$_SESSION["codeDossier"] = $_GET["codeD"];
+		//Suppression des variables transmises par la méthode GET
 		RedirigerVers("traiter.php");
 	}
 
