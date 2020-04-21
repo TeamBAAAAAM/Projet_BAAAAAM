@@ -4,13 +4,21 @@
     // Connexion à la BD
     $link = connexionMySQL();
 	
+	//Vérification des identifiants
+	if(isset($_POST["matricule"]) && isset($_POST["mdp"])) {
+		if(!AuthentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
+			RedirigerVers("se_connecter.php?msg_erreur=msg_3");
+		}
+	}
+
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	}else{
+	}
+	else {
 		$matricule = $_POST["matricule"];
 		$technicien = DonneesTechnicien($link, $matricule);
 		$codeT = $technicien["CodeT"];

@@ -11,6 +11,49 @@ $(document).ready(function(){
     $(".alert").show(1500);
 });
 
+//Vérifie et corrige le format du NIR
+function checkFormatMatricule(format) {
+	formatNIR = format;
+
+	let caret = document.getElementById("mat").selectionStart;
+	var str = $("#mat").val().toUpperCase();
+
+	//Suppression des valeurs invalides
+	var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
+	var match = str.match(pattern);
+	if(match != null) {
+		str = match.join("");
+		var deb = str.substr(0, caret);
+		var fin = str.substr(caret);
+		
+		for(i = 0 ; i < caret ; i++) {
+			if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
+				deb = deb.substr(0, i) + " " + deb.substr(i);
+				caret++;
+			}
+		}
+	
+		//Si le curseur est dans la chaine de caractères
+		if(caret < str.length - 1) {
+			for(i = caret ; i < format.length ; i++) {
+				if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
+					fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
+				}
+				if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
+					fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
+				}
+			}
+		}
+	
+		str = deb + fin;
+		//Si le nombre de caractères courants dépasse celui du nombre autorisés
+		if(str.length > format.length) str = str.substr(0, format.length);
+	
+		$("#mat").val(str);
+		document.getElementById("mat").setSelectionRange(caret, caret);
+	}
+}
+
 //Fonction qui gère modifie le lien vers l'aperçu
 function changePathViewer(path) {
     $("#apercu").attr("src", path);

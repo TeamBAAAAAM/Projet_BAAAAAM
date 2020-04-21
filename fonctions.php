@@ -324,6 +324,16 @@ function DonneesTechnicien($link, $matricule) {
     return mysqli_fetch_array($result);
 }
 
+// Vérifie les identifiants d'un technicien (VRAI si les données correspondent, FAUX sinon)
+function AuthentifierTechnicien($link, $matricule, $mdpT) {
+    $query = "SELECT Matricule, MdpT ";
+    $query .= "FROM Technicien T ";
+    $query .= "WHERE Matricule = '$matricule' ";
+    $query .= "AND MdpT = '$mdpT'";
+    $result = mysqli_query($link, $query);
+    return (mysqli_fetch_array($result) != NULL);
+}
+
 
 /*      TRAITEMENT D'UN DOSSIER      */
 

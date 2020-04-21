@@ -97,6 +97,15 @@
 	background-color: lightgray;
 }
 
+#confirmation_inscription {
+	margin-top: 100px;
+    width: 80%;
+	padding: 30px;
+	border: 1px solid #f1f1f1;
+	background: #fff;
+	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
 .row {
 	margin-bottom: 15px;
 }

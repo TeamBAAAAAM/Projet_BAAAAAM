@@ -1,23 +1,21 @@
-body{    
+body {
     background-color: WhiteSmoke;
     font-family: Helvetica,sans-serif;
 }
 
-#container{
-    width:600px;
-    margin:0 auto;
-    margin-top:10%;
-    
+.container {
+    width: 600px;
+    margin-top: 5%;
 }
+
 /* Bordered form */
 form {
-    width:100%;
     padding: 30px;
     border: 1px solid #f1f1f1;
     background: #fff;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
-#container h1{
+.container h2{
     width: 60%;
     margin: 0 auto;
     padding-bottom: 10px;
@@ -27,10 +25,13 @@ form {
 input[type=text], input[type=password] {
     width: 100%;
     padding: 12px 20px;
-    margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
+}
+
+label {    
+    margin-top: 16px;
 }
 
 /* Set a style for all buttons */
@@ -39,17 +40,23 @@ input[type=submit] {
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
-    border: none;
     cursor: pointer;
+    border: 1px solid #03057B;
     width: 100%;
+    font-weight: bold;
+    transition: background-color 0.5s, color 1s;
 }
 input[type=submit]:hover {
     background-color: white;
     color: #03057B;
-    border: 1px solid #03057B;
 }
 #oubli{
     float:right;
+}
+
+.champ_obligatoire {
+    font-style: italic;
+    color: #03057B;
 }
 
 a{
