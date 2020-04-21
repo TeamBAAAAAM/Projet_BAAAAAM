@@ -6,7 +6,9 @@
         //$RefD = $_GET["RefD"];
     }
     if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}  
+    $data = ["nir"=>"dddd"];
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -33,7 +35,8 @@
 			</div>
         </nav>
         		
-        <div class="container text-center" id="status">
+       <?php if (!(isset($_GET["confirm"]) && $_GET["confirm"]=="ok")): ?>
+           <div class="container text-center" id="status">
 			<div class="row">
 				<div id="interim" class="col-sm-3 btn-status">
 					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
@@ -63,6 +66,7 @@
 				</div>
             </div>                
         </div>
+        <?php endif ?>
 
         <div id="info-status" class="alert alert-info">
             <strong>Attention ! </strong><span id="message">Mon message ici ...</span>
@@ -93,6 +97,7 @@
                                             pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
                                             placeholder="# ## ## ## ### ###"
                                             onKeyUp='checkFormatNir("# ## ## ## ### ###");'
+                                            value="<?=isset($data["nir"]) ? $data["nir"] : "" ?>"
                                             required
                                         >
                                     </div>
