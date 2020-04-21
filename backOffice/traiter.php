@@ -274,7 +274,10 @@
 										</div>
 										<div class="modal-body">
 											<?php
-												if($messagesAssure == null) {
+												$message = mysqli_fetch_array($messagesAssure);
+												$i = 1;
+
+												if($message == null) {
 													echo '
 														<div class="alert alert-warning text-center">
 															<strong>
@@ -283,9 +286,6 @@
 														</div>
 													';
 												}
-
-												$message = mysqli_fetch_array($messagesAssure);
-												$i = 1;
 												while ($message != null) {
 													$contenuMessage = ExtraireMessage($message["Contenu"]);
 													echo '
