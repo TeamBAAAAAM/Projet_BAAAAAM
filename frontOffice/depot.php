@@ -6,7 +6,6 @@
         //$RefD = $_GET["RefD"];
     }
     if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}  
-    $data = ["nir"=>"dddd"];
 ?>
 
 
@@ -34,8 +33,39 @@
 				</div>
 			</div>
         </nav>
-        		
-       <?php if (!(isset($_GET["confirm"]) && $_GET["confirm"]=="ok")): ?>
+         <?php if (isset($_GET["RefD"])): ?>
+        <div class="container">
+            <div class="panel panel-default" >
+                <div class="panel-heading">Formulaire d'envoi</div>
+                <div class="panel-body">
+                    <form  method="POST" action="verification_nir.php"> 
+                        <div class="container" id="etat-civil">
+                            <h3>Identification :</h3>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
+                                        <input id="nir" type="text" class="form-control" name="nir"
+                                            pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
+                                            placeholder="# ## ## ## ### ###"
+                                            onKeyUp='checkFormatNir("# ## ## ## ### ###");'
+                                            required
+                                        >
+                                        
+                                    </div>
+                                    <br/>
+                                    <input  type="hidden"  name="RefD" value="<?=$_GET['RefD']?>"/>
+                                    <input  type="submit" class="btn btn-info" value="Envoyer"/>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+       <?php elseif(!isset($_SESSION['recuperation'])): ?>
            <div class="container text-center" id="status">
 			<div class="row">
 				<div id="interim" class="col-sm-3 btn-status">
@@ -72,7 +102,7 @@
             <strong>Attention ! </strong><span id="message">Mon message ici ...</span>
         </div>
 
-        <?php
+       <?php
             if(EnvoyerMailConfirmationEnregistrement("alt.hq-3o2ak43d@yopmail.com", "dfDFQqf121ddf")) {
                 echo "<p>Bon</p>";
             }
@@ -80,9 +110,11 @@
                 echo "<p>Pas bon</p>";
             }
         ?>
-
+         
+        <?php if (!isset($_GET["RefD"]) || isset($_SESSION["recuperation"])): ?>
+       
         <div class="container">
-            <div class="panel panel-default" id="form_panel">
+            <div class="panel panel-default" id="<?= isset($_SESSION["recuperation"]) ? "" : "form_panel"?>">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
                     <form enctype="multipart/form-data" method="POST" action="enregistrement.php"> 
@@ -97,7 +129,7 @@
                                             pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
                                             placeholder="# ## ## ## ### ###"
                                             onKeyUp='checkFormatNir("# ## ## ## ### ###");'
-                                            value="<?=isset($data["nir"]) ? $data["nir"] : "" ?>"
+                                             value="<?= isset($_SESSION["recuperation"]) ? $_SESSION["recuperation"]["NirA"] :""?>"
                                             required
                                         >
                                     </div>
@@ -144,6 +176,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <?php if (!isset($_SESSION["recuperation"])): ?>
                                 <div class="col-sm-6">
                                     <label for="nom" class="control-label">Référence du dossier en cours :</label>    
                                     <div class="row">
@@ -167,21 +200,26 @@
                                             </span>
                                         </div>
                                     </div>
-                                </div>  
+                                </div> 
+                                 <?php endif ?>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nom" class="control-label">Nom (*) :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom" required>
+                                        <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom" 
+                                               value="<?= isset($_SESSION["recuperation"]) ? $_SESSION["recuperation"]["NomA"] :""?>"
+                                               required>
                                     </div>
                                 </div>        
                                 <div class="col-sm-4">                
                                     <label for="prenom" class="control-label">Prénom (*) :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom" required>
+                                        <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom"
+                                         value="<?= isset($_SESSION["recuperation"]) ? $_SESSION["recuperation"]["PrenomA"] :""?>"
+                                               required>
                                     </div>
                                 </div>
                             </div>
@@ -190,7 +228,9 @@
                                     <label for="email" class="control-label">Adresse mail : </label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <input id="email" type="email" class="form-control" name="email" placeholder="xyz@exemple.com">
+                                        <input id="email" type="email" class="form-control" name="email" placeholder="xyz@exemple.com"
+                                         value="<?= isset($_SESSION["recuperation"]) ? $_SESSION["recuperation"]["MailA"] :""?>" >      
+                                       
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre adresse email à des fins commerciales.</span>
                                 </div>
@@ -198,7 +238,9 @@
                                     <label for="tel" class="control-label">Numéro de téléphone : </label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
-                                        <input id="tel" type="tel" class="form-control" name="tel" placeholder="0#########">
+                                        <input id="tel" type="tel" class="form-control" name="tel" placeholder="0#########"
+                                          value="<?= isset($_SESSION["recuperation"]) ? $_SESSION["recuperation"]["TelA"] :""?>">
+                                               
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre numéro de téléphone à des fins commerciales.</span>
                                 </div>
@@ -252,7 +294,7 @@
                 </div>
             </div>
         </div>
-
+<?php endif ?>
 		<footer class="container-fluid text-center">
 			<div class="row">
 				<div class="col-sm-3">
@@ -314,5 +356,6 @@
 			</div>
 			<div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>
         </footer>
+       <?php unset($_SESSION['recuperation'])?>
     </body>
 </html>
