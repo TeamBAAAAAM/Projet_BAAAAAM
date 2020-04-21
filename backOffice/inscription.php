@@ -35,7 +35,7 @@ session_start();
         <form action="confirmation.php" method='POST'>
         
         <div class="form-group">
-            <label for="exampleInputEmail1">Matricule(*) :</label>
+            <label for="exampleInputEmail1">Matricule (*) :</label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input id="mat" type="text" class="form-control" name="matricule" placeholder="# ## #" 
@@ -57,7 +57,7 @@ session_start();
         </div>     
         
         <div class="form-group">
-            <label for="exampleInputEmail1">Nom(*) :</label>
+            <label for="exampleInputEmail1">Nom (*) :</label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input id="nom" type="text" class="form-control" name="nom" placeholder="Votre Nom"
@@ -67,7 +67,7 @@ session_start();
         </div> 
         
         <div class="form-group">
-            <label for="exampleInputEmail1">Prénom(*) :</label>
+            <label for="exampleInputEmail1">Prénom (*) :</label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Votre prénom" 
@@ -77,7 +77,7 @@ session_start();
         </div> 
         
         <div class="form-group">
-            <label for="exampleInputEmail1">Mot de passe(*) :</label>
+            <label for="exampleInputEmail1">Mot de passe (*) :</label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                         <input id="mdp" type="password" class="form-control" name="mdp" required>
@@ -85,7 +85,7 @@ session_start();
         </div> 
         
         <div class="form-group">
-            <label for="exampleInputEmail1">Confirmation mot de passe(*) :</label>
+            <label for="exampleInputEmail1">Confirmation mot de passe (*) :</label>
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                         <input id="confmdp" type="password" class="form-control" name="conf" required>

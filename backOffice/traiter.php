@@ -198,14 +198,19 @@
 							<h5><?php echo "$nomAssure $prenomAssure";?></h5>
 							<h5>En arrêt de travail depuis le : <?php echo $dateArretMaladie;?></h5>
 							<h5 style="margin: 8px 0px;">
+								<span style='margin-left: 0px;' class='glyphicon glyphicon-phone-alt'></span>
 								<?php
-									if($telephoneAssure != "") {
-										echo "<span style='margin-left: 0px;' class='glyphicon glyphicon-phone-alt'></span>$telephoneAssure / ";
-									}
-									if($mailAssure != "") {
-										echo "<span style='margin-left: 0px;' class='glyphicon glyphicon-envelope'></span>$mailAssure</span>";
-									}
+									if($telephoneAssure != "") echo "$telephoneAssure";
+									else echo "N/A";
 								?>
+								</span>
+								/
+								<span style='margin-left: 0px;' class='glyphicon glyphicon-envelope'></span>
+								<?php
+									if($mailAssure != "") echo "$mailAssure";
+									else echo "N/A";
+								?>
+								</span>
 							</h5>
 						</div>
 					</div>
