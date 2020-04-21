@@ -11,6 +11,11 @@ define("PORT", "3306");
 //NB : À partir de la racine
 define("STORAGE_PATH", "piecesJustificatives");
 
+//Message pour l'assuré (généré en JavaScript)
+define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");
+define("DEPOSITE_LINK", "https://www.pjpe-cpam.fr/depot.php");
+define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");
+
 /* ************************************************ */
 /*              FONCTIONS GENERALES                 */
 /* ************************************************ */
@@ -470,6 +475,76 @@ function EnvoyerMailConfirmationEnregistrement($mailA, $refD) {
     $txt = "Votre référence dossier est le $refD.";
     
     return mail($mailA, $subject, $txt);
+}
+
+// Envoie un mail de demande de PJs à l'assuré
+function EnvoyerMailDemandePJs($mailA, $subject, $txt) {
+    return mail($mailA, $subject, $txt);
+}
+
+// Enregistre le mail envoyé à un assuré
+function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
+    $keys = ""; $values = "";
+    if($CodeA != NULL) {$keys .= "CodeA, "; $values .= $CodeA.", ";}
+    if($CodeT != NULL) {$keys .= "CodeT, "; $values .= $CodeT.", ";}
+    if($Contenu != NULL) {$keys .= "Contenu, "; $values .= "'".$Contenu."', ";}
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO message(".$keys.") VALUES (".$values.")";
+
+    return mysqli_query($link, $query);
+}
+
+// Liste des messages adressés à un assuré
+function ListeMessages($CodeA, $link) {
+    $query = "SELECT DateEnvoiM, Contenu, T.Matricule ";
+    $query .= "FROM Message M, Assure A, Technicien T ";
+    $query .= "WHERE A.CodeA = M.CodeA ";
+    $query .= "AND A.CodeA = $CodeA ";
+    $query .= "AND T.CodeT = M.CodeT ";
+    $query .= "ORDER BY DateEnvoiM DESC";
+ 
+    return $result = mysqli_query($link, $query);
+}
+
+//Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
+function ExtraireMessage($Contenu) {
+    //Position de l'adresse email
+    $deb = strpos($Contenu, "À : ") + strlen("À : ");
+    $fin = strpos($Contenu, "Objet : ");
+    $mail = substr($Contenu, $deb, $fin - $deb);
+
+    //Position de la référence du dossier
+    $deb = strpos($Contenu, "?RefD=") + strlen("?RefD=");
+    $fin = $deb + 8; // 8 = Nb char référence
+    $refD = substr($Contenu, $deb, $fin - $deb);
+
+    //Position de l'objet
+    $deb = strpos($Contenu, "Objet : ") + strlen("Objet : ");
+    $fin = strpos($Contenu, "Message : ");
+    $objet = substr($Contenu, $deb, $fin - $deb);
+
+    //Position du contenu du message
+    $deb = strpos($Contenu, "Message : ") + strlen("Message : ");
+    $fin = strlen($Contenu);
+    $texte = explode("\n", substr($Contenu, $deb, $fin - $deb));
+    $texte = implode("<br>",$texte);
+
+    return [$mail, $objet, $texte, $refD];
+}
+
+// Renvoie la date de format aaaa-mm-jj hh:MM:ss en jj / mm / aaaa hh:MM:ss
+function dateFR($date) {
+    $annee = substr($date, 0, 4);
+    $mois = substr($date, 5, 2);
+    $jour = substr($date, 8, 2);
+    $heure = substr($date, 11);
+
+    return "$jour / $mois / $annee $heure";
 }
 
 ?>

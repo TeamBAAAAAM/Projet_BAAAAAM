@@ -1,3 +1,16 @@
+$(document).ready(function(){
+    $("#panel-pjs li").click(clickOnPjsLi($(this)));
+    
+    //Initialisation des écouteurs pour la recherche
+    $("#recherche").on("keyup", function() {TrierTableau()});
+    $("#statut").change(function() {TrierTableau()});
+    $("#date_debut").change(function() {TrierTableau()});
+    $("#date_fin").change(function() {TrierTableau()});
+
+    $(".alert").hide();
+    $(".alert").show(1500);
+});
+
 //Fonction qui gère modifie le lien vers l'aperçu
 function changePathViewer(path) {
     $("#apercu").attr("src", path);
@@ -9,18 +22,6 @@ function clickOnPjsLi(node) {
     $("panel-pjs li").removeClass("onclick-pjs-li");
     node.addClass("onclick-pjs-li");
 }
-
-$(document).ready(function(){
-    $("#panel-pjs li").click(clickOnPjsLi($(this)));
-});
-
-//Initialisation des écouteurs pour la recherche
-$(document).ready(function(){
-    $("#recherche").on("keyup", function() {TrierTableau()});
-    $("#statut").change(function() {TrierTableau()});
-    $("#date_debut").change(function() {TrierTableau()});
-    $("#date_fin").change(function() {TrierTableau()});
-});
 
 function DateToNumber(date) {
     var number = date.substring(0, 4);
@@ -86,4 +87,35 @@ function NaissanceAssure($nir){
     $annee = $nir.substring(2, 4);
     $mois = $nir.substring(5, 7);
     return ($mois, $annee);
+}
+
+// Mise à jour du message pré-rempli pour demander des pièces à un assuré
+function MAJMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, CodeJ) {
+    var Raisons = [$("#cb1").prop("checked"), $("#cb2").prop("checked"), $("#cb3").prop("checked")];
+    $("#mail_text").val(EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ));
+}
+
+// Génère et renvoie un message pré-rempli pour demander des pièces à un assuré
+function EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ) {
+    var message = "Bonjour,\n\n"
+    message += "\tNous souhaiterions vous informer que lors de votre ";
+    message += "dernier dépôt, certaines pièces justificatives affiliées au dossier ";
+    message += "de référence " + RefD + " semblent ";
+    if(!Raisons[0] && !Raisons[1] && !Raisons[2]) {message += "[Mettre les erreurs relevées ici] ";}
+    if(Raisons[0] && (Raisons[1] || Raisons[2])) message += "manquantes et ";
+    else if(Raisons[0]) message += "manquantes";
+    if(Raisons[1] && Raisons[2]) message += "illisibles et ";
+    else if(Raisons[1]) message += "illisibles";
+    if(Raisons[2]) message += "invalides";
+    message += ".\n\nMerci de vous rendre à l'adresse suivante afin de déposer les documents demandés :\n\n\t";
+    message += "<a href='" + DEPOSITE_LINK + "?RefD=" + RefD + "' target='_blank'>";
+    message += DEPOSITE_LINK + "?RefD=" + RefD + "</a>";
+    for(i = 0 ; i < CodeJ ; i++) {
+        message += "&CodeJ_" + i + "=" + CodeJ[i];
+    }
+    message += "\n\n\tBien cordialement,\n\n";
+    message += "La CPAM de la Haute-Garonne";
+    if(FOOTER_EMAIL != "") message +="\n\n<hr>" + FOOTER_EMAIL;
+
+    return message;
 }
