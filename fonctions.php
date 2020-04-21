@@ -11,6 +11,11 @@ define("PORT", "3306");
 //NB : À partir de la racine
 define("STORAGE_PATH", "piecesJustificatives");
 
+//Message pour l'assuré (généré en JavaScript)
+define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");
+define("DEPOSITE_LINK", "https://www.pjpe-cpam.fr/depot.php");
+define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");
+
 /* ************************************************ */
 /*              FONCTIONS GENERALES                 */
 /* ************************************************ */
@@ -100,12 +105,21 @@ function ChercherDossierAvecREF($RefD, $link) {
     return mysqli_fetch_array($result);
 }
 
+//Renvoie les informations d'un dossier traité ou en cours de traitemnet
+function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
+    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
+    $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
+    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
 //Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
 function ChercherREFAvecCodeD($CodeD, $link) {
     $query = "SELECT RefD FROM Assure A, Dossier D ";
     $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '".$CodeD."'";
     $result = mysqli_query($link, $query);
-    echo $query;
 
     return mysqli_fetch_array($result);
 }
@@ -333,7 +347,7 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
     $values = substr($values, 0, strlen($values) - 2);
 
     $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
-    
+
     if(mysqli_query($link, $query)) {
         if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
             echo "<div class='alert alert-danger'><strong>Alerte !".
@@ -343,6 +357,9 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link) {
         else return True;
     }
     else {
+        echo "<div class='alert alert-danger'><strong>Alerte !".
+            "</strong> Erreur dans l'insertion dans traiter !</div>";
+            return False;
         return False;
     }
 }
@@ -359,19 +376,38 @@ function RecupererPJ($link, $codeDossier){
 //Appelée dans la page 'traiter.php'
 //$sessionValue = $_SESSION['statut'] (statut actuel)
 //$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
-function ClassBoutonTraiter($sessionValue, $buttonValue) {
+//$codeT_dossier est le code du technicien qui traite le dossier courant
+//$codeT_dossier est le code du technicien qui est actuellement connecté
+//Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier
+//Le statut du dossier courant
+function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
-            switch($buttonValue) {
-                case "En cours":
-                    echo "btn btn-primary disabled";
-                    break;
-                case "Classé sans suite":
-                    echo "btn btn-primary";
-                    break;
-                case "Terminé":
-                    echo "btn btn-primary";
-                    break;
+            if($codeT_dossier == $codeT_courant) {
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn btn-primary";
+                        break;
+                    case "Terminé":
+                        echo "btn btn-primary";
+                        break;
+                }
+            }
+            else { // désactiver les boutons si en cours de traitement par un autre technicien
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn disabled";
+                        break;
+                    case "Terminé":
+                        echo "btn disabled";
+                        break;
+                }
             }
             break;
         case "Classé sans suite":
@@ -403,7 +439,6 @@ function ClassBoutonTraiter($sessionValue, $buttonValue) {
     }
 }
 
-
 /*          CORBEILLE GENERALE         */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
@@ -417,57 +452,21 @@ function DossiersCorbeilleGenerale($link, $dateReception, $statut) {
 /*      CORBEILLE D'UN TECHNICIEN      */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
-function DossiersCorbeilleTechnicien($link) {
+function DossiersCorbeilleTechnicien($link, $codeT) {
     //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA';
-    $dossiers = "";
 
-    if(isset($_SESSION['codeT'])) {
-        $codeT = $_SESSION['codeT'];
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
+    $query .= "FROM dossier d, assure a, technicien t, traiter tr ";
+    $query .= "WHERE d.CodeA = a.CodeA ";
+    $query .= "AND d.CodeD = tr.CodeD ";
+    $query .= "AND t.CodeT = tr.CodeT ";
+    $query .= "AND t.CodeT = '$codeT' ";
+    $query .= "AND d.StatutD = 'En cours' ";
 
-        $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-        if(isset($_SESSION[$index])){    
-            foreach($_SESSION[$index] as $codeD) {
-                $dossiers .= "d.CodeD = $codeD OR ";
-            }
-
-            if($dossiers != "") $dossiers = "AND (".substr($dossiers, 0, (count($dossiers) - 4)).")";
-        }
-    }
-    
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
+    //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
 
     $result = mysqli_query($link, $query);    
     return $result;
-}
-
-// Affectation d'un dossier à un technicien
-function AffecterDossier($codeD) {
-    if(isset($_SESSION['codeT'])) {
-        $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-
-        if(!isset($_SESSION[$index])) {
-            $_SESSION[$index] = array();
-        }
-
-        $_SESSION[$index][] = $codeD;
-        return True;
-    }
-    else {
-        return False;
-    }
-}
-
-// Retrait d'un dossier de la corbeille d'un technicien
-function RetirerDossierCorbeille($codeD) {
-    unset($_SESSION[array_search($codeD, $_SESSION)]);
-}
-
-// Vide la corbeille d'un assuré
-function ViderCorbeilleTechnicien($codeT) {
-    $index = "codeT=".$_SESSION['codeT']; //CodeT étant un entier, il faut changer l'index par une CC
-    foreach($_SESSION[$index] as $codeD) {
-        RetirerDossier($codeD);
-    }
 }
 
 // Envoie un mail de confirmation d'enregistrement
@@ -476,6 +475,76 @@ function EnvoyerMailConfirmationEnregistrement($mailA, $refD) {
     $txt = "Votre référence dossier est le $refD.";
     
     return mail($mailA, $subject, $txt);
+}
+
+// Envoie un mail de demande de PJs à l'assuré
+function EnvoyerMailDemandePJs($mailA, $subject, $txt) {
+    return mail($mailA, $subject, $txt);
+}
+
+// Enregistre le mail envoyé à un assuré
+function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
+    $keys = ""; $values = "";
+    if($CodeA != NULL) {$keys .= "CodeA, "; $values .= $CodeA.", ";}
+    if($CodeT != NULL) {$keys .= "CodeT, "; $values .= $CodeT.", ";}
+    if($Contenu != NULL) {$keys .= "Contenu, "; $values .= "'".$Contenu."', ";}
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO message(".$keys.") VALUES (".$values.")";
+
+    return mysqli_query($link, $query);
+}
+
+// Liste des messages adressés à un assuré
+function ListeMessages($CodeA, $link) {
+    $query = "SELECT DateEnvoiM, Contenu, T.Matricule ";
+    $query .= "FROM Message M, Assure A, Technicien T ";
+    $query .= "WHERE A.CodeA = M.CodeA ";
+    $query .= "AND A.CodeA = $CodeA ";
+    $query .= "AND T.CodeT = M.CodeT ";
+    $query .= "ORDER BY DateEnvoiM DESC";
+ 
+    return $result = mysqli_query($link, $query);
+}
+
+//Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
+function ExtraireMessage($Contenu) {
+    //Position de l'adresse email
+    $deb = strpos($Contenu, "À : ") + strlen("À : ");
+    $fin = strpos($Contenu, "Objet : ");
+    $mail = substr($Contenu, $deb, $fin - $deb);
+
+    //Position de la référence du dossier
+    $deb = strpos($Contenu, "?RefD=") + strlen("?RefD=");
+    $fin = $deb + 8; // 8 = Nb char référence
+    $refD = substr($Contenu, $deb, $fin - $deb);
+
+    //Position de l'objet
+    $deb = strpos($Contenu, "Objet : ") + strlen("Objet : ");
+    $fin = strpos($Contenu, "Message : ");
+    $objet = substr($Contenu, $deb, $fin - $deb);
+
+    //Position du contenu du message
+    $deb = strpos($Contenu, "Message : ") + strlen("Message : ");
+    $fin = strlen($Contenu);
+    $texte = explode("\n", substr($Contenu, $deb, $fin - $deb));
+    $texte = implode("<br>",$texte);
+
+    return [$mail, $objet, $texte, $refD];
+}
+
+// Renvoie la date de format aaaa-mm-jj hh:MM:ss en jj / mm / aaaa hh:MM:ss
+function dateFR($date) {
+    $annee = substr($date, 0, 4);
+    $mois = substr($date, 5, 2);
+    $jour = substr($date, 8, 2);
+    $heure = substr($date, 11);
+
+    return "$jour / $mois / $annee $heure";
 }
 
 ?>

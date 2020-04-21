@@ -75,6 +75,11 @@
 	border: none;
 }
 
+/*Boite de dialogue pour l'envoi d'un mail*/
+#mail_text {
+	width: 100%;
+}
+
 /* Listes des pièces justificatives */
 #panel-pjs li {
 	cursor: pointer;
