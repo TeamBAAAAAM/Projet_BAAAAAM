@@ -36,11 +36,11 @@
          <?php if (isset($_GET["RefD"])): ?>
         <div class="container">
             <div class="panel panel-default" >
-                <div class="panel-heading">Formulaire d'envoi</div>
+                <div class="panel-heading">Veuillez saisir votre numéro sécurité sociale. </div>
                 <div class="panel-body">
                     <form  method="POST" action="verification_nir.php"> 
                         <div class="container" id="etat-civil">
-                            <h3>Identification :</h3>
+                            
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
@@ -57,6 +57,8 @@
                                     <br/>
                                     <input  type="hidden"  name="RefD" value="<?=$_GET['RefD']?>"/>
                                     <input  type="submit" class="btn btn-info" value="Envoyer"/>
+                                    <a href="../index.html" class="btn btn-info" role="button" >Retour Accueil</a>
+                                    
                                 </div>
                             </div>
                         </div>
