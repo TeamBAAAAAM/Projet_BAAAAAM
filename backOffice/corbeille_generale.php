@@ -10,12 +10,9 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
+	} else {
+		RedirigerVers("se_connecter.php");
 	}
-
-	// Variables de test (à supprimer par la suite)
-	$dateReception = "10/10/20";
-	$statut = "À traiter";
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,20 +158,11 @@
 				</thead>
 				<tbody id="data-list">
 				<?php					
-					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
-					/* while ($donnees = $reponse->fetch())
-					{
-						echo ("<tr><td>".$donnees['DateD']."</td>
-									<td>".$donnees['RefD']."</td>
-									<td>".$donnees['NirA']."</td> 
-									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
-					}
-					$reponse->closeCursor(); */
-					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					$result = DossiersCorbeilleGenerale($link);
 					$rows = mysqli_num_rows($result);
                     for ($i = 0; $i < $rows; $i++) {
 						$donnees = mysqli_fetch_array($result);
-						echo("<tr><td>".$donnees['DateD']."</td>
+						echo("<tr><td>".date("d/m/Y", strtotime($donnees['DateD']))."</td>
 								    <td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td>
 									<td>".$donnees['StatutD']."</td>

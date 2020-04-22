@@ -41,7 +41,7 @@ session_start();
             <label for="exampleInputEmail1">Matricule <span class="champ_obligatoire">(*)</span> :</label>
             <div class="input-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-barcode"></i></span>
-                <input id="mat" type="text" class="form-control" name="matricule" placeholder="# ## #" 
+                <input id="mat" type="text" class="form-control" name="matricule" placeholder="# ## ##" 
                     value ="<?php if ((isset($_GET['msg_erreur'])) or (isset($_GET['msg_erreur_mdp']))) {echo($_SESSION['mat']);}?>"
                     onKeyUp="checkFormatMatricule('# ## ##')" 
                     required>

@@ -10,8 +10,9 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
+	} else {
+		RedirigerVers("se_connecter.php");
 	}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -149,23 +150,13 @@
 				</thead>
 				<tbody id="data-list">
 				<?php
-					//$reponse = $bdd->query('SELECT d.DATED, d.REFD, a.NIRA  FROM traiter t, dossier d, assure a where t.CODED=d.CODED and d.CODEA=a.CODEA  ');
-					//$reponse = DossiersCorbeilleTechnicien($link);
-					/* while ($donnees = $reponse->fetch())
-					{
-						echo ("<tr><td>".$donnees['DateD']."</td>
-									<td>".$donnees['RefD']."</td>
-									<td>".$donnees['NirA']."</td> 
-									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
-					}
-					$reponse->closeCursor(); */
 					$result = DossiersCorbeilleTechnicien($link, $codeT);
 					if ($result != NULL)
 						$rows = mysqli_num_rows($result);
 					else $rows = 0;
 					for ($i = 0; $i < $rows; $i++){
 						$donnees = mysqli_fetch_array($result);
-						echo ("<tr><td>".$donnees['DateD']."</td>
+						echo ("<tr><td>".date("d/m/Y", strtotime($donnees['DateD']))."</td>
 									<td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td>
 									<td>".$donnees['StatutD']."</td>

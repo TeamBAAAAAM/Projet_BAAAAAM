@@ -89,6 +89,14 @@ function GenererReferenceDossier($nbChar, $link)
 }
 
 
+//Vérifie si Ref et Nir correspondant existe dans la base de données
+function NirRefExiste($NirA, $refD, $link) {
+    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.refD = '".$refD."'" ;
+    $result = mysqli_query($link, $query);
+        
+    return (mysqli_fetch_array($result) != NULL);
+}
+
 //Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
 function ChercherAssureAvecNIR($NirA, $link)
 {
@@ -364,11 +372,18 @@ function nbDossiersATraiter($link)
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link)
 {
-    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d WHERE d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";
+    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 
+// Nombre de dossiers terminés à la date courante
+function nbDossiersTermines($link)
+{
+    $query = "SELECT count(*) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+    return mysqli_fetch_array($result);
+}
 /*      FONCTIONS POUR TECHNICIEN    */
 
 // Récupère les informations d'un technicien à partir du matricule
@@ -514,10 +529,9 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
 
 /*          CORBEILLE GENERALE         */
 
-// Liste des dossiers en cours de traitement par le technicien connecté
-function DossiersCorbeilleGenerale($link, $dateReception, $statut)
+// Liste de tous les dossiers (ceux à traiter sont affichés par défaut)
+function DossiersCorbeilleGenerale($link)
 {
-    //$query = "SELECT d.DateD, d.RefD, a.NirA  FROM dossier d, assure a WHERE d.DateD = '$dateReception' AND d.CodeA = a.CodeA"; 
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
     $result = mysqli_query($link, $query);
     return $result;
@@ -584,7 +598,7 @@ function ListeMessages($CodeA, $link) {
     $query .= "AND T.CodeT = M.CodeT ";
     $query .= "ORDER BY DateEnvoiM DESC";
  
-    return $result = mysqli_query($link, $query);
+    return mysqli_query($link, $query);
 }
 
 //Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
