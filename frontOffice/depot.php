@@ -1,13 +1,21 @@
 <?php
+
     session_start();
     require_once("../fonctions.php");
+
+    if(isset($_GET["delete_session"])) {
+        if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      
+        if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
+        RedirigerVers('depot.php'); // Suppresion des valeurs du POST
+    }
 
     $link = connexionMySQL();
     $repost = False; // Ceci est un premier dépôt
     $repost_ok = False; // Ceci n'est pas une demande d'authentification
 
-    $msg_error_nir = false;
-    $msg_error_ref = false;
+    $msg_error_nir = False; // Il n'y a pas de message d'erreur pour le NIR
+    $msg_error_ref = False; // Il n'y a pas de message d'erreur pour la référence du dossier
+    $msg_error_nir_ref = False; // Il n'y a pas de correspondance
 
     if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
@@ -20,11 +28,15 @@
             $repost = True;  // Ceci n'est pas un premier dépôt
         }
         if(isset($_GET["msg_error_nir"])) {
-            $msg_error_nir = true;
+            $msg_error_nir = True;
             $repost = True;  // Ceci n'est pas un premier dépôt
         }
         if(isset($_GET["msg_error_ref"])) {
-            $msg_error_ref = true;
+            $msg_error_ref = True;
+            $repost = True;  // Ceci n'est pas un premier dépôt
+        }
+        if(isset($_GET["msg_error_nir_ref"])) {
+            $msg_error_nir_ref = True;
             $repost = True;  // Ceci n'est pas un premier dépôt
         }
     }
@@ -42,6 +54,10 @@
             if(!DossierExiste($_POST["refD"], $link)) {
                 if($msg != "") $msg .= "&";
                 $msg = "msg_error_ref=1";
+            }
+            else {
+                if($msg != "") $msg .= "&msg_error_nir_ref=1";
+                else $msg .= "RefD=".$_POST["refD"]."&msg_error_nir_ref=1";
             }
         }
 
@@ -167,9 +183,38 @@
             </div>                
         </div>
     <?php endif ?>
-    
+
         <div class="container">
             <div class="row">
+                <!-- Message en cas d'erreur d'authentification -->
+                <?php if($msg_error_nir_ref) : ?>
+                    <div class="col-sm-12">
+                        <div class="alert alert-danger">
+                            <h3>
+                                <strong>
+                                    <span class="glyphicon glyphicon-remove"></span>Échec lors de l'authentification !
+                                </strong>
+                            </h3>
+                            <p>Ces identifiants sont invalides !</p>
+                        </div>
+                    </div>
+                <?php endif ?>
+                
+                <!-- Message en cas de référence de dossier valide -->                
+                <?php if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) : ?>
+                    <div class="col-sm-12">
+                        <div class="alert alert-info">
+                            <h3>
+                                <strong>
+                                    <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR
+                                </strong>
+                            </h3>
+                            <p>Dans le but de vous authentifier, merci de saisir votre NIR dans le champ précu à cet effet.</p>
+                        </div>
+                    </div>
+                <?php endif ?>  
+
+                <!-- Message en cas d'erreur de NIR inconnu -->
                 <?php if ($msg_error_nir) : ?>
                     <div class="col-sm-12">
                         <div class="alert alert-danger">
@@ -181,7 +226,9 @@
                             <p>Il semblerait que ce NIR ne soit affilié à aucun dossier.</p>
                         </div>
                     </div>
-                <?php endif ?>        
+                <?php endif ?>     
+
+                <!-- Message en cas d'erreur de référence inconnue -->
                 <?php if ($msg_error_ref) : ?>
                     <div class="col-sm-12">
                         <div class="alert alert-warning">
@@ -204,11 +251,20 @@
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
 
-                <?php if (!$repost && $repost_ok) : ?>
+                <?php if (!$repost) : ?>
                     <form enctype="multipart/form-data" method="POST" action="enregistrement.php">
                 <?php else : ?>
                     <form method="POST" action="depot.php">
                 <?php endif ?>
+                        <div id="lien_ameli" class="container">
+                            <h3><span class="glyphicon glyphicon-link"></span>Merci de vous rendre sur ameli.fr</h3>
+                            <p>Vous y trouverez la liste des feuillets nécessaires pour le traitement de votre demande.</p>
+                            <a href="https://www.ameli.fr/haute-garonne/assure/remboursements/indemnites-journalieres/conge-maternite#text_85208" target="_blank" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-share-alt"></span>Aller sur ameli.fr</a>
+                            <a href="https://www.ameli.fr/content/carnet-de-maternite-pour-les-femmes-chef-dentreprise-les-demarches-maternite" target="_blank" class="btn btn-lg btn-danger">
+                                <span class="glyphicon glyphicon-file"></span>Consulter le document PDF
+                            </a>
+                        </div>
+
                         <div class="container" id="etat-civil">
                             <h3>Identification :</h3>
 
@@ -269,7 +325,7 @@
                                     </div>
                                 </div>
 
-                            <?php if ($repost || $repost_ok): ?>
+                            <?php if ($repost || $repost_ok) : ?>
                                 <div class="col-sm-6">
                                     <label for="nom" class="control-label">Référence du dossier en cours :</label>    
                                     <div class="row">
@@ -296,7 +352,7 @@
                             <?php endif ?>
                             </div>
 
-                        <?php if (!$repost && $repost_ok) : ?>
+                        <?php if (!$repost || $repost_ok) : ?>
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nom" class="control-label">Nom (*) :</label>
@@ -350,7 +406,7 @@
                         </div>
 
                         <div class="container" id="pj">
-                        <?php if (!$repost && $repost_ok) : ?>
+                        <?php if (!$repost || $repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
                             <div class="row pj salarie">
                                 <div class="col-sm-12">
@@ -392,9 +448,9 @@
                                     </button>
                                 </div>
                             <!-- Affichage d'un bouton de retour s'il y a un message d'erreur -->
-                            <?php if ($msg_error_nir || $msg_error_ref) : ?>
+                            <?php if ($repost_ok || $repost) : ?>
                                 <div class="col-sm-4">
-                                    <a href="depot.php" class="btn btn-default btn-lg">
+                                    <a href="depot.php?delete_session=1" class="btn btn-default btn-lg">
                                         <span class="glyphicon glyphicon-new-window"></span>
                                         Effectuer un nouveau dépot
                                     </a>

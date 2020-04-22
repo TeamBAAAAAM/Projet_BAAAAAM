@@ -108,8 +108,7 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>

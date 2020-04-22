@@ -6,6 +6,7 @@ $(document).ready(function(){
     $("#statut").change(function() {TrierTableau()});
     $("#date_debut").change(function() {TrierTableau()});
     $("#date_fin").change(function() {TrierTableau()});
+    $("#mois_nir").change(function() {TrierTableau()});
 
     $(".alert").hide();
     $(".alert").show(1500);
@@ -75,10 +76,11 @@ function DateToNumber(date) {
 }
 
 function TrierTableau() {
-    TrierListe($("#recherche").val(), $("#date_debut").val(), $("#date_fin").val(), $("#statut").val());
+    TrierListe($("#recherche").val(), $("#date_debut").val(),
+        $("#date_fin").val(), $("#statut").val(), $("#mois_nir").val());
 }
 
-function TrierListe(texte, dateDebut, dateFin, statut) {
+function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
     var lignes = document.getElementById("data-list").getElementsByTagName("tr");
     if(dateDebut != "") dateDebut = DateToNumber(dateDebut);
     if(dateFin != "") dateFin = DateToNumber(dateFin);
@@ -87,6 +89,7 @@ function TrierListe(texte, dateDebut, dateFin, statut) {
         var colonnes = lignes[i].getElementsByTagName("td");
         var dateCourante = DateToNumber(colonnes[0].innerHTML);
         var statutCourant = colonnes[3].innerHTML;
+        var moisNirCourant = NaissanceAssure(colonnes[2].innerHTML)[0];
 
         lignes[i].style.display = '';
 
@@ -122,6 +125,12 @@ function TrierListe(texte, dateDebut, dateFin, statut) {
                     lignes[i].style.display = 'none';
             }
         }
+
+        if(moisNir != "") {
+            if(moisNir != moisNirCourant) {  
+                lignes[i].style.display = 'none';
+            }
+        }
     }
 }
 
@@ -129,7 +138,7 @@ function TrierListe(texte, dateDebut, dateFin, statut) {
 function NaissanceAssure($nir){
     $annee = $nir.substring(2, 4);
     $mois = $nir.substring(5, 7);
-    return ($mois, $annee);
+    return Array($mois, $annee);
 }
 
 // Mise à jour du message pré-rempli pour demander des pièces à un assuré

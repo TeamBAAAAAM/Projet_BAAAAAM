@@ -66,11 +66,12 @@ function goToByScroll(id, duration) {
 }
 
 //Rafraichissement du formulaire
-function showForm() {
+function refreshForm() {
     //Si les éléments de l'état civil n'est pas affiché
     if ($("#form_panel > div.container:first-child").is(":visible") == false) {
         setStatusToTheLeft(); //On place le menu des boutons du haut à gauche
-        $("#form_panel").show(); //On affiche le formulaire
+        $("#form_panel").hide(); //On affiche le formulaire
+        $("#form_panel").show(500); //On affiche le formulaire
     }
     goToByScroll('form_panel', 1000); //On scroll sur le formulaire
 }
@@ -99,13 +100,25 @@ function hideAllPJ() {
     }
 }
 
+// Cache le formulaire (pour le cas du travailleur indépendant)
+function hideForm() {
+    $("#etat-civil").hide();
+    $("#pj").hide();
+}
+
+// Affiche le formulaire (pour les cas autres que le travailleur indépendant)
+function showForm() {    
+    $("#etat-civil").show();
+    $("#pj").show();
+}
+
 //Création d'une fonction événementielle déclencher du clique
 //sur l'un des bouton $("#" + pj[i])
 function click_function(event) {
     var currentPJ = event.data.arg1;
 
     if (isUnselected("#" + currentPJ)) {
-        showForm();
+        refreshForm();
 
         hideAllPJ();
         $("#form_panel > div.panel-heading").text($("#" + currentPJ).text());
@@ -115,9 +128,7 @@ function click_function(event) {
 
         if ((currentPJ == "interim") |
             (currentPJ == "art-aut") |
-            (currentPJ == "independant") |
             (currentPJ == "cesu") |
-            (currentPJ == "independant") |
             (currentPJ == "independant")
         ) {
             //Changement de texte
@@ -299,11 +310,26 @@ $(document).ready(function(){
 	for(i = 0 ; i < pj.length ; i++) {
 		var currentPJ = pj[i];
 		$("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
-		$("#" + currentPJ).click({arg1: currentPJ}, click_function);
+        $("#" + currentPJ).click({arg1: currentPJ}, click_function);
+        
+        if(currentPJ == "independant") {
+            // Si on clique sur la case du travailleur indépendant
+            $("#" + currentPJ).click(function() {
+                hideForm(); // Le formulaire se ferme
+                $("#lien_ameli").show();  // Le message vers AMELI s'ouvre
+            });
+        }
+        else {
+            // Si on clique mais pas sur la case du travailleur indépendant
+            $("#" + currentPJ).click(function() {
+                showForm(); // Le formulaire s'ouvre
+                $("#lien_ameli").hide();  // Le message vers AMELI se ferme
+            });
+        }
 	}
 	$("#checkref").hide();
 
 	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
 	$("#date_arret").attr("max", aujourdhui());
-	$("#date_arret").attr("value", aujourdhui());
+    $("#date_arret").attr("value", aujourdhui());
 });
