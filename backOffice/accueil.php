@@ -1,6 +1,8 @@
 <?php 
 	session_start();
-    require("../fonctions.php");
+	require("../fonctions.php");
+	setlocale(LC_TIME, "fr_FR");
+
     // Connexion à la BD
     $link = connexionMySQL();
 	
@@ -121,7 +123,7 @@
 				<div class="col-sm-6 ">          
 					<table class="table table-striped police">
 						<thead class="titre"> 
-							<tr class="titre"><th><span class="glyphicon glyphicon-calendar"></span> Aujourd'hui  <?php setlocale(LC_TIME, "fr_FR"); echo ("<small>".strftime("(%a. %d-%m-%Y)")."</small>")?></th>
+							<tr class="titre"><th><span class="glyphicon glyphicon-calendar"></span> Aujourd'hui  <?php  echo ("<small>".strftime("(%a %d-%m-%Y)")."</small>")?></th>
 							<th><h4></h4></th></tr>
 						</thead>
 						<tbody id="data-list">

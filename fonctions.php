@@ -509,10 +509,9 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
 
 /*          CORBEILLE GENERALE         */
 
-// Liste des dossiers en cours de traitement par le technicien connecté
-function DossiersCorbeilleGenerale($link, $dateReception, $statut)
+// Liste de tous les dossiers (ceux à traiter sont affichés par défaut)
+function DossiersCorbeilleGenerale($link)
 {
-    //$query = "SELECT d.DateD, d.RefD, a.NirA  FROM dossier d, assure a WHERE d.DateD = '$dateReception' AND d.CodeA = a.CodeA"; 
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
     $result = mysqli_query($link, $query);
     return $result;

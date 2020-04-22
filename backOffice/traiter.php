@@ -35,7 +35,7 @@
 	$dossier = ChercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
-	$dateReception = $dossier["DateD"];
+	$dateReception = strtotime($dossier["DateD"]);
 	$statutDossier = $dossier["StatutD"];
 	$codeAssure = $dossier["CodeA"];
 	$nirAssure = $dossier["NirA"];
@@ -43,12 +43,12 @@
 	$prenomAssure = $dossier["PrenomA"];
 	$telephoneAssure = $dossier["TelA"];
 	$mailAssure = $dossier["MailA"];
-	$dateArretMaladie = $dossier["DateAM"];
+	$dateArretMaladie = strtotime($dossier["DateAM"]);
 	$codeT_dossier = $dossier["CodeT"];
 	$matricule_dossier = $dossier["Matricule"];
 	$nomT_dossier = $dossier["NomT"];
 	$prenomT_dossier = $dossier["PrenomT"];
-	$dateTraite = $dossier["DateTraiterD"];
+	$dateTraite = strtotime($dossier["DateTraiterD"]);
 
 	//Récupération des messages de l'assuré
 	$messagesAssure = ListeMessages($codeAssure, $link);
@@ -185,9 +185,9 @@
 					<div class="container-fluid panel panel-default">
 						<div class="panel-body">
 							<h4>DOSSIER No <?php echo $refDossier;?></h4>
-							<h5>Date de réception :  <?php echo $dateReception;?></h5>
+							<h5>Date de réception :  <?php echo date("d-m-Y", $dateReception);?></h5>
 							<h5>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h5>
-							<?php if ($statutDossier != "En cours") echo "<h5>Traité le :   $dateTraite</h5>"; else echo "<h5>Depuis le :   $dateTraite</h5>"; ?>
+							<?php if ($statutDossier != "En cours") echo "<h5>Traité le :  ".date("d-m-Y H:i", $dateTraite)."</h5>"; else echo "<h5>Depuis le :  ".date("d-m-Y H:i", $dateTraite)."</h5>"; ?>
 						</div>
 					</div>
 				</div>
@@ -196,7 +196,7 @@
 						<div class="panel-body">
 							<h4>NIR : <?php echo $nirAssure;?></h4>
 							<h5><?php echo "$nomAssure $prenomAssure";?></h5>
-							<h5>En arrêt de travail depuis le : <?php echo $dateArretMaladie;?></h5>
+							<h5>En arrêt de travail depuis le : <?php echo date("d-m-Y", $dateArretMaladie);?></h5>
 							<h5 style="margin: 8px 0px;">
 								<span style='margin-left: 0px;' class='glyphicon glyphicon-phone-alt'></span>
 								<?php
