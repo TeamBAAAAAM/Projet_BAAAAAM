@@ -445,7 +445,7 @@
                                     </button>
                                 </div>
                             <!-- Affichage d'un bouton de retour s'il y a un message d'erreur -->
-                            <?php if ($repost_ok || $repost) : ?>
+                            <?php if($repost_ok || $repost) : ?>
                                 <div class="col-sm-4">
                                     <a href="depot.php?delete_session=1" class="btn btn-default btn-lg">
                                         <span class="glyphicon glyphicon-new-window"></span>
@@ -459,7 +459,7 @@
                 </div>
             </div>
         </div>
-<?php endif ?>
+        
 		<footer class="container-fluid text-center">
 			<div class="row">
 				<div class="col-sm-3">
