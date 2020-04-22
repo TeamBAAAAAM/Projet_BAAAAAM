@@ -40,11 +40,6 @@ function connexionMySQL()
             return null;
         }
     }
-    if (mysqli_select_db($link, BD_MYSQL) == NULL) {
-        echo "Erreur : Impossible de se connecter à la base de données.";
-        exit;
-    }
-
     return $link;
 }
 
@@ -88,14 +83,6 @@ function GenererReferenceDossier($nbChar, $link)
     return $ref;
 }
 
-//Vérifie si un assuré est déjà enregistré
-function AssureExiste($NirA, $link)
-{
-    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
-    $result = mysqli_query($link, $query);
-
-    return (mysqli_fetch_array($result) != NULL);
-}
 
 //Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
 function ChercherAssureAvecNIR($NirA, $link)
@@ -147,12 +134,28 @@ function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
     return mysqli_fetch_array($result);
 }
 
+/*      Vérification d'existence dans la BD        */
+
+//Vérifie si un assuré est déjà enregistré
+function AssureExiste($NirA, $link)
+{
+    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
+    $result = mysqli_query($link, $query);
+    return (mysqli_fetch_array($result) != NULL);
+}
+
 //Vérifie si la référence donnée en paramètre n'est pas déjà utilisé
 function DossierExiste($RefD, $link)
 {
     $query = "SELECT RefD FROM Dossier WHERE RefD = '" . $RefD . "'";
     $result = mysqli_query($link, $query);
+    return (mysqli_fetch_array($result) != NULL);
+}
 
+// Vérifie si un justificatif est dans la BD
+function FichierExiste($link, $path){
+    $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '" . $path . "'";
+    $result = mysqli_query($link, $query);
     return (mysqli_fetch_array($result) != NULL);
 }
 
@@ -278,25 +281,24 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
                 $file = basename($Fichier['name'][$i]);
 
                 $target_dir = "../" . STORAGE_PATH . "/" . $NirA . "/" . $RefD;
-                $path = pathinfo($file);
-                $filename = $path['filename'];
-                $ext = $path['extension'];
+                $ext = pathinfo($file)['extension'];
 
                 $CheminJ = "$target_dir/$Key" . "_$j.$ext";
                 $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
                 $CodeD = ChercherDossierAvecREF($RefD, $link)["CodeD"];
                 $Mnemonique = ChercherObjetMnemoAvecMnemo($Key, $link);
                 $Designation = $Mnemonique["Designation"] . " No. " . $j;
-
-                if (EnregistrerFichier($CheminJ, $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
-                    if (move_uploaded_file($Fichier['tmp_name'][$i], $CheminJ)) {
-                        $resultats[] = array(TRUE, $file, $Designation);
-                        $j++;
+                if (!FichierExiste($link, $CheminJ)){
+                    if (EnregistrerFichier($CheminJ, $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
+                        if (move_uploaded_file($Fichier['tmp_name'][$i], $CheminJ)) {
+                            $resultats[] = array(TRUE, $file, $Designation);
+                            $j++;
+                        } else {
+                            $resultats[] = array(FALSE, $file, $Designation);
+                        }
                     } else {
                         $resultats[] = array(FALSE, $file, $Designation);
                     }
-                } else {
-                    $resultats[] = array(FALSE, $file, $Designation);
                 }
             }
         }
@@ -334,14 +336,14 @@ function VerificationMat($connexion, $matricule)
 // Nombre de dossiers recus à la date courante
 function nbDossiersRecus($link)
 {
-    $query = "Select count(*) AS nbDossiersRecus From dossier d Where DATE(d.DateD) = CURDATE()";
+    $query = "SELECT count(*) AS nbDossiersRecus FROM dossier d WHERE DATE(d.DateD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link)
 {
-    $query = "Select count(*) as nbDossiersAtraiterTotal From dossier d Where d.StatutD = 'À traiter'";
+    $query = "SELECT count(*) AS nbDossiersAtraiterTotal FROM dossier d WHERE d.StatutD = 'À traiter'";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
@@ -349,7 +351,7 @@ function nbDossiersATraiterTotal($link)
 // Nombre de dossiers restant à traiter à la date courante
 function nbDossiersATraiter($link)
 {
-    $query = "Select count(*) as nbDossiersAtraiter From dossier d Where d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";
+    $query = "SELECT count(*) AS nbDossiersAtraiter FROM dossier d WHERE d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
@@ -357,7 +359,7 @@ function nbDossiersATraiter($link)
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link)
 {
-    $query = "Select count(*) as nbDossiersClasses From dossier d Where d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";
+    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d WHERE d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
@@ -387,7 +389,7 @@ function AuthentifierTechnicien($link, $matricule, $mdpT) {
 // Changement du statut d'un dossier
 function ChangerStatutDossier($link, $codeDossier, $statut)
 {
-    $query = "UPDATE dossier SET StatutD = '$statut' Where CodeD = '$codeDossier'";
+    $query = "UPDATE dossier SET StatutD = '$statut' WHERE CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);
     return $result;
 }
@@ -516,11 +518,12 @@ function DossiersCorbeilleGenerale($link, $dateReception, $statut)
     return $result;
 }
 
+
 /*      CORBEILLE D'UN TECHNICIEN      */
 
 // Liste des dossiers en cours de traitement par le technicien connecté
 function DossiersCorbeilleTechnicien($link, $codeT) {
-    //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a where t.CodeD=d.CodeD and d.CodeA=a.CodeA';
+    //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a WHERE t.CodeD=d.CodeD and d.CodeA=a.CodeA';
 
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
     $query .= "FROM dossier d, assure a, technicien t, traiter tr ";

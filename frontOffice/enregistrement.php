@@ -54,18 +54,22 @@
                     <?php
                         if(empty($_POST) && empty($_GET)) RedirigerVers("depot.php");
 
+                        // Si l'assuré n'existe pas déjà dans la BD
                         if(!AssureExiste($_POST["nir"], $link)) {
-                            if(!EnregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) {
-                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans l'enregistrement de l'assuré' !</div>";
-                                }
-                                //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
-                                if(CreerDossierNIR($_POST["nir"])) {
+                            // Enregistrement de l'assuré dans la BD
+                            if(!EnregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) { // Message d'échec
+                                echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement de l'assuré !</div>";
+                            } else {
+                                //Création du dossier d'un assuré dont le nom est son NIR (en local)
+                                if(!CreerDossierNIR($_POST["nir"])) { // Message d'échec
+                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de la création du dossier du NIR de l'assuré' !</div>";
+                                } else { // Message de réussite
                                     $_SESSION["MessageAssure"] = "
-                                    <ul class='list-group'>
-                                        <li class='list-group-item list-group-item-success'> 
-                                            <h3>Enregistrement de vos informations</h3>
-                                        </li>";                   
-                                        
+                                        <ul class='list-group'>
+                                            <li class='list-group-item list-group-item-success'> 
+                                                <h3>Enregistrement de vos informations</h3>
+                                            </li>";                   
+                                            
                                     if(isset($_POST["nir"])) {$_SESSION["MessageAssure"] .= "
                                         <li class='list-group-item list-group-item-default'>
                                             <span class='glyphicon glyphicon-barcode'></span>NIR : ".$_POST["nir"]."
@@ -77,7 +81,7 @@
                                             <span class='glyphicon glyphicon-user'></span>Nom : ".$_POST["nom"]."
                                         </li>";
                                     }
-                                      
+                                        
                                     if(isset($_POST["prenom"])) {$_SESSION["MessageAssure"] .= "
                                         <li class='list-group-item list-group-item-default'>
                                             <span class='glyphicon glyphicon-user'></span>Prénom : ".$_POST["prenom"]."
@@ -96,60 +100,82 @@
                                             <span class='glyphicon glyphicon-phone-alt'></span>Email : ".$_POST["email"]."
                                         </li>";
                                     }
-                                    $_SESSION["MessageAssure"] .=  "
-                                    </ul>
-                                    ";
+                                    $_SESSION["MessageAssure"] .=  "</ul>";
                                 }
-                            
+                            }                                            
+                        } else { // Message d'information si l'assuré est déjà enregistré
+                            $_SESSION["MessageAssure"] = "
+                                    <ul class='list-group'>
+                                        <li class='list-group-item list-group-item-success'> 
+                                            <h3>Enregistrement de vos informations</h3>
+                                        </li>
+                                        <li class='list-group-item list-group-item-default'>
+                                            <span class='glyphicon glyphicon-ok'></span>Vous avez déjà été enregistré.
+                                        </li>
+                                    </ul>";
                         }
-                
+
+                        // Récupération des données de l'assuré dans la BD
                         $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
 
-                        //Si le dossier n'a pas encore été enregistré
+                        //Si une référence de dossier n'a pas encore été enregistré
                         if(!isset($_SESSION["RefD"])) {
                             $_SESSION["RefD"] = GenererReferenceDossier(8, $link);
-
-                            if(EnregistrerDossier(
-                                $assure["CodeA"],
-                                $_POST["date_arret"],
-                                $_SESSION["RefD"],
-                                $link)) {
-                                    //Créer le dossier de l'arrêt-maladie d'un assuré en local
-                                    if(CreerDossierAM($_SESSION["RefD"], $assure["NirA"])) {
-                                        $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
-                                        $_SESSION["MessageDossier"] = "
-                                            <ul class='list-group'>
-                                                <li class='list-group-item list-group-item-success'> 
-                                                    <h3>Enregistrement de votre dossier</h3>
-                                                </li>
-                                                <li class='list-group-item list-group-item-default'>
-                                                    <span class='glyphicon glyphicon-user'></span>". $dossier["PrenomA"]." ".$dossier["NomA"]."
-                                                    <span class='badge ignore'>
-                                                        Affilié au NIR ".$dossier["NirA"]."
-                                                    </span>
-                                                </li>
-                                                <li class='list-group-item list-group-item-default'>                           
-                                                    <span class='glyphicon glyphicon-folder-close'></span>Référence du dossier : <strong>".$dossier["RefD"]."</strong>
-                                                    <span class='label label-warning label_enregistrement'>
-                                                        &#9888; <strong>À conserver</strong>
-                                                    </span>
-                                                </li>
-                                                <li class='list-group-item list-group-item-default'>              
-                                                    <span class='glyphicon glyphicon-calendar'></span>Ce dossier a été créé le : <strong>".$dossier["DateD"]."</strong>
-                                                </li>
-                                            </ul>
-                                        ";
-                                    }
-                            }                            
+                            // Enregistrement du dossier dans la BD
+                            if(!EnregistrerDossier($assure["CodeA"], $_POST["date_arret"], $_SESSION["RefD"], $link)) { // Message d'échec
+                                echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement du dossier dans la base de données !</div>";
+                            } else {
+                                //Création du dossier de l'arrêt maladie dont le nom est sa référence (en local)
+                                if(!CreerDossierAM($_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
+                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec lors de la création du dossier !</div>";
+                                } else {
+                                    // Récupération des données du dossier dans la BD
+                                    $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
+                                    // Message de réussite
+                                    $_SESSION["MessageDossier"] = "
+                                        <ul class='list-group'>
+                                            <li class='list-group-item list-group-item-success'> 
+                                                <h3>Enregistrement de votre dossier</h3>
+                                            </li>
+                                            <li class='list-group-item list-group-item-default'>
+                                                <span class='glyphicon glyphicon-user'></span>". $dossier["PrenomA"]." ".$dossier["NomA"]."
+                                                <span class='badge ignore'>
+                                                    Affilié au NIR ".$dossier["NirA"]."
+                                                </span>
+                                            </li>
+                                            <li class='list-group-item list-group-item-default'>                           
+                                                <span class='glyphicon glyphicon-folder-close'></span>Référence du dossier : <strong>".$dossier["RefD"]."</strong>
+                                                <span class='label label-warning label_enregistrement'>
+                                                    &#9888; <strong>À conserver</strong>
+                                                </span>
+                                            </li>
+                                            <li class='list-group-item list-group-item-default'>              
+                                                <span class='glyphicon glyphicon-calendar'></span>Ce dossier a été créé le : <strong>".$dossier["DateD"]."</strong>
+                                            </li>
+                                        </ul>
+                                    ";
+                                }
+                            }                           
+                        } else { // Message d'information si le dossier existe déjà
+                            $_SESSION["MessageDossier"] = "
+                                        <ul class='list-group'>
+                                            <li class='list-group-item list-group-item-success'> 
+                                                <h3>Votre dossier d'arrêt maladie</h3>
+                                            </li>
+                                            <li class='list-group-item list-group-item-default'>
+                                                <span class='glyphicon glyphicon-ok'></span> Votre dossier existe déjà. 
+                                            </li>
+                                        </ul>";
                         }
-
+                        // Récupération des données du dossier dans la BD
                         $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
                             
                         if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
                         if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
                         
-                        $resultats = EnregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);
-                        if($resultats != null) {
+                        // Enregistrement des PJ
+                        $resultats = EnregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
+                        if($resultats != null) { // Message de réussite
                             echo "
                             <ul class='list-group'>
                                 <li class='list-group-item panel_header_fichier'>   
@@ -158,7 +184,7 @@
                             ";
 
                             foreach($resultats as $resultat) {
-                                if($resultat[0]) { //Si l'envoie a réussi
+                                if($resultat[0]) { //Si l'envoi a réussi
                                     echo "
                                         <li class='list-group-item list-group-item-default'>
                                                 <span class='glyphicon glyphicon-save-file'></span>
@@ -171,8 +197,7 @@
                                                 </span>
                                         </li>
                                     ";
-                                }
-                                else {
+                                } else {
                                     echo "
                                         <li class='list-group-item list-group-item-default'>
                                             <span class='glyphicon glyphicon-save-file'></span>
