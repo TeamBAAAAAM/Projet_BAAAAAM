@@ -10,12 +10,9 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
+	} else {
+		RedirigerVers("se_connecter.php");
 	}
-
-	// Variables de test (à supprimer par la suite)
-	$dateReception = "10/10/20";
-	$statut = "À traiter";
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,7 +43,7 @@
 
         <title>PJPE - Corbeille Générale</title>
 	</head>
-	<body>
+	<body onload="TrierTableau();">
 		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">
@@ -77,8 +74,7 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -86,10 +82,60 @@
 			</div>
 		</nav>
 		
-		<div class="container">			
-			<div class="input-group">
-				<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
-				<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+		<div class="container">		
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i>Recherche un élément</span>
+						<input id="recherche" type="text" class="form-control" name="msg" placeholder="Date de réception, Référence du dossier, NIR, Statut ...">
+					</div>		
+				</div>	
+			</div>
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Date de réception (Début)</span>
+						<input id="date_debut" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="input-group input-date">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i>Date de réception (Fin)</span>
+						<input id="date_fin" type="date" class="form-control">
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="input-group">
+						<span class="input-group-addon">Statut</span>
+						<select  class="form-control" id="statut">
+							<option>Tous</option>
+							<option selected>À traiter</option>
+							<option>En cours</option>
+							<option>Classé sans suite</option>
+							<option>Terminé</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-4">
+					<label for="mois_nir"><i class="glyphicon glyphicon-calendar"></i>Mois de naissance</label>
+					<select class="form-control" id="mois_nir">
+						<option value="" selected>---</option>
+						<option value="01">Janvier</option>
+						<option value="02">Février</option>
+						<option value="03">Mars</option>
+						<option value="04">Avril</option>
+						<option value="05">Mai</option>
+						<option value="06">Juin</option>
+						<option value="07">Juillet</option>
+						<option value="08">Août</option>
+						<option value="09">Septembre</option>
+						<option value="10">Octobre</option>
+						<option value="11">Novembre</option>
+						<option value="12">Décembre</option>
+					</select>
+				</div>
 			</div>
 		
 			<table class="table table-striped">
@@ -103,39 +149,28 @@
 				</thead>
 				<tbody id="data-list">
 				<?php					
-					$reponse = DossiersCorbeilleGenerale($link, $dateReception, $statut);
-					/* while ($donnees = $reponse->fetch())
-					{
-						echo ("<tr><td>".$donnees['DateD']."</td>
-									<td>".$donnees['RefD']."</td>
-									<td>".$donnees['NirA']."</td> 
-									<td><button type='button' class='btn btn-info'><span class='glyphicon glyphicon-plus'></span></button></td></tr>");
-					}
-					$reponse->closeCursor(); */
-					$result = DossiersCorbeilleGenerale($link, $dateReception, $statut);
+					$result = DossiersCorbeilleGenerale($link);
 					$rows = mysqli_num_rows($result);
-                    for ($i = 0; $i < $rows; $i++){
+                    for ($i = 0; $i < $rows; $i++) {
 						$donnees = mysqli_fetch_array($result);
-						echo("<tr><td>".$donnees['DateD']."</td>
+						echo("<tr><td>".date("d/m/Y", strtotime($donnees['DateD']))."</td>
 								    <td>".$donnees['RefD']."</td>
 									<td>".$donnees['NirA']."</td>
 									<td>".$donnees['StatutD']."</td>
 									<td>");
 								
-						if($donnees['StatutD'] == "En cours") {
-							$class =  "btn btn-warning disabled";
-							$icon = "glyphicon-lock";	
-						}
-						else if($donnees['StatutD'] == "À traiter")  {
+						if($donnees['StatutD'] == "À traiter")  {
 							$class =  "btn btn-success";
-							$icon = "glyphicon-plus";			
+							$icon = "glyphicon-plus";
+							$variables = "codeD=".$donnees['CodeD']."&statut=En cours";
 						}
 						else {
 							$class =  "btn btn-primary";
 							$icon = "glyphicon-search";
+							$variables = "codeD=".$donnees['CodeD'];
 						}
 						
-						echo("<a href='traiter.php?codeD=".$donnees['CodeD']."' class='$class' role='button'>
+						echo("<a href='traiter.php?$variables' class='$class' role='button'>
 							<span class='glyphicon $icon'></span>
 						</a>");
 						echo "</td></tr>";

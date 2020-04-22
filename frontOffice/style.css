@@ -195,10 +195,20 @@ footer #links a {
 	background-color: #161c27;
 }
 
-footer div.list-group a , .header a{
+footer div.list-group a {
 	border: none;
 	background-color: #1c2331;
 	color: #21d192;
+}
+
+.header a {
+	border: none;
+	text-decoration: none;
+	color: white;
+}
+
+.header a:hover {
+	color: rgb(163, 206, 204);
 }
 
 a[href='https://www.oups.gouv.fr/'] > img {
@@ -227,7 +237,7 @@ div.alert {
 }
 @media only screen and (min-width : 992px) {
 	div.btn-status {
-		height: 190px;
+		height: 210px;
 	}
 }
 

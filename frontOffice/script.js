@@ -66,11 +66,12 @@ function goToByScroll(id, duration) {
 }
 
 //Rafraichissement du formulaire
-function showForm() {
+function refreshForm() {
     //Si les éléments de l'état civil n'est pas affiché
     if ($("#form_panel > div.container:first-child").is(":visible") == false) {
         setStatusToTheLeft(); //On place le menu des boutons du haut à gauche
-        $("#form_panel").show(); //On affiche le formulaire
+        $("#form_panel").hide(); //On affiche le formulaire
+        $("#form_panel").show(500); //On affiche le formulaire
     }
     goToByScroll('form_panel', 1000); //On scroll sur le formulaire
 }
@@ -99,25 +100,42 @@ function hideAllPJ() {
     }
 }
 
+// Cache le formulaire (pour le cas du travailleur indépendant)
+function hideForm() {
+    $("#etat-civil").hide();
+    $("#pj").hide();
+}
+
+// Affiche le formulaire (pour les cas autres que le travailleur indépendant)
+function showForm() {    
+    $("#etat-civil").show();
+    $("#pj").show();
+}
+
 //Création d'une fonction événementielle déclencher du clique
 //sur l'un des bouton $("#" + pj[i])
 function click_function(event) {
     var currentPJ = event.data.arg1;
 
     if (isUnselected("#" + currentPJ)) {
-        showForm();
+        refreshForm();
 
         hideAllPJ();
         $("#form_panel > div.panel-heading").text($("#" + currentPJ).text());
         $("." + currentPJ).show(1000);
         $(".selected").toggleClass("unselected selected");
         $("#" + currentPJ).toggleClass("unselected selected");
+        $("#" + currentPJ).toggleClass("unselected selected");
+
+        // Toggle sur le required
+        for(i = 0 ; i < pj.length ; i++) {
+            $("." + pj[i] + " input[type='file']").prop('required', false);
+        }
+        $("." + currentPJ + " input[type='file']").prop('required', true);
 
         if ((currentPJ == "interim") |
             (currentPJ == "art-aut") |
-            (currentPJ == "independant") |
             (currentPJ == "cesu") |
-            (currentPJ == "independant") |
             (currentPJ == "independant")
         ) {
             //Changement de texte
@@ -212,47 +230,45 @@ function enregistrerPage() {
 
 //Vérifie et corrige le format du NIR
 function checkFormatNir(format) {
-    formatNIR = format;
+	formatNIR = format;
 
-    let caret = document.getElementById("nir").selectionStart;
-    var str = $("#nir").val().toUpperCase();
+	let caret = document.getElementById("nir").selectionStart;
+	var str = $("#nir").val().toUpperCase();
 
-    //Suppression des valeurs invalides
-    var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
-    var match = str.match(pattern);
-    if (match != null) {
-        str = match.join("");
-        var deb = str.substr(0, caret);
-        var fin = str.substr(caret);
-
-        for (i = 0; i < caret; i++) {
-            if (format.charAt(i) == " " && str.charAt(i) != " ") {
-                deb = deb.substr(0, i) + " " + deb.substr(i);
-                caret++;
-            }
-        }
-
-        //Si le curseur est dans la chaine de caractères
-        if (caret < str.length - 1) {
-            for (i = caret; i < format.length; i++) {
-                if (format.charAt(i) == " " && fin.charAt(i - caret) != " ") {
-                    fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
-                }
-                if (format.charAt(i) == "#" && fin.charAt(i - caret) == " ") {
-                    fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
-                }
-            }
-        }
-
-        str = deb + fin;
-        //Si le nombre de caractères courants dépasse celui du nombre autorisés
-        if (str.length > format.length) str = str.substr(0, format.length);
-
-        $("#nir").val(str);
-        document.getElementById("nir").setSelectionRange(caret, caret);
-
-        checkButtonRefD();
-    }
+	//Suppression des valeurs invalides
+	var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
+	var match = str.match(pattern);
+	if(match != null) {
+		str = match.join("");
+		var deb = str.substr(0, caret);
+		var fin = str.substr(caret);
+		
+		for(i = 0 ; i < caret ; i++) {
+			if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
+				deb = deb.substr(0, i) + " " + deb.substr(i);
+				caret++;
+			}
+		}
+	
+		//Si le curseur est dans la chaine de caractères
+		if(caret < str.length - 1) {
+			for(i = caret ; i < format.length ; i++) {
+				if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
+					fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
+				}
+				if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
+					fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
+				}
+			}
+		}
+	
+		str = deb + fin;
+		//Si le nombre de caractères courants dépasse celui du nombre autorisés
+		if(str.length > format.length) str = str.substr(0, format.length);
+	
+		$("#nir").val(str);
+		document.getElementById("nir").setSelectionRange(caret, caret);
+	}
 }
 
 //Vérifie et corrige le format du NIR
@@ -272,17 +288,7 @@ function checkFormatRefD() {
         $("#refD").val(str);
     }
 
-    document.getElementById("refD").setSelectionRange(caret, caret);
-    checkButtonRefD();
-}
-
-//Active ou désactive le bouton de vérification de référence
-function checkButtonRefD() {
-    if ($("#refD").val().length == nbCharRefD && $("#nir").val().length == formatNIR.length) {
-        $("#checkref").show(); //Activation du bouton de vérification de la référence de dossier
-    } else {
-        $("#checkref").hide(); //Désactivation du bouton de vérification de la référence de dossier
-    }
+	document.getElementById("refD").setSelectionRange(caret, caret);
 }
 
 //Vérifie si une référence est correcte
@@ -304,38 +310,33 @@ function remplirFormulaire(xhttp) {
 
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
-$(document).ready(function() {
-    showInfo();
-    $("#form_panel").hide(); //Le formulaire est masqué
+$(document).ready(function(){
+	showInfo();
+	$("#form_panel").hide(); //Le formulaire est masqué
+	
+	for(i = 0 ; i < pj.length ; i++) {
+		var currentPJ = pj[i];
+		$("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
+        $("#" + currentPJ).click({arg1: currentPJ}, click_function);
+        
+        if(currentPJ == "independant") {
+            // Si on clique sur la case du travailleur indépendant
+            $("#" + currentPJ).click(function() {
+                hideForm(); // Le formulaire se ferme
+                $("#lien_ameli").show();  // Le message vers AMELI s'ouvre
+            });
+        }
+        else {
+            // Si on clique mais pas sur la case du travailleur indépendant
+            $("#" + currentPJ).click(function() {
+                showForm(); // Le formulaire s'ouvre
+                $("#lien_ameli").hide();  // Le message vers AMELI se ferme
+            });
+        }
+	}
+	$("#checkref").hide();
 
-    for (i = 0; i < pj.length; i++) {
-        var currentPJ = pj[i];
-        $("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
-        $("#" + currentPJ).click({ arg1: currentPJ }, click_function);
-    }
-    $("#checkref").hide();
-});
-
-//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
-$(document).ready(function() {
-    $("#date_arret").attr("max", aujourdhui());
+	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
+	$("#date_arret").attr("max", aujourdhui());
     $("#date_arret").attr("value", aujourdhui());
 });
-
-// Afficher le bouton scroll lorsqu'on descend de 20 à partir du haut de la page
-window.onscroll = function() { scrollFunction() };
-
-function scrollFunction() {
-    mybutton = document.getElementById("myBtn");
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        mybutton.style.display = "block";
-    } else {
-        mybutton.style.display = "none";
-    }
-}
-
-// Scroll en haut de la page
-function topFunction() {
-    document.body.scrollTop = 0; // Safari
-    document.documentElement.scrollTop = 0; // Chrome, Firefox, IE and Opera
-}
