@@ -111,8 +111,7 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" href="index.php">Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -220,11 +219,11 @@
 				<div id="panel-statut" class="col-sm-6">
 					<div class= "container-fluid panel panel-default">	
 						<div class="panel-body">
-							<div class="row" style="margin-bottom:0px;">
-								<div class="col-sm-2 text-center">
+							<div class="row">
+								<div class="col-lg-2 text-center">
 									<span class="titre">Statut</span>
 								</div>
-								<div class="col-sm-10">
+								<div class="col-lg-10">
 									<div class="btn-group btn-group-justified">
 										<a href="traiter.php?statut=En cours"
 											class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
@@ -244,19 +243,18 @@
 				<div class="col-sm-6">
 					<div class= "container-fluid panel panel-default">	
 						<div class="panel-body">
-							<div class="row" style="margin-bottom:0px;">
-								<div class="col-sm-12 btn-group btn-group-justified">
+							<div class="row">
+								<div class="col-lg-12 btn-group btn-group-justified">
     								<div class="btn-group">
 										<button type="button" class="btn btn-default<?php if($codeT != $codeT_dossier) echo " disabled";?>" 
-										data-toggle="modal" data-target="#myModal">
+										data-toggle="modal" data-target="#myModal" <?php if($codeT != $codeT_dossier) echo" disabled";?>
 											<span class="glyphicon glyphicon-send"></span> Envoyer un mail à l'assuré
 										</button>
 									</div>
-
     								<div class="btn-group">
 										<button type="button" class="btn btn-default<?php if($messagesAssure == null) echo " disabled";?>" 
-										data-toggle="modal" data-target="#myModal2"
-											><span class="glyphicon glyphicon-th-list"></span> Consulter la liste des messages
+										data-toggle="modal" data-target="#myModal2" <?php if($messagesAssure == null) echo " disabled";?>
+											><span class="glyphicon glyphicon-th-list"></span> Historique des messages
 										</button>
 									</div>
 								</div>

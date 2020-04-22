@@ -7,6 +7,7 @@ $(document).ready(function(){
     $("#date_debut").change(function() {TrierTableau()});
     $("#date_fin").change(function() {TrierTableau()});
     $("#mois_nir").change(function() {TrierTableau()});
+    $("#nb_page").change(function() {TrierTableau()});
 
     $(".alert").hide();
     $(".alert").show(1500);
@@ -78,6 +79,7 @@ function DateToNumber(date) {
 function TrierTableau() {
     TrierListe($("#recherche").val(), $("#date_debut").val(),
         $("#date_fin").val(), $("#statut").val(), $("#mois_nir").val());
+    GenererPagination();
 }
 
 function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
@@ -91,27 +93,32 @@ function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
         var statutCourant = colonnes[3].innerHTML;
         var moisNirCourant = NaissanceAssure(colonnes[2].innerHTML)[0];
 
-        lignes[i].style.display = '';
-
+        lignes[i].style = "";
+        lignes[i].className = "valide";
+        
         if(dateDebut != "" && dateFin != "") {
             if(!(dateDebut <= dateCourante && dateCourante <= dateFin)) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
         else if(dateDebut != "") {
             if(!(dateDebut <= dateCourante)) {  
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
         else if(dateFin != "") {
-            if(!(dateFin >= dateCourante)) {  
+            if(!(dateFin >= dateCourante)) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
 
         if(statut != "" && statut != "Tous") {            
-            if(!(statut == statutCourant)) {
+            if(statut != statutCourant) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
 
@@ -123,15 +130,22 @@ function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
                 || colonnes[2].innerHTML.toLowerCase().includes(texte.toLowerCase())
                 || colonnes[3].innerHTML.toLowerCase().includes(texte.toLowerCase()))) {
                     lignes[i].style.display = 'none';
+                    lignes[i].className = "";
             }
         }
 
         if(moisNir != "") {
             if(moisNir != moisNirCourant) {  
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
-        }
+        } 
+
+        console.log(i + " : " + lignes[i].style.display);
+        console.log(i + " : " + lignes[i].className);
     }
+
+    CliquePageBouton(1);
 }
 
 // Extraction du mois et de l'année de naissance d'un assuré à partir du NIR
@@ -170,4 +184,49 @@ function EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ) 
     if(FOOTER_EMAIL != "") message +="\n\n<hr>" + FOOTER_EMAIL;
 
     return message;
+}
+
+//Génère automatiquement la pagination selon le nombre de ligne afficher
+function GenererPagination() {
+    nbLignesParPage = $("#nb_page").val();
+    nbLignesTableau = $("#data-list tr.valide").length;
+
+    nbPage = Math.ceil(nbLignesTableau / nbLignesParPage);
+    html = "";
+
+    for(i = 1 ; i <= nbPage ; i++) {
+        html += '<li';
+        if(i == 1) html += ' class="active" '
+        html += '><a id="page' + i + '" role="button" onClick="CliquePageBouton(' + i + ')">' + i + '</a></li>';
+    }
+
+    $(".pagination").html(html);
+}
+
+//Gère l'évènement lors du clique sur une page
+function CliquePageBouton(numPage) {
+    // Changement du bouton cliqué en classe "active"
+    $("ul.pagination li").removeClass("active");
+    $("ul.pagination li:nth-child(" + numPage + ")").addClass("active");
+
+    nbLignesTableau = $("#data-list tr.valide").length;
+    nbLignesParPage = $("#nb_page").val();
+
+    nbPage = Math.ceil(nbLignesTableau / nbLignesParPage);
+    fin = numPage * nbLignesParPage - 1;
+    
+    /*if(debut + nbLignesParPage > nbLignesTableau) fin = nbLignesTableau;
+    else fin = debut + nbLignesParPage;*/
+
+    debut = fin - nbLignesParPage + 1;
+
+    for(i = 0 ; i < nbLignesTableau ; i++) {
+        element = $("#data-list tr.valide:eq(" + i + ")");
+        if(i >= debut && i <= fin) {
+            element.show();
+        }
+        else {
+            element.hide();
+        }
+    }
 }
