@@ -56,18 +56,6 @@
 
                         // Si l'assuré n'existe pas déjà dans la BD
                         if(!AssureExiste($_POST["nir"], $link)) {
-<<<<<<< Updated upstream
-                            if(EnregistrerAssure(
-                                $_POST["nir"],
-                                $_POST["nom"],
-                                $_POST["prenom"], 
-                                $_POST["tel"], 
-                                $_POST["email"],
-                                $link)) {
-
-                                //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
-                                if(CreerDossierNIR($_POST["nir"])) {
-=======
                             // Enregistrement de l'assuré dans la BD
                             if(!EnregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) { // Message d'échec
                                 echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement de l'assuré !</div>";
@@ -76,7 +64,6 @@
                                 if(!CreerDossierNIR($_POST["nir"])) { // Message d'échec
                                     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de la création du dossier du NIR de l'assuré' !</div>";
                                 } else { // Message de réussite
->>>>>>> Stashed changes
                                     $_SESSION["MessageAssure"] = "
                                         <ul class='list-group'>
                                             <li class='list-group-item list-group-item-success'> 
@@ -115,9 +102,6 @@
                                     }
                                     $_SESSION["MessageAssure"] .=  "</ul>";
                                 }
-<<<<<<< Updated upstream
-                            }
-=======
                             }                                            
                         } else { // Message d'information si l'assuré est déjà enregistré
                             $_SESSION["MessageAssure"] = "
@@ -129,7 +113,6 @@
                                             <span class='glyphicon glyphicon-ok'></span>Vous avez déjà été enregistré.
                                         </li>
                                     </ul>";
->>>>>>> Stashed changes
                         }
 
                         // Récupération des données de l'assuré dans la BD
