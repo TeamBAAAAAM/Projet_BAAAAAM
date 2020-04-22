@@ -13,7 +13,7 @@ define("STORAGE_PATH", "piecesJustificatives");
 
 //Message pour l'assuré (généré en JavaScript)
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");
-define("DEPOSITE_LINK", "https://www.pjpe-cpam.fr/depot.php");
+define("DEPOSITE_LINK", GenererLienDepot());
 define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");
 
 /* ************************************************ */
@@ -44,12 +44,17 @@ function connexionMySQL()
 }
 
 // Redirection vers une page différente du même dossier
-function RedirigerVers($nomPage)
-{
+function RedirigerVers($nomPage) {
     $host = $_SERVER['HTTP_HOST'];
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     header("Location: http://$host$uri/$nomPage");
     exit;
+}
+
+// Retourne le lien à la racine du site WEB
+function GenererLienDepot() {
+    $host = $_SERVER['HTTP_HOST'];
+    return "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php";
 }
 
 /* ************************************************ */
