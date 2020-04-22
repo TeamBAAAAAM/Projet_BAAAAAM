@@ -62,8 +62,16 @@ function RedirigerVers($nomPage) {
 /*                  FRONT OFFICE                    */ 
 /* ************************************************ */  
 
-//
-function CharactereAleatoire() {
+//Vérifie si la référence d'un dossier est affilié au NIR passé en paramètre
+function NirRefExiste($NirA, $RefD, $link) {
+    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.RefD = '".$RefD."'" ;
+    $result = mysqli_query($link, $query);
+        
+    return (mysqli_fetch_array($result) != NULL);
+}
+
+// Renvoie un caractère aléatoire compris dans $listeChar
+function CaractereAleatoire() {
     $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return $listeChar[rand(0, strlen($listeChar)-1)];
 }
@@ -73,10 +81,10 @@ function GenererReferenceDossier($nbChar, $link) {
     do {
         $ref = "";
         for($i = 0 ; $i < $nbChar ; $i++) {
-            $ref .= CharactereAleatoire();
+            $ref .= CaractereAleatoire();
         }
     } while(DossierExiste($ref, $link));
-    
+
     return $ref;
 }
 
@@ -318,6 +326,7 @@ function nbDossiersClasses($link) {
 
 /*      FONCTIONS POUR TECHNICIEN    */
 
+// Récupère les informations d'un technicien à partir du matricule
 function DonneesTechnicien($link, $matricule) {
     $query = "Select CodeT, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);    

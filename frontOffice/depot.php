@@ -1,8 +1,63 @@
 <?php
     session_start();
     require_once("../fonctions.php");
-    
-    if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}  
+
+    $link = connexionMySQL();
+    $repost = False; // Ceci est un premier dépôt
+    $repost_ok = False; // Ceci n'est pas une demande d'authentification
+
+    $msg_error_nir = false;
+    $msg_error_ref = false;
+
+    if(isset($_GET)) {
+        if(isset($_GET["RefD"])) {
+            $ReferenceDossier = $_GET["RefD"];
+            if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
+            if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
+            if(!DossierExiste($_GET["RefD"], $link)) {
+                RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+            }
+            $repost = True;  // Ceci n'est pas un premier dépôt
+        }
+        if(isset($_GET["msg_error_nir"])) {
+            $msg_error_nir = true;
+            $repost = True;  // Ceci n'est pas un premier dépôt
+        }
+        if(isset($_GET["msg_error_ref"])) {
+            $msg_error_ref = true;
+            $repost = True;  // Ceci n'est pas un premier dépôt
+        }
+    }
+
+    if(isset($_POST["nir"])) {
+        //Vérification de la correspondance entre le NIR et la référence du dossier
+        if(NirRefExiste($_POST["nir"], $_POST["refD"], $link)) {
+            $_SESSION["Assure"] = ChercherAssureAvecNIR($_POST["nir"], $link);      
+            $_SESSION["RefD"] = $_POST["refD"];
+            $_SESSION["Assure"]["DateAM"] = ChercherDossierAvecREF($_POST["refD"], $link)["DateAM"];
+            RedirigerVers('depot.php'); // Suppresion des valeurs du POST
+        }     
+        else {           
+            if(!AssureExiste($_POST["nir"], $link)) $msg .= "RefD=".$_POST["refD"]."&msg_error_nir=1";
+            if(!DossierExiste($_POST["refD"], $link)) {
+                if($msg != "") $msg .= "&";
+                $msg = "msg_error_ref=1";
+            }
+        }
+
+        RedirigerVers('depot.php?'.$msg); // Passage des varaibles par la méthode GET
+    }
+
+    if(isset($_SESSION["Assure"])) {
+        $NirAssure = $_SESSION["Assure"]["NirA"];
+        $ReferenceDossier = $_SESSION["RefD"];
+        $NomAssure = $_SESSION["Assure"]["NomA"];
+        $PrenomAssure = $_SESSION["Assure"]["PrenomA"];
+        $TelephoneAssure = $_SESSION["Assure"]["TelA"];
+        $MailAssure = $_SESSION["Assure"]["MailA"];
+        $DateAM = $_SESSION["Assure"]["DateAM"];
+        $repost_ok = True;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +70,57 @@
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="script.js"></script>
+
+        <?php if (!$repost && !$repost_ok) : ?>
+            <script src="script.js"></script>
+        <?php else :?>
+            <script>
+                //Vérifie et corrige le format du NIR
+                function checkFormatNir(format) {
+                    formatNIR = format;
+
+                    let caret = document.getElementById("nir").selectionStart;
+                    var str = $("#nir").val().toUpperCase();
+
+                    //Suppression des valeurs invalides
+                    var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
+                    var match = str.match(pattern);
+                    if(match != null) {
+                        str = match.join("");
+                        var deb = str.substr(0, caret);
+                        var fin = str.substr(caret);
+                        
+                        for(i = 0 ; i < caret ; i++) {
+                            if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
+                                deb = deb.substr(0, i) + " " + deb.substr(i);
+                                caret++;
+                            }
+                        }
+                    
+                        //Si le curseur est dans la chaine de caractères
+                        if(caret < str.length - 1) {
+                            for(i = caret ; i < format.length ; i++) {
+                                if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
+                                    fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
+                                }
+                                if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
+                                    fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
+                                }
+                            }
+                        }
+                    
+                        str = deb + fin;
+                        //Si le nombre de caractères courants dépasse celui du nombre autorisés
+                        if(str.length > format.length) str = str.substr(0, format.length);
+                    
+                        $("#nir").val(str);
+                        document.getElementById("nir").setSelectionRange(caret, caret);
+                    
+                        checkButtonRefD();
+                    }
+                }
+            </script>
+        <?php endif ?>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -29,7 +134,8 @@
 				</div>
 			</div>
         </nav>
-        		
+        
+    <?php if (!$repost && !$repost_ok) : ?>
         <div class="container text-center" id="status">
 			<div class="row">
 				<div id="interim" class="col-sm-3 btn-status">
@@ -60,18 +166,52 @@
 				</div>
             </div>                
         </div>
-
-        <div id="info-status" class="alert alert-info">
-            <strong>Attention ! </strong><span id="message">Mon message ici ...</span>
+    <?php endif ?>
+    
+        <div class="container">
+            <div class="row">
+                <?php if ($msg_error_nir) : ?>
+                    <div class="col-sm-12">
+                        <div class="alert alert-danger">
+                            <h3>
+                                <strong>
+                                    <span class="glyphicon glyphicon-remove"></span>NIR non enregistré !
+                                </strong>
+                            </h3>
+                            <p>Il semblerait que ce NIR ne soit affilié à aucun dossier.</p>
+                        </div>
+                    </div>
+                <?php endif ?>        
+                <?php if ($msg_error_ref) : ?>
+                    <div class="col-sm-12">
+                        <div class="alert alert-warning">
+                            <h3>
+                                <strong>
+                                    <span class="glyphicon glyphicon-link"></span>Référence invalide
+                                </strong>
+                            </h3>
+                            <p>
+                                Ce lien ne permet pas de référencer un dossier enregistré !
+                            </p>
+                        </div>
+                    </div>
+                <?php endif ?>
+            </div>
         </div>
 
         <div class="container">
             <div class="panel panel-default" id="form_panel">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
-                    <form enctype="multipart/form-data" method="POST" action="enregistrement.php"> 
+
+                <?php if (!$repost && $repost_ok) : ?>
+                    <form enctype="multipart/form-data" method="POST" action="enregistrement.php">
+                <?php else : ?>
+                    <form method="POST" action="depot.php">
+                <?php endif ?>
                         <div class="container" id="etat-civil">
                             <h3>Identification :</h3>
+
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
@@ -81,6 +221,7 @@
                                             pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
                                             placeholder="# ## ## ## ### ###"
                                             onKeyUp='checkFormatNir("# ## ## ## ### ###");'
+                                            <?php if(isset($NirAssure)) echo "value='$NirAssure' readonly " ?>
                                             required
                                         >
                                     </div>
@@ -127,19 +268,20 @@
                                         </div>
                                     </div>
                                 </div>
+
+                            <?php if ($repost || $repost_ok): ?>
                                 <div class="col-sm-6">
                                     <label for="nom" class="control-label">Référence du dossier en cours :</label>    
                                     <div class="row">
                                         <div class="col-sm-6">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="	glyphicon glyphicon-folder-close"></i></span>
-                                                <input onKeyUp="checkFormatRefD();" id="refD" type="text" class="form-control" name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$">
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button id="checkref" type="button" class="btn btn-primary" onClick="verifierRef();">
-                                                <strong>&#128272;</strong> Vérifier
-                                            </button>
+                                                <input onKeyUp="checkFormatRefD();" id="refD" type="text" class="form-control" 
+                                                    name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$"
+                                                    <?php
+                                                        if(isset($ReferenceDossier)){ echo "value='$ReferenceDossier' readonly";}
+                                                    ?>>           
+                                            </div>          
                                         </div>
                                     </div>
                                     <div class="row">
@@ -149,22 +291,27 @@
                                                 Il vous a été délivré lors de la confirmation de la prise en charge de votre demande.
                                             </span>
                                         </div>
-                                    </div>
-                                </div>  
+                                    </div>         
+                                </div>
+                            <?php endif ?>
                             </div>
+
+                        <?php if (!$repost && $repost_ok) : ?>
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="nom" class="control-label">Nom (*) :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom" required>
+                                        <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom" 
+                                        <?php if(isset($NomAssure)) echo "value='$NomAssure'" ?> required>
                                     </div>
                                 </div>        
                                 <div class="col-sm-4">                
                                     <label for="prenom" class="control-label">Prénom (*) :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom" required>
+                                        <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom" 
+                                        <?php if(isset($PrenomAssure)) echo "value='$PrenomAssure'" ?> required>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +320,8 @@
                                     <label for="email" class="control-label">Adresse mail : </label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <input id="email" type="email" class="form-control" name="email" placeholder="xyz@exemple.com">
+                                        <input id="email" type="email" class="form-control" name="email" placeholder="xyz@exemple.com"
+                                        <?php if(isset($MailAssure)) echo "value='$MailAssure'" ?>>
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre adresse email à des fins commerciales.</span>
                                 </div>
@@ -181,7 +329,8 @@
                                     <label for="tel" class="control-label">Numéro de téléphone : </label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-phone-alt"></i></span>
-                                        <input id="tel" type="tel" class="form-control" name="tel" placeholder="0#########">
+                                        <input id="tel" type="tel" class="form-control" name="tel" placeholder="0#########"
+                                        <?php if(isset($TelephoneAssure)) echo "value='$TelephoneAssure'" ?> >
                                     </div>
                                     <span class="note">La CPAM de la Haute-Garonne s'engage à ne pas utiliser votre numéro de téléphone à des fins commerciales.</span>
                                 </div>
@@ -191,13 +340,17 @@
                                     <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : (*)</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                        <input type="date" id="date_arret" class="form-control" name="date_arret" required>
+                                        <input type="date" id="date_arret" class="form-control" name="date_arret" 
+                                            <?php if(isset($DateAM)) echo "value='$DateAM' readonly" ?> required>
                                     </div>
                                 </div>
                             </div>
+
+                        <?php endif ?>
                         </div>
 
                         <div class="container" id="pj">
+                        <?php if (!$repost && $repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
                             <div class="row pj salarie">
                                 <div class="col-sm-12">
@@ -229,7 +382,25 @@
                             </div>
 
                             <input name="page" type="hidden" value="depot.html">
-                            <input type="submit" class="btn btn-info" value="Envoyer">
+                        <?php endif ?>
+
+                            
+                            <div class="row text-center" style="margin-top: 20px;">
+                                <div class="col-sm-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <span class="glyphicon glyphicon-send"></span>Envoyer
+                                    </button>
+                                </div>
+                            <!-- Affichage d'un bouton de retour s'il y a un message d'erreur -->
+                            <?php if ($msg_error_nir || $msg_error_ref) : ?>
+                                <div class="col-sm-4">
+                                    <a href="depot.php" class="btn btn-default btn-lg">
+                                        <span class="glyphicon glyphicon-new-window"></span>
+                                        Effectuer un nouveau dépot
+                                    </a>
+                                </div>
+                            <?php endif ?>
+                            </div>
                         </div>
                     </form>
                 </div>

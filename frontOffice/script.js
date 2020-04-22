@@ -252,8 +252,6 @@ function checkFormatNir(format) {
 	
 		$("#nir").val(str);
 		document.getElementById("nir").setSelectionRange(caret, caret);
-	
-		checkButtonRefD();
 	}
 }
 
@@ -275,17 +273,6 @@ function checkFormatRefD() {
 	}
 
 	document.getElementById("refD").setSelectionRange(caret, caret);
-	checkButtonRefD();
-}
-
-//Active ou désactive le bouton de vérification de référence
-function checkButtonRefD() {
-	if ($("#refD").val().length == nbCharRefD && $("#nir").val().length == formatNIR.length) {
-		$("#checkref").show();//Activation du bouton de vérification de la référence de dossier
-	}
-	else {
-		$("#checkref").hide();//Désactivation du bouton de vérification de la référence de dossier
-	}
 }
 
 //Vérifie si une référence est correcte
@@ -317,10 +304,8 @@ $(document).ready(function(){
 		$("#" + currentPJ).click({arg1: currentPJ}, click_function);
 	}
 	$("#checkref").hide();
-});
 
-//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
-$(document).ready(function(){
+	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
 	$("#date_arret").attr("max", aujourdhui());
 	$("#date_arret").attr("value", aujourdhui());
 });
