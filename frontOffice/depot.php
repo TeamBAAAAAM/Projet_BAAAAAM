@@ -76,6 +76,7 @@
     }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -150,38 +151,37 @@
 				</div>
 			</div>
         </nav>
-        
     <?php if (!$repost && !$repost_ok) : ?>
         <div class="container text-center" id="status">
-			<div class="row">
-				<div id="interim" class="col-sm-3 btn-status">
-					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
-				</div>
-				<div id="cesu" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par CESU / PAJEMPLOI ou je suis assistant·e maternel·le</h2>
-				</div>
-				<div id="pole-emploi" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
-				</div>
-				<div id="pole-emploiC" class="col-sm-3 btn-status">
-					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div id="independant" class="col-sm-3 btn-status">
-					<h2>Je suis travailleur indépendant et j'attends un enfant</h2>
-				</div>
-				<div id="intermit" class="col-sm-3 btn-status">
-                    <h2>Je suis intermittent·e du spectacle</h2>
-                </div>
-				<div id="art-aut" class="col-sm-3 btn-status">
-                    <h2>Je suis artiste auteur</h2>
-                </div>
-				<div id="salarie" class="col-sm-3 btn-status">
-					<h2>Je suis salarié·e</h2>
-				</div>
-            </div>                
-        </div>
+          <div class="row">
+            <div id="interim" class="col-sm-3 btn-status">
+              <h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
+            </div>
+            <div id="cesu" class="col-sm-3 btn-status">
+              <h2>Je suis indemnisé·e par CESU / PAJEMPLOI ou je suis assistant·e maternel·le</h2>
+            </div>
+            <div id="pole-emploi" class="col-sm-3 btn-status">
+              <h2>Je suis indemnisé·e par Pôle Emploi</h2>
+            </div>
+            <div id="pole-emploiC" class="col-sm-3 btn-status">
+              <h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div id="independant" class="col-sm-3 btn-status">
+              <h2>Je suis travailleur indépendant et j'attends un enfant</h2>
+            </div>
+            <div id="intermit" class="col-sm-3 btn-status">
+              <h2>Je suis intermittent·e du spectacle</h2>
+            </div>
+            <div id="art-aut" class="col-sm-3 btn-status">
+              <h2>Je suis artiste auteur</h2>
+            </div>
+            <div id="salarie" class="col-sm-3 btn-status">
+              <h2>Je suis salarié·e</h2>
+            </div>
+          </div>                
+         </div>
     <?php endif ?>
 
         <div class="container">
@@ -247,7 +247,7 @@
         </div>
 
         <div class="container">
-            <div class="panel panel-default" id="form_panel">
+            <div class="panel panel-default" id="<?= isset($_SESSION["recuperation"]) ? "" : "form_panel"?>">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
 
@@ -277,9 +277,7 @@
                                             pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
                                             placeholder="# ## ## ## ### ###"
                                             onKeyUp='checkFormatNir("# ## ## ## ### ###");'
-                                            <?php if(isset($NirAssure)) echo "value='$NirAssure' readonly " ?>
-                                            required
-                                        >
+                                            <?php if(isset($NirAssure)) echo "value='$NirAssure' readonly " ?> required >
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
@@ -324,7 +322,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             <?php if ($repost || $repost_ok) : ?>
                                 <div class="col-sm-6">
                                     <label for="nom" class="control-label">Référence du dossier en cours :</label>    
@@ -462,7 +459,7 @@
                 </div>
             </div>
         </div>
-
+<?php endif ?>
 		<footer class="container-fluid text-center">
 			<div class="row">
 				<div class="col-sm-3">
@@ -524,5 +521,6 @@
 			</div>
 			<div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM</div>
         </footer>
+       <?php unset($_SESSION['recuperation'])?>
     </body>
 </html>

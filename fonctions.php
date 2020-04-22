@@ -89,6 +89,14 @@ function GenererReferenceDossier($nbChar, $link)
 }
 
 
+//Vérifie si Ref et Nir correspondant existe dans la base de données
+function NirRefExiste($NirA, $refD, $link) {
+    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.refD = '".$refD."'" ;
+    $result = mysqli_query($link, $query);
+        
+    return (mysqli_fetch_array($result) != NULL);
+}
+
 //Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
 function ChercherAssureAvecNIR($NirA, $link)
 {
