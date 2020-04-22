@@ -55,14 +55,9 @@
                         if(empty($_POST) && empty($_GET)) RedirigerVers("depot.php");
 
                         if(!AssureExiste($_POST["nir"], $link)) {
-                            if(EnregistrerAssure(
-                                $_POST["nir"],
-                                $_POST["nom"],
-                                $_POST["prenom"], 
-                                $_POST["tel"], 
-                                $_POST["email"],
-                                $link)) {
-
+                            if(!EnregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) {
+                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Erreur dans l'enregistrement de l'assuré' !</div>";
+                                }
                                 //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
                                 if(CreerDossierNIR($_POST["nir"])) {
                                     $_SESSION["MessageAssure"] = "
@@ -105,7 +100,7 @@
                                     </ul>
                                     ";
                                 }
-                            }
+                            
                         }
                 
                         $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
