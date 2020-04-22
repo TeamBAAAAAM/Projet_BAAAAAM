@@ -256,7 +256,7 @@
                 <?php else : ?>
                     <form method="POST" action="depot.php">
                 <?php endif ?>
-                        <div id="lien_ameli" class="container">
+                        <div id="lien_ameli" class="container" style="display: none;">
                             <h3><span class="glyphicon glyphicon-link"></span>Merci de vous rendre sur ameli.fr</h3>
                             <p>Vous y trouverez la liste des feuillets nécessaires pour le traitement de votre demande.</p>
                             <a href="https://www.ameli.fr/haute-garonne/assure/remboursements/indemnites-journalieres/conge-maternite#text_85208" target="_blank" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-share-alt"></span>Aller sur ameli.fr</a>

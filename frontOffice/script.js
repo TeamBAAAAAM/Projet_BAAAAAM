@@ -125,6 +125,13 @@ function click_function(event) {
         $("." + currentPJ).show(1000);
         $(".selected").toggleClass("unselected selected");
         $("#" + currentPJ).toggleClass("unselected selected");
+        $("#" + currentPJ).toggleClass("unselected selected");
+
+        // Toggle sur le required
+        for(i = 0 ; i < pj.length ; i++) {
+            $("." + pj[i] + " input[type='file']").prop('required', false);
+        }
+        $("." + currentPJ + " input[type='file']").prop('required', true);
 
         if ((currentPJ == "interim") |
             (currentPJ == "art-aut") |
