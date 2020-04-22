@@ -13,7 +13,6 @@
 	} else {
 		RedirigerVers("se_connecter.php");
 	}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

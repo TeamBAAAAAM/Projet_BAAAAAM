@@ -10,6 +10,8 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
+	} else {
+		RedirigerVers("se_connecter.php");
 	}
 
 	//Changement de statut si un statut est indiqué dans l'URL
