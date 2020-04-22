@@ -144,6 +144,15 @@ if (isset($_SESSION["matricule"])) {
 								?>
 							</td>
 						</tr>
+						<tr>
+							<td><span class="glyphicon glyphicon-ok"></span> Dossiers terminés</td>
+							<td>
+								<?php
+								$result = nbDossiersTermines($link);
+								echo $result["nbDossiersTermines"];
+								?>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

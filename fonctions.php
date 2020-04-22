@@ -364,11 +364,18 @@ function nbDossiersATraiter($link)
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link)
 {
-    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d WHERE d.StatutD = 'Classé sans suite' And DATE(d.DateD) = CURDATE()";
+    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
 
+// Nombre de dossiers terminés à la date courante
+function nbDossiersTermines($link)
+{
+    $query = "SELECT count(*) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+    return mysqli_fetch_array($result);
+}
 /*      FONCTIONS POUR TECHNICIEN    */
 
 // Récupère les informations d'un technicien à partir du matricule
@@ -583,7 +590,7 @@ function ListeMessages($CodeA, $link) {
     $query .= "AND T.CodeT = M.CodeT ";
     $query .= "ORDER BY DateEnvoiM DESC";
  
-    return $result = mysqli_query($link, $query);
+    return mysqli_query($link, $query);
 }
 
 //Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
