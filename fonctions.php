@@ -363,7 +363,7 @@ function nbDossiersATraiter($link)
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link)
 {
-    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
+    $query = "SELECT count(DISTINCT d.CodeD) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
@@ -371,10 +371,11 @@ function nbDossiersClasses($link)
 // Nombre de dossiers terminés à la date courante
 function nbDossiersTermines($link)
 {
-    $query = "SELECT count(*) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
+    $query = "SELECT count(DISTINCT d.CodeD) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
+
 /*      FONCTIONS POUR TECHNICIEN    */
 
 // Récupère les informations d'un technicien à partir du matricule
