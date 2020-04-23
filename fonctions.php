@@ -483,10 +483,10 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
                         echo "btn btn-primary disabled";
                         break;
                     case "Classé sans suite":
-                        echo "btn btn-primary";
+                        echo "btn btn-default";
                         break;
                     case "Terminé":
-                        echo "btn btn-primary";
+                        echo "btn btn-default";
                         break;
                 }
             }
@@ -632,15 +632,4 @@ function ExtraireMessage($Contenu) {
 
     return [$mail, $objet, $texte, $refD];
 }
-
-// Renvoie la date de format aaaa-mm-jj hh:MM:ss en jj / mm / aaaa hh:MM:ss
-function dateFR($date) {
-    $annee = substr($date, 0, 4);
-    $mois = substr($date, 5, 2);
-    $jour = substr($date, 8, 2);
-    $heure = substr($date, 11);
-
-    return "$jour / $mois / $annee $heure";
-}
-
 ?>

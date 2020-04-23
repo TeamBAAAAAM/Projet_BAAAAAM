@@ -210,15 +210,9 @@
 									<h5><?php if ($statutDossier != "En cours") echo "Traité le :  ".date("d/m/Y H:i", $dateTraite); else echo "Depuis le :  ".date("d/m/Y H:i", $dateTraite); ?></h5>
 								</div>
 								<div id="panel-statut" class="col-lg-12 btn-group btn-group-justified" role="group">
-								<?php if($statutDossier == "En cours") : ?>
-									<a href="traiter.php?statut=À traiter" class="btn btn-primary" role="button">
+									<a href="traiter.php?statut=À traiter" class="btn btn-default<?php if(!($statutDossier == "En cours")) {echo(" disabled");}?>" role="button">
 										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
 									</a>
-								<?php else : ?>
-									<a href="traiter.php?statut=À traiter" class="btn btn-default disabled" role="button">
-										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
-									</a>
-								<?php endif ?>
 									<a href="traiter.php?statut=En cours"
 										class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
@@ -305,13 +299,13 @@
 								echo '
 									<button class="btn btn-primary btn-block" 
 										onclick=\'$("#m'.$i.'").toggle(500); $("#m'.$i.'-title").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");\'>
-										<div class="row container" style="text-align: left;">
-											<div class="col-lg-5">
+										<div class="row" style="text-align: left;">
+											<div class="col-lg-8">
 												<span id="m'.$i.'-title" class="glyphicon glyphicon-chevron-right"></span>'.$contenuMessage[1].'
 											</div>
-											<div class="col-lg-2">
+											<div class="col-lg-2" style="text-align: right;">
 												<span class="glyphicon glyphicon-barcode"></span>'.$message["Matricule"]."
-												| <span class='glyphicon glyphicon-time'></span>".dateFR($message["DateEnvoiM"]).'
+												| <span class='glyphicon glyphicon-time'></span>".date("d/m/Y H:i:s", strtotime($message["DateEnvoiM"])).'
 											</div>
 										</div>
 									</button> 
