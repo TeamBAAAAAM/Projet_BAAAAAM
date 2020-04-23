@@ -18,6 +18,12 @@
 	if(isset($_GET["statut"])) {
 		if(isset($_GET["codeD"])) $_SESSION["codeDossier"] = $_GET["codeD"];
 		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+
+		if($_GET["statut"] == "À traiter") {
+			LibererDossier($link, $_SESSION["codeDossier"]);
+			RedirigerVers("corbeille_generale.php");
+		}
+
 		//Suppression des variables transmises par la méthode GET
 		RedirigerVers("traiter.php");
 	}
@@ -56,7 +62,7 @@
 	$messagesAssure = ListeMessages($codeAssure, $link);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		
 		<meta charset="utf-8">
@@ -72,12 +78,15 @@
 
 		<script>
 			$(document).ready(function(){
-			  $("#research").on("keyup", function() {
-				var value = $(this).val().toLowerCase();
-				$("#data-list tr").filter(function() {
-				  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+				$("#research").on("keyup", function() {
+					var value = $(this).val().toLowerCase();
+					$("#data-list tr").filter(function() {
+					$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+					});
 				});
-			  });
+
+				//Désactivation de tous les boutons de classe disabled
+    			$("a.btn.btn-default.disabled").attr("disabled", true);
 			});
 		</script>
 
@@ -105,7 +114,7 @@
 					<ul class="nav navbar-nav" id="menu">
 						<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
 						<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
-						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
+						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right dropdown">
 						<li class="dropdown">
@@ -125,10 +134,12 @@
 			if(isset($_POST['email'])) {
 				if(EnvoyerMailDemandePJs($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
 					echo '
-						<div class="container -fluid alert alert-success text-center">
-							<strong>
-								<span class="glyphicon glyphicon-ok"></span>Mail envoyé !
-							</strong> Votre message a bien été envoyé.
+						<div class="container-fluid">
+							<div class="alert alert-success text-center">
+								<strong>
+									<span class="glyphicon glyphicon-ok"></span>Mail envoyé !
+								</strong> Votre message a bien été envoyé.
+							</div>	
 						</div>	
 					';
 
@@ -140,10 +151,12 @@
 
 					if(EnregistrerMessageAssure($codeAssure, $codeT, $contenu, $link)) {
 						echo '
-							<div class="container -fluid alert alert-success text-center">
-								<strong>
-									<span class="glyphicon glyphicon-ok"></span>Mail enregistré !
-								</strong> Votre message a bien été enregistré.
+							<div class="container-fluid">
+								<div class="alert alert-success text-center">
+									<strong>
+										<span class="glyphicon glyphicon-ok"></span>Mail enregistré !
+									</strong> Votre message a bien été enregistré.
+								</div>		
 							</div>		
 						';
 						
@@ -155,22 +168,26 @@
 						$messagesAssure = ListeMessages($codeAssure, $link);
 					}
 					else {
-						echo '				  
-							<div class="container -fluid alert alert-danger text-center">
-								<strong>
-									<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'enregistrement !
-								</strong> Votre message n\'a pas pu être enregistré !	
-							</div>				
+						echo '				
+							<div class="container-fluid">  
+								<div class="alert alert-danger text-center">
+									<strong>
+										<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'enregistrement !
+									</strong> Votre message n\'a pas pu être enregistré !	
+								</div>			
+							</div>	
 						';
 					}
 				}
 				else {
-					echo '				  
-						<div class="container -fluid alert alert-danger text-center">
-							<strong>
-								<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'envoi !
-							</strong> Votre message n\'a pas pu être envoyé !
-						</div>		
+					echo '			
+						<div class="container-fluid">	  
+							<div class="alert alert-danger text-center">
+								<strong>
+									<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'envoi !
+								</strong> Votre message n\'a pas pu être envoyé !
+							</div>		
+						</div>
 					';
 				}
 
@@ -181,187 +198,180 @@
 		?>
 
 		<div class="container">
-			<div class="row">
-				<div id="panel-dossier" class="col-sm-6">
-					<div class="container-fluid panel panel-default">
-						<div class="panel-body">
-							<h4>DOSSIER No <?php echo $refDossier;?></h4>
-							<h5>Date de réception :  <?php echo date("d-m-Y", $dateReception);?></h5>
-							<h5>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h5>
-							<?php if ($statutDossier != "En cours") echo "<h5>Traité le :  ".date("d-m-Y H:i", $dateTraite)."</h5>"; else echo "<h5>Depuis le :  ".date("d-m-Y H:i", $dateTraite)."</h5>"; ?>
-						</div>
-					</div>
-				</div>
-				<div id="panel-assure" class="col-sm-6">
-					<div class="container-fluid panel panel-default">
-						<div class="panel-body">
-							<h4>NIR : <?php echo $nirAssure;?></h4>
-							<h5><?php echo "$nomAssure $prenomAssure";?></h5>
-							<h5>En arrêt de travail depuis le : <?php echo date("d-m-Y", $dateArretMaladie);?></h5>
-							<h5 style="margin: 8px 0px;">
-								<span style='margin-left: 0px;' class='glyphicon glyphicon-phone-alt'></span>
-								<?php
-									if($telephoneAssure != "") echo "$telephoneAssure";
-									else echo "N/A";
-								?>
-								</span>
-								/
-								<span style='margin-left: 0px;' class='glyphicon glyphicon-envelope'></span>
-								<?php
-									if($mailAssure != "") echo "$mailAssure";
-									else echo "N/A";
-								?>
-								</span>
-							</h5>
-						</div>
-					</div>
-				</div>
-			<div>
-			<div class="row">
-				<div id="panel-statut" class="col-sm-6">
-					<div class= "container-fluid panel panel-default">	
+			<div class="row container">
+				<div id="panel-dossier" class="col-lg-6">
+					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-lg-2 text-center">
-									<span class="titre">Statut</span>
+								<div class="col-xs-12">
+									<h3><span class="glyphicon glyphicon-folder-open"></span> DOSSIER No : <?php echo $refDossier;?></h3>
+									<h5>Date de réception :  <?php echo date("d/m/Y", $dateReception);?></h5>
+									<h5>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h5>
+									<h5><?php if ($statutDossier != "En cours") echo "Traité le :  ".date("d/m/Y H:i", $dateTraite); else echo "Depuis le :  ".date("d/m/Y H:i", $dateTraite); ?></h5>
 								</div>
-								<div class="col-lg-10">
-									<div class="btn-group btn-group-justified">
-										<a href="traiter.php?statut=En cours"
-											class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
-											role="button">En cours</a>
-										<a href="traiter.php?statut=Classé sans suite"
-											class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
-											role="button">Classé sans suite</a>
-										<a href="traiter.php?statut=Terminé"
-											class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
-											role="button">Terminé</a>
-									</div>
+								<div id="panel-statut" class="col-lg-12 btn-group btn-group-justified" role="group">
+								<?php if($statutDossier == "En cours") : ?>
+									<a href="traiter.php?statut=À traiter" class="btn btn-primary" role="button">
+										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
+									</a>
+								<?php else : ?>
+									<a href="traiter.php?statut=À traiter" class="btn btn-default disabled" role="button">
+										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
+									</a>
+								<?php endif ?>
+									<a href="traiter.php?statut=En cours"
+										class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
+										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
+								</div>	
+								<div id="panel-statut" class="col-lg-12 btn-group btn-group-justified" role="group">
+									<a href="traiter.php?statut=Classé sans suite"
+										class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
+										role="button"><span class="glyphicon glyphicon-remove"></span>Classé sans suite</a>
+									<a href="traiter.php?statut=Terminé"
+										class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
+										role="button"><span class="glyphicon glyphicon-ok"></span>Terminé</a>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-6">
-					<div class= "container-fluid panel panel-default">	
+				<div id="panel-assure" class="col-lg-6">
+					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-lg-12 btn-group btn-group-justified">
-    								<div class="btn-group">
-										<button type="button" class="btn btn-default<?php if($codeT != $codeT_dossier) echo " disabled";?>" 
-										data-toggle="modal" data-target="#myModal" <?php if($codeT != $codeT_dossier) echo" disabled";?>
-											<span class="glyphicon glyphicon-send"></span> Envoyer un mail à l'assuré
-										</button>
-									</div>
-    								<div class="btn-group">
-										<button type="button" class="btn btn-default<?php if($messagesAssure == null) echo " disabled";?>" 
-										data-toggle="modal" data-target="#myModal2" <?php if($messagesAssure == null) echo " disabled";?>
-											><span class="glyphicon glyphicon-th-list"></span> Historique des messages
-										</button>
-									</div>
+								<div class="col-xs-12">
+									<h3><span class="glyphicon glyphicon glyphicon-user"></span> NIR : <?php echo $nirAssure;?></h3>
+									<h5><?php echo "Assuré : $prenomAssure $nomAssure";?></h5>
+									<h5>En arrêt de travail depuis le : <?php echo date("d/m/Y", $dateArretMaladie);?></h5>
+									<h5>
+										<?php
+											if($telephoneAssure != "") echo "Tel : $telephoneAssure";
+											else echo "N/A";
+										?>
+										</span>
+										/
+										<?php
+											if($mailAssure != "") echo "Email : $mailAssure";
+											else echo "N/A";
+										?>
+										</span>
+									</h5>
+								</div>
+								<div class="col-xs-12 btn-group btn-group-vertical">
+									<button type="button" class="btn btn-default<?php if($codeT != $codeT_dossier) echo " disabled";?>" 
+									data-toggle="modal" data-target="#myModal">
+										<span class="glyphicon glyphicon-send"></span>Envoyer un mail à l'assuré
+									</button>
+									<button type="button" class="btn btn-default<?php if($messagesAssure == null) echo " disabled";?>" 
+									data-toggle="modal" data-target="#myModal2">
+										<span class="glyphicon glyphicon-th-list"></span>Historique des messages
+									</button>
 								</div>
 							</div>
-
-							<!-- Modal pour l'affichage de la liste des messages -->
-							<div id="myModal2" class="modal fade" role="dialog">
-								<div class="modal-dialog modal-lg">
-
-									<!-- Modal content-->
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">Consulter les messages envoyés</h4>
-										</div>
-										<div class="modal-body">
-											<?php
-												$message = mysqli_fetch_array($messagesAssure);
-												$i = 1;
-
-												if($message == null) {
-													echo '
-														<div class="alert alert-warning text-center">
-															<strong>
-																<span class="glyphicon glyphicon-floppy-disk"></span>Aucune correspondance !
-															</strong> Aucun message enregistré n\'est affilié à cet·te assuré·e.
-														</div>
-													';
-												}
-												while ($message != null) {
-													$contenuMessage = ExtraireMessage($message["Contenu"]);
-													echo '
-														<button type="button"
-															class="btn btn-primary btn-block" onclick=\'$("#m'.$i.'").toggle(500);\'>
-															<div class="row" style="margin-bottom: 0px">
-																<div class="col-lg-8" style="text-align: left;">
-																	<h5><strong><span class="glyphicon glyphicon-chevron-right"></span>'.$contenuMessage[1].'</strong></h5>
-																</div>
-																<div class="col-lg-3">
-																	<h5><span class="glyphicon glyphicon-barcode"></span>'.$message["Matricule"]." | <span class='glyphicon glyphicon-time'></span>".dateFR($message["DateEnvoiM"]).'</h5>
-																</div>
-															</div> 
-														</button>
-														<div id="m'.$i.'" class="panel panel-info" style="display: none; margin-bottom: 0px;">
-															<div class="panel-heading">
-																<h5>À : '.$contenuMessage[0].'</h5>
-															</div>
-															<div class="panel-body">'.$contenuMessage[2].'</div>
-														</div>
-													';
-													$message = mysqli_fetch_array($messagesAssure);
-													$i++;
-												}
-											?>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<form method="POST" action="traiter.php" class="modal fade" id="myModal" role="dialog">
-								<div class="modal-dialog">						
-									<!-- Modal content-->
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4>Envoyer un mail à l'assuré</h4>
-											<div class="container" style="padding-bottom: 10px">
-												Type de demande : 
-												<input id="cb1" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces manquantes
-												<input id="cb2" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces illisibles
-												<input id="cb3" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces invalides
-											</div>
-											<div class="input-group">
-												<span class="input-group-addon">À : </span>
-												<input id="email" type="text" class="form-control" name="email" value="<?php echo $mailAssure;?>" readonly>
-											</div>			
-											<div class="input-group">
-												<span class="input-group-addon">Objet : </span>
-												<input id="subject" type="text" class="form-control" name="subject" placeholder="Mettre le sujet de votre email ici ..."
-												value="<?php echo MAIL_REQUEST_SUBJECT." [REF. $refDossier]";?>">
-											</div>									
-										</div>
-										<div class="modal-body">
-											<textarea id="mail_text" name="mail_text" rows="15"></textarea>
-										</div>
-										<div class="modal-footer">
-											<button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-send"></span>Envoyer</button>
-										<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-										</div>
-									</div>
-								</div>						
-							</form>
 						</div>
-						
 					</div>
-					
 				</div>
 			</div>
+		</div>
 
-			<div class="row">
+		<!-- Modal pour l'affichage de la liste des messages -->
+		<div id="myModal2" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-lg">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title"><span class="glyphicon glyphicon-th-list"></span>Historique des messages</h4>
+					</div>
+					<div class="modal-body">
+						<?php
+							$message = mysqli_fetch_array($messagesAssure);
+							$i = 1;
+
+							if($message == null) {
+								echo '
+									<div class="container-fluid">
+										<div class="alert alert-warning text-center">
+											<strong>
+												<span class="glyphicon glyphicon-floppy-disk"></span>Aucune correspondance !
+											</strong> Aucun message enregistré n\'est affilié à cet assuré.
+										</div>
+									</div>
+								';
+							}
+							while ($message != null) {
+								$contenuMessage = ExtraireMessage($message["Contenu"]);
+								echo '
+									<button class="btn btn-primary btn-block" 
+										onclick=\'$("#m'.$i.'").toggle(500); $("#m'.$i.'-title").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");\'>
+										<div class="row container" style="text-align: left;">
+											<div class="col-lg-5">
+												<span id="m'.$i.'-title" class="glyphicon glyphicon-chevron-right"></span>'.$contenuMessage[1].'
+											</div>
+											<div class="col-lg-2">
+												<span class="glyphicon glyphicon-barcode"></span>'.$message["Matricule"]."
+												| <span class='glyphicon glyphicon-time'></span>".dateFR($message["DateEnvoiM"]).'
+											</div>
+										</div>
+									</button> 
+									<div id="m'.$i.'" class="panel panel-info" style="display: none; margin-bottom: 0px;">
+										<div class="panel-heading">
+											<h5>À : '.$contenuMessage[0].'</h5>
+										</div>
+										<div class="panel-body">'.$contenuMessage[2].'</div>
+									</div>
+								';
+								$message = mysqli_fetch_array($messagesAssure);
+								$i++;
+							}
+						?>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<form method="POST" action="traiter.php" class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">						
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4>Envoyer un mail à l'assuré</h4>
+						<div class="container" style="padding-bottom: 10px">
+							Type de demande : 
+							<input id="cb1" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces manquantes
+							<input id="cb2" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces illisibles
+							<input id="cb3" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces invalides
+						</div>
+						<div class="input-group">
+							<span class="input-group-addon">À : </span>
+							<input id="email" type="text" class="form-control" name="email" value="<?php echo $mailAssure;?>" readonly>
+						</div>			
+						<div class="input-group">
+							<span class="input-group-addon">Objet : </span>
+							<input id="subject" type="text" class="form-control" name="subject" placeholder="Mettre le sujet de votre email ici ..."
+							value="<?php echo MAIL_REQUEST_SUBJECT." [REF. $refDossier]";?>">
+						</div>									
+					</div>
+					<div class="modal-body">
+						<textarea id="mail_text" name="mail_text" rows="15"></textarea>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-send"></span>Envoyer</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+					</div>
+				</div>
+			</div>						
+		</form>
+
+		<div class="container">
+			<div class="row container">
 				<div id="panel-pjs" class="col-sm-4">
-					<div class= "panel panel-primary">
+					<div class= "panel panel-default">
 						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
 						<ul class="panel-body list-group">
 						<?php
@@ -369,18 +379,18 @@
 							if ($result != NULL)
 								$rows = mysqli_num_rows($result);
 							else $rows = 0;
-                            for ($i = 0; $i < $rows; $i++){
-                                $justificatif = mysqli_fetch_array($result);
+							for ($i = 0; $i < $rows; $i++){
+								$justificatif = mysqli_fetch_array($result);
 								$cheminFichier = $justificatif["CheminJ"];
-                                $nomFichier = strrchr($cheminFichier, '/');
-                                $nomFichier = substr($nomFichier, 1);
-                                $extension = strrchr($cheminFichier, '.');
-                                $extension = substr($extension, 1);
-                                //$mnemonique = $justificatif["Mnemonique"];
-                                echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><h5><img class='icon icon-$extension'>$nomFichier</h5></li>");
-                            }
-                        ?>
-                        </ul>
+								$nomFichier = strrchr($cheminFichier, '/');
+								$nomFichier = substr($nomFichier, 1);
+								$extension = strrchr($cheminFichier, '.');
+								$extension = substr($extension, 1);
+								//$mnemonique = $justificatif["Mnemonique"];
+								echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><h5><img class='icon icon-$extension'>$nomFichier</h5></li>");
+							}
+						?>
+						</ul>
 					</div>
 				</div>
 				<div id="panel-apercu" class="col-sm-8">
