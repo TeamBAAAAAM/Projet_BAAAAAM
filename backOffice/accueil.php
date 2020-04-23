@@ -36,7 +36,7 @@ if (isset($_SESSION["matricule"])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
 	<meta charset="utf-8">

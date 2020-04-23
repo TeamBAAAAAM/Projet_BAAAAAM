@@ -11,7 +11,7 @@ session_start();
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <title>Inscription</title>
         <meta charset="UTF-8">
