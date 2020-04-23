@@ -19,11 +19,13 @@
 
     if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
-            $ReferenceDossier = $_GET["RefD"];
-            if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
-            if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-            if(!DossierExiste($_GET["RefD"], $link)) {
-                RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+            if($_GET["RefD"] != "") {
+                $ReferenceDossier = $_GET["RefD"];
+                if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
+                if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
+                if(!DossierExiste($_GET["RefD"], $link)) {
+                    RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+                }
             }
             $repost = True;  // Ceci n'est pas un premier dépôt
         }
@@ -207,10 +209,11 @@
                 <div class="alert alert-info">
                     <h3>
                         <strong>
-                            <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR
+                            <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR<?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo ", ainsi que la référence du dossier qui vous a été délivrée";?>.
                         </strong>
                     </h3>
-                    <p>Dans le but de vous authentifier, merci de saisir votre NIR dans le champ précu à cet effet.</p>
+                    <p>Dans le but de vous authentifier, merci de saisir votre NIR
+                        <?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo " et la référence de votre dossier";?> dans le champ précu à cet effet.</p>
                 </div>
             <?php endif ?>  
 
