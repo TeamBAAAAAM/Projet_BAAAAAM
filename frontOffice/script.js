@@ -69,16 +69,10 @@ function goToByScroll(id, duration) {
 function refreshForm() {
     //Si les éléments de l'état civil n'est pas affiché
     if ($("#form_panel > div.container:first-child").is(":visible") == false) {
-        setStatusToTheLeft(); //On place le menu des boutons du haut à gauche
         $("#form_panel").hide(); //On affiche le formulaire
         $("#form_panel").show(500); //On affiche le formulaire
     }
     goToByScroll('form_panel', 1000); //On scroll sur le formulaire
-}
-
-//Place les boutons de "statuts sociaux" sur la gauche
-function setStatusToTheLeft() {
-    $("#status").css("display: float");
 }
 
 //Désactivation de l'évènement clique pour un objet dont le
@@ -338,5 +332,32 @@ $(document).ready(function(){
 
 	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
 	$("#date_arret").attr("max", aujourdhui());
-    $("#date_arret").attr("value", aujourdhui());
+    $("#date_arret").attr("value", aujourdhui());  
+
+    // Gestion des messages
+    $(".alert").hide();
+    $(".alert").show(1500);
+
+    // Affichage d'un bouton de suppression lors du survol
+    $(".alert").hover(function() {
+        //Création du bouton de suppression
+        var elt = document.createElement("span");
+        elt.id = "msg_close";
+        elt.className = "glyphicon glyphicon-remove";
+        $(this).find(".alert-title").append(elt);
+
+        //Initialisation de l'évènement "clique"
+        $("#msg_close").click(function() {
+            // On cache le message parent le plus proche
+            $(this).closest(".alert").hide(400, function(){
+                $(this).remove();
+            });
+        });
+    }, function() {
+        // Sinon on le supprime
+        $("#msg_close").remove();
+    });
+
+    // Désactivation de tous les boutons de classe disabled
+    $(".disabled").attr("disabled", true);
 });
