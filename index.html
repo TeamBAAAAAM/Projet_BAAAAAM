@@ -40,18 +40,34 @@
 				$("body").mousemove(function(){
 					if (hover_1) {
 						$("#msg_1").fadeIn(500);
-						$("#msg_1").offset({top: event.pageY, left: event.pageX});
+
+						// Pour le mettre au dessus du pointeur
+						var y =  $(".msg").height();
+						y += parseInt($(".msg").css("padding-bottom"), 10);
+						y += parseInt($(".msg").css("padding-top"), 10);
+						y += 10;
+
+						var x =  20;
+					
+						$("#msg_1").offset({top: event.pageY - y, left: event.pageX + x});
 					}
 					else {						
-						$("#msg_1").fadeOut(500);
+						$("#msg_1").fadeOut(300);
 					}
 
 					if (hover_2) {
 						$("#msg_2").fadeIn(500);
-						$("#msg_2").offset({top: event.pageY, left: event.pageX});
+						
+						var y = parseInt($("#msg_2").css("padding-bottom"), 10);
+						y += parseInt($("#msg_2").css("padding-top"), 10);
+						y += 10;
+
+						var x =  20;
+					
+						$("#msg_2").offset({top: event.pageY + y, left: event.pageX + x});
 					}
 					else {						
-						$("#msg_2").fadeOut(500);
+						$("#msg_2").fadeOut(300);
 					}
 				});
 
