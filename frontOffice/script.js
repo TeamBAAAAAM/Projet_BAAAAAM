@@ -189,7 +189,9 @@ function aujourdhui() {
 //Fonction qui imprime le contenu d'un élément dont l'id est passé en paramètre
 function imprimerPage() {
     $(".ignore").hide();
-
+    
+    var date = dateAujoudhuiEnLettres();
+    var heure = heureActuelle();
     var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
 
     var message = '<div id="message" class="alert alert-warning">' +
@@ -198,6 +200,8 @@ function imprimerPage() {
         '</div>';
 
     $("body").append(message);
+
+    documant.title='Confirmation d\'enregistrement sur PJPE ['+ date + " à " + heure +']';
     window.print();
 
     $("#message").remove();

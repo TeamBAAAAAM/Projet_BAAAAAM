@@ -75,23 +75,6 @@
   		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 		<script src="script.js"></script>
 
-		<style>			
-			/* Note: Try to remove the following lines to see the effect of CSS positioning */
-			.affix {
-				top: 0;
-				width: 100%;
-				z-index: 9999 !important;
-			}
-
-			.affix + .container {
-				padding-top: 71px;
-			}
-			
-			.affix + .container {
-				padding-top: 71px;
-			}
-		</style>
-
         <title>PJPE - Réception des documents</title>
 	</head>
 	<body onLoad="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);">
@@ -104,29 +87,31 @@
 		</nav>
 
 		<nav class="navbar navbar-inverse navbar-static-top police" data-spy="affix" data-offset-top="90">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>                        
-				</button>
-			</div>
-			<div class="collapse navbar-collapse" id="myNavbar2">
-				<ul class="nav navbar-nav" id="menu">
-					<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
-					<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
-					<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right dropdown">
-					<li class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-						<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
-						</a>
-						<ul class="dropdown-menu" role="menu">
-							<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
-						</ul>
-					</li>						
-				</ul>
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>                        
+					</button>
+				</div>
+				<div class="collapse navbar-collapse" id="myNavbar2">
+					<ul class="nav navbar-nav" id="menu">
+						<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+						<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
+						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right dropdown">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+							</ul>
+						</li>						
+					</ul>
+				</div>
 			</div>
 		</nav>
 		

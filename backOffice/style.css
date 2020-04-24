@@ -134,3 +134,19 @@ div.alert > h3 {
 }
 #msg_close:hover {color: rgb(0, 0, 0, 0.25);}
 #msg_close + h3 {margin-top: 0px;}
+
+
+/* Note: Try to remove the following lines to see the effect of CSS positioning */
+.affix {
+	top: 0;
+	width: 100%;
+	z-index: 9999 !important;
+}
+
+.affix + .container {
+	padding-top: 71px;
+}
+
+.affix + .container {
+	padding-top: 71px;
+}
