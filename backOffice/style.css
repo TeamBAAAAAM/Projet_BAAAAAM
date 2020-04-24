@@ -25,7 +25,6 @@
 
 .navbar-header > button {
 	height: 50px;
-	background-color: white;
 }
 
 #research, #data-table {
@@ -82,19 +81,21 @@
 
 /* Listes des pièces justificatives */
 #panel-pjs li {
+	box-shadow: 1px 1px 3px black;
 	cursor: pointer;
 }
 #panel-pjs li h5{
 	margin: 0px;
 }
 #panel-pjs li:hover {
-	background-image: none;
-	background-color: gray;
-	box-shadow: 1px 1px 5px black inset;
-	color: white;
-}
-.onclick-pjs-li {	
 	background-color: lightgray;
+	box-shadow: 1px 1px 3px black inset;
+}
+
+.pj-selected {
+	background-color: gray;
+	color: white;
+	box-shadow: 1px 1px 10px black;
 }
 
 #confirmation_inscription {
@@ -111,14 +112,25 @@
 }
 
 .icon {
-	height: 50px;
+	height: 45px;
 	margin-right: 10px;
 }
 
-.icon-bmp, .icon-BMP {content: url('../img/icons/bmp-icon.png');}
-.icon-jpeg, .icon-JPEG {content: url('../img/icons/jpeg-icon.png');}
-.icon-jpg, .icon-JPG {content: url('../img/icons/jpg-icon.png');}
-.icon-pdf, .icon-PDF {content: url('../img/icons/pdf-icon.png');}
-.icon-png, .icon-PNG {content: url('../img/icons/png-icon.png');}
-.icon-tiff, .icon-TIFF {content: url('../img/icons/tiff-icon.png');}
-.icon-tif, .icon-TIF {content: url('../img/icons/tif-icon.png');}
+/* Message */
+div.alert {
+	margin: 30px 150px;
+	margin-top: 0px;
+	margin-bottom: 20px;
+	min-width: 440px;
+}
+div.alert > h3 {
+	margin-top: 0px;
+}
+
+/* Bouton de fermeture de message */
+#msg_close {
+	float: right;
+	font-size: 24px;
+}
+#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
+#msg_close + h3 {margin-top: 0px;}

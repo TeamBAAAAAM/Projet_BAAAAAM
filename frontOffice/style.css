@@ -44,6 +44,9 @@ body {
 }
 
 /* Components */
+#status {
+	margin-bottom: 20px;
+}
 div.btn-status {
 	display: flex;
 	justify-content: center;
@@ -62,6 +65,9 @@ div.btn-status {
 	color: white;
 	font-weight: bold;
 	margin-top: 34px;
+	font-size: 20px;
+	padding-left: 16px; 
+	padding-right: 16px; 
 	border-radius: 100px;
 }
 #btn-modal:hover {
@@ -69,30 +75,29 @@ div.btn-status {
 }
 
 .unselected {
-	background-color: #0072ff54;
+	background-color: rgba(0, 114, 255, 0.33);
 	color: white;
 }
 
 .unselected:hover {
-	background-color: #0072ffb8;
+	background-color: rgba(0, 114, 255, 0.72);
 	color: white;
 	cursor: pointer;
 }
 
 .selected {
-	background-color: #0072ffb8;
+	background-color: rgba(0, 114, 255, 0.72);
 	color: white;
 }
 
 #form_panel {
-	margin-top: 40px;
 	border-radius: 25px;
 }
 
 #form_panel > .panel-heading {
 	border-radius: 25px 25px 0px 0px;
 	padding-left: 40px;
-	background-color: #0072ffb8;
+	background-color: rgba(0, 114, 255, 0.72);
 	font-size: 2em;
 	color: white;
 }
@@ -150,7 +155,7 @@ li.list-group-item {
 /*footer*/
 footer {
 	margin-top: 95px;
-	background-color: #1c233191;
+	background-color: rgba(28, 35, 49, 0.568);
 	color: white;
 	padding: 0px 50px;
 }
@@ -174,7 +179,7 @@ footer iframe.col-sm-5 {
 #juridique {
 	margin-top: 15px;
 	padding: 10px 0px;
-	background-color: #181f2bc7;
+	background-color: rgba(24, 31, 43, 0.78);
 }
 
 footer a {
@@ -219,17 +224,38 @@ img[src="../img/num_tel.png"] {
 	height: 50px;
 }
 
-div.alert {
-	margin: 30px 150px;
-	margin-bottom: 0px;
+.champ_obligatoire{
+	font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    color: #03057B;
 }
 
+/* Message */
+div.alert {
+	margin: 30px 150px;
+	margin-top: 0px;
+	margin-bottom: 20px;
+	min-width: 440px;
+}
+div.alert > h3 {
+	margin-top: 0px;
+}
+
+/* Bouton de fermeture de message */
+#msg_close {
+	float: right;
+	font-size: 24px;
+}
+#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
+#msg_close + h3 {margin-top: 0px;}
+
+/* Gestion du responsive */
 @media (max-width: 770px) {
-	#contact > *{
+	#contact > * {
 		text-align: center;
 	}
 }
-
 @media only screen and (min-width : 768px) {
 	div.btn-status {
 		height: 240px;
@@ -240,7 +266,6 @@ div.alert {
 		height: 210px;
 	}
 }
-
 @media (max-width: 768px) {
 	div.btn-status {
 		border: 2px solid white;
