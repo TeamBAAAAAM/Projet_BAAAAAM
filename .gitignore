@@ -3,3 +3,5 @@ back/
 /nbproject/private/
 /piecesJustificatives/*
 sendgrid.env
+.env
+test.php

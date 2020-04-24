@@ -157,6 +157,8 @@
                                 }
                             }                           
                         } else { // Message d'information si le dossier existe déjà
+                            // Récupération des données du dossier dans la BD
+                            $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
                             $_SESSION["MessageDossier"] = "
                                         <ul class='list-group'>
                                             <li class='list-group-item list-group-item-success'> 
@@ -165,10 +167,17 @@
                                             <li class='list-group-item list-group-item-default'>
                                                 <span class='glyphicon glyphicon-ok'></span> Votre dossier existe déjà. 
                                             </li>
+                                            <li class='list-group-item list-group-item-default'>                           
+                                                <span class='glyphicon glyphicon-folder-close'></span>Référence du dossier : <strong>".$dossier["RefD"]."</strong>
+                                                <span class='label label-warning label_enregistrement'>
+                                                    &#9888; <strong>À conserver</strong>
+                                                </span>
+                                            </li>
+                                            <li class='list-group-item list-group-item-default'>              
+                                                <span class='glyphicon glyphicon-calendar'></span>Ce dossier a été créé le : <strong>".$dossier["DateD"]."</strong>
+                                            </li>
                                         </ul>";
                         }
-                        // Récupération des données du dossier dans la BD
-                        $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
                             
                         if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
                         if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
