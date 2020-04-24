@@ -201,7 +201,7 @@ function imprimerPage() {
 
     $("body").append(message);
 
-    documant.title='Confirmation d\'enregistrement sur PJPE ['+ date + " à " + heure +']';
+    document.title='Confirmation d\'enregistrement sur PJPE ['+ date + " à " + heure +']';
     window.print();
 
     $("#message").remove();
