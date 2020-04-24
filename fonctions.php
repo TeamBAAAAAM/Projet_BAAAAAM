@@ -607,7 +607,7 @@ function ListeMessages($CodeA, $link) {
     return mysqli_query($link, $query);
 }
 
-//Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
+// Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
 function ExtraireMessage($Contenu) {
     //Position de l'adresse email
     $deb = strpos($Contenu, "À : ") + strlen("À : ");
@@ -631,5 +631,21 @@ function ExtraireMessage($Contenu) {
     $texte = implode("<br>",$texte);
 
     return [$mail, $objet, $texte, $refD];
+}
+
+// Créer un message
+function GenererMessage($title, $body, $icon, $type) {
+    echo "
+        <div class='alert alert-$type'>
+            <h3>
+                <strong class='alert-title'>
+                    <span class='glyphicon glyphicon-$icon'></span>$title
+                </strong>
+            </h3>
+            <p>
+                $body
+            </p>
+        </div>
+    ";
 }
 ?>

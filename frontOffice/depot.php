@@ -1,5 +1,4 @@
 <?php
-
     session_start();
     require_once("../fonctions.php");
 
@@ -77,7 +76,6 @@
         $repost_ok = True;
     }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -88,62 +86,14 @@
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-        <?php if (!$repost && !$repost_ok) : ?>
-            <script src="script.js"></script>
-        <?php else :?>
-            <script>
-                //Vérifie et corrige le format du NIR
-                function checkFormatNir(format) {
-                    formatNIR = format;
-
-                    let caret = document.getElementById("nir").selectionStart;
-                    var str = $("#nir").val().toUpperCase();
-
-                    //Suppression des valeurs invalides
-                    var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
-                    var match = str.match(pattern);
-                    if(match != null) {
-                        str = match.join("");
-                        var deb = str.substr(0, caret);
-                        var fin = str.substr(caret);
-                        
-                        for(i = 0 ; i < caret ; i++) {
-                            if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
-                                deb = deb.substr(0, i) + " " + deb.substr(i);
-                                caret++;
-                            }
-                        }
-                    
-                        //Si le curseur est dans la chaine de caractères
-                        if(caret < str.length - 1) {
-                            for(i = caret ; i < format.length ; i++) {
-                                if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
-                                    fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
-                                }
-                                if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
-                                    fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
-                                }
-                            }
-                        }
-                    
-                        str = deb + fin;
-                        //Si le nombre de caractères courants dépasse celui du nombre autorisés
-                        if(str.length > format.length) str = str.substr(0, format.length);
-                    
-                        $("#nir").val(str);
-                        document.getElementById("nir").setSelectionRange(caret, caret);
-                    
-                        checkButtonRefD();
-                    }
-                }
-
-                $(document).ready(function(){
-                    $(".alert").hide();
-                    $(".alert").show(1500);
-                });
-            </script>
-        <?php endif ?>
+        <script src="script.js"></script>
+    <?php if ($repost || $repost_ok) : ?>
+        <script>
+            $(document).ready(function(){
+                $("#form_panel").show(); //Le formulaire est affiché
+            });
+        </script>
+    <?php endif ?>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -193,56 +143,61 @@
 
         <div class="container-fluid">
             <!-- Message en cas d'erreur d'authentification -->
-            <?php if($msg_error_nir_ref) : ?>
-                <div class="alert alert-danger">
-                    <h3>
-                        <strong>
-                            <span class="glyphicon glyphicon-remove"></span>Échec lors de l'authentification !
-                        </strong>
-                    </h3>
-                    <p>Ces identifiants sont invalides !</p>
-                </div>
-            <?php endif ?>
+            <?php
+                if($msg_error_nir_ref) {
+                    GenererMessage (
+                        "Échec lors de l'authentification !",
+                        "Ces identifiants sont invalides !",
+                        "remove",
+                        "danger"
+                    );
+                }
+            ?>
                 
             <!-- Message en cas de référence de dossier valide -->                
-            <?php if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) : ?>
-                <div class="alert alert-info">
-                    <h3>
-                        <strong>
-                            <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR<?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo ", ainsi que la référence du dossier qui vous a été délivrée";?>.
-                        </strong>
-                    </h3>
-                    <p>Dans le but de vous authentifier, merci de saisir votre NIR
-                        <?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo " et la référence de votre dossier";?> dans le champ précu à cet effet.</p>
-                </div>
-            <?php endif ?>  
+            <?php
+                if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) {
+                    $title = "Veuillez saisir votre NIR";
+                    $body = "Dans le but de vous authentifier, merci de saisir votre NIR";
+
+                    if(isset($_GET["RefD"]) && $_GET["RefD"] == "")
+                        $title .= ", ainsi que la référence du dossier qui vous a été délivrée.";
+                        $body .= " et la référence de votre dossier";
+
+                    $body .= " dans le champ précu à cet effet.";
+
+                    GenererMessage (
+                        $title,
+                        $body,
+                        "user",
+                        "info"
+                    );
+                }
+            ?>
 
             <!-- Message en cas d'erreur de NIR inconnu -->
-            <?php if ($msg_error_nir) : ?>
-                <div class="alert alert-danger">
-                    <h3>
-                        <strong>
-                            <span class="glyphicon glyphicon-remove"></span>NIR non enregistré !
-                        </strong>
-                    </h3>
-                    <p>Il semblerait que ce NIR ne soit affilié à aucun dossier.</p>
-                </div>
-            <?php endif ?>     
+            <?php 
+                if ($msg_error_nir) {
+                    GenererMessage (
+                        "NIR non enregistré !",
+                        "Il semblerait que ce NIR ne soit affilié à aucun dossier.",
+                        "remove",
+                        "danger"
+                    );
+                }
+            ?>
 
             <!-- Message en cas d'erreur de référence inconnue -->
-            <?php if ($msg_error_ref) : ?>
-                <div class="alert alert-warning">
-                    <h3>
-                        <strong>
-                            <span class="glyphicon glyphicon-link"></span>Référence invalide
-                        </strong>
-                    </h3>
-                    <p>
-                        Ce lien ne permet pas de référencer un dossier enregistré !
-                    </p>
-                </div>
-            <?php endif ?>
-            </div>
+            <?php 
+                if ($msg_error_ref) {
+                    GenererMessage (
+                        "Référence invalide !",
+                        "Ce lien ne permet pas de référencer un dossier enregistré !",
+                        "link",
+                        "warning"
+                    );
+                }
+            ?>
         </div>
 
         <div class="container">
@@ -269,7 +224,7 @@
 
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <label for="nir" class="control-label">N° Sécurité sociale (*) :</label>
+                                    <label for="nir" class="control-label">N° Sécurité sociale <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
                                         <input id="nir" type="text" class="form-control" name="nir"
@@ -332,10 +287,12 @@
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="	glyphicon glyphicon-folder-close"></i></span>
                                                 <input onKeyUp="checkFormatRefD();" id="refD" type="text" class="form-control" 
-                                                    name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$"
+                                                    name="refD" placeholder="8 caractères alphanumériques" pattern="^[a-zA-Z0-9]{8}$"                                                    
                                                     <?php
                                                         if(isset($ReferenceDossier)){ echo "value='$ReferenceDossier' readonly";}
-                                                    ?>>           
+                                                    ?>
+                                                    required
+                                                >
                                             </div>          
                                         </div>
                                     </div>
@@ -354,7 +311,7 @@
                         <?php if (!$repost || $repost_ok) : ?>
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <label for="nom" class="control-label">Nom (*) :</label>
+                                    <label for="nom" class="control-label">Nom <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                         <input id="nom" type="text" class="form-control" name="nom" placeholder="Nom" 
@@ -362,7 +319,7 @@
                                     </div>
                                 </div>        
                                 <div class="col-sm-4">                
-                                    <label for="prenom" class="control-label">Prénom (*) :</label>
+                                    <label for="prenom" class="control-label">Prénom <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                         <input id="prenom" type="text" class="form-control" name="prenom" placeholder="Prénom" 
@@ -392,7 +349,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">                            
-                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : (*)</label>
+                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : <span class="champ_obligatoire">(*)</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                         <input type="date" id="date_arret" class="form-control" name="date_arret" 
@@ -409,30 +366,42 @@
                             <h3>Pièces justificatives à déposer:</h3>
                             <div class="row pj salarie">
                                 <div class="col-sm-12">
-                                    <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur (*) :</label>
+                                    <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur <span class="champ_obligatoire">(*)</span> :</label>
                                     <input type="file" id="ATT_SAL" name="ATT_SAL[]" multiple>
                                 </div>
                             </div>
                             <div class="row pj interim cesu pole-emploi pole-emploiC">
                                 <div class="col-sm-12">
-                                    <label for="BS">Les bulletins de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) (*) : </label>
+                                    <label for="BS">Les bulletins de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="BS" name="BS[]" multiple>
                                 </div>
                             </div>
                             <div class="row pj intermit">
                                 <div class="col-sm-12">
-                                    <label for="CACHET_GUSO">Cachet du GUSO (*): </label>
+                                    <label for="CACHET_GUSO">Cachet du GUSO <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL[]" multiple>
                                 </div>
                             </div>
                             <div class="row pj art-aut">
                                 <div class="col-sm-12">
-                                    <label for="DOC_AGESSA">Imprimé délivré par AGESSA (*) : </label>
+                                    <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
-                            </div>                   
+                            </div>
+                            
+                            
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-sm-12">
+                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je certifie sur l'honneur l'exactitude des renseignements fournis. <span class="champ_obligatoire">(*)</span> </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je reconnais avoir pris connaissance et j'accepte les <a href="../documentation-juridique/cgu.html">conditions générales d'utilisation</a> du site. <span class="champ_obligatoire">(*)</span> </span>
+                                </div>
+                            </div>
 
-                            <div id="champ_obligatoire" class="container">                    
+                            <div id="champ_obligatoire" class="champ_obligatoire">                    
                                 <p>(*) : Champs obligatoires</p>
                             </div>
 
@@ -443,7 +412,11 @@
                             <div class="row text-center" style="margin-top: 20px;">
                                 <div class="col-sm-4">
                                     <button type="submit" class="btn btn-primary btn-lg">
+                                    <?php if($repost_ok || $repost) : ?>
+                                        <span class="glyphicon glyphicon-lock"></span>Valider
+                                    <?php else : ?>
                                         <span class="glyphicon glyphicon-send"></span>Envoyer
+                                    <?php endif ?>
                                     </button>
                                 </div>
                             <!-- Affichage d'un bouton de retour s'il y a un message d'erreur -->
@@ -452,6 +425,13 @@
                                     <a href="depot.php?delete_session=1" class="btn btn-default btn-lg">
                                         <span class="glyphicon glyphicon-new-window"></span>
                                         Effectuer un nouveau dépot
+                                    </a>
+                                </div>
+                            <?php else : ?>                                
+                                <div class="col-sm-4">
+                                    <a href="depot.php?RefD" class="btn btn-default btn-lg">
+                                        <span class="glyphicon glyphicon-folder-open"></span>
+                                        J'ai déjà effectué un premier envoi
                                     </a>
                                 </div>
                             <?php endif ?>

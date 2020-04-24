@@ -64,7 +64,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
-		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
@@ -76,19 +75,22 @@
   		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 		<script src="script.js"></script>
 
-		<script>
-			$(document).ready(function(){
-				$("#research").on("keyup", function() {
-					var value = $(this).val().toLowerCase();
-					$("#data-list tr").filter(function() {
-					$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-					});
-				});
+		<style>			
+			/* Note: Try to remove the following lines to see the effect of CSS positioning */
+			.affix {
+				top: 0;
+				width: 100%;
+				z-index: 9999 !important;
+			}
 
-				//Désactivation de tous les boutons de classe disabled
-    			$("a.btn.btn-default.disabled").attr("disabled", true);
-			});
-		</script>
+			.affix + .container {
+				padding-top: 71px;
+			}
+			
+			.affix + .container {
+				padding-top: 71px;
+			}
+		</style>
 
         <title>PJPE - Réception des documents</title>
 	</head>
@@ -101,101 +103,89 @@
 			</div>
 		</nav>
 
-		<nav class="navbar navbar-inverse navbar-static-top police">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>                        
-					</button>
-				</div>
-				<div class="collapse navbar-collapse" id="myNavbar2">
-					<ul class="nav navbar-nav" id="menu">
-						<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
-						<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
-						<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
-					</ul>
-					<ul class="nav navbar-nav navbar-right dropdown">
-						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
-							</ul>
-						</li>						
-					</ul>
-				</div>
+		<nav class="navbar navbar-inverse navbar-static-top police" data-spy="affix" data-offset-top="90">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>                        
+				</button>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar2">
+				<ul class="nav navbar-nav" id="menu">
+					<li><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+					<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
+					<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right dropdown">
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+						<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+						</ul>
+					</li>						
+				</ul>
 			</div>
 		</nav>
 		
-		<?php
-			if(isset($_POST['email'])) {
-				if(EnvoyerMailDemandePJs($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
-					echo '
-						<div class="container-fluid">
-							<div class="alert alert-success text-center">
-								<strong>
-									<span class="glyphicon glyphicon-ok"></span>Mail envoyé !
-								</strong> Votre message a bien été envoyé.
-							</div>	
-						</div>	
-					';
+		<div class="container-fluid">
+			<?php
+				if(isset($_POST['email'])) {
+					if(EnvoyerMailDemandePJs($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
+						GenererMessage (
+							"Mail envoyé !",
+							"Votre message a bien été envoyé.",
+							"envelope",
+							"success"
+						);
 
-					$contenu = "À : $mailAssure\n";
-					$contenu .= "Objet : ".$_POST['subject']."\n";
-					$contenu .= "Message : ".$_POST['mail_text'];
-					$contenu = explode("'", $contenu);
-					$contenu = implode("\\'", $contenu);
+						$contenu = "À : $mailAssure\n";
+						$contenu .= "Objet : ".$_POST['subject']."\n";
+						$contenu .= "Message : ".$_POST['mail_text'];
+						$contenu = explode("'", $contenu);
+						$contenu = implode("\\'", $contenu);
 
-					if(EnregistrerMessageAssure($codeAssure, $codeT, $contenu, $link)) {
-						echo '
-							<div class="container-fluid">
-								<div class="alert alert-success text-center">
-									<strong>
-										<span class="glyphicon glyphicon-ok"></span>Mail enregistré !
-									</strong> Votre message a bien été enregistré.
-								</div>		
-							</div>		
-						';
-						
-						//Reconnexion à la BD en cas de réussite de l'enregistrement
-						mysqli_close($link);
-						$link = connexionMySQL();
+						if(EnregistrerMessageAssure($codeAssure, $codeT, $contenu, $link)) {						
+							GenererMessage (
+								"Mail enregistré !",
+								"Votre message a bien été enregistré.",
+								"saved",
+								"success"
+							);
+							
+							//Reconnexion à la BD en cas de réussite de l'enregistrement
+							mysqli_close($link);
+							$link = connexionMySQL();
 
-						//Récupération des messages de l'assuré
-						$messagesAssure = ListeMessages($codeAssure, $link);
+							//Récupération des messages de l'assuré
+							$messagesAssure = ListeMessages($codeAssure, $link);
+						}
+						else {						
+							GenererMessage (
+								"Erreur lors de l\'enregistrement !",
+								"Votre message n\'a pas pu être enregistré !",
+								"remove",
+								"danger"
+							);
+						}
 					}
-					else {
-						echo '				
-							<div class="container-fluid">  
-								<div class="alert alert-danger text-center">
-									<strong>
-										<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'enregistrement !
-									</strong> Votre message n\'a pas pu être enregistré !	
-								</div>			
-							</div>	
-						';
+					else {				
+						GenererMessage (
+							"Erreur lors de l\'envoi !",
+							"Votre message n\'a pas pu être envoyé !",
+							"remove",
+							"danger"
+						);
 					}
-				}
-				else {
-					echo '			
-						<div class="container-fluid">	  
-							<div class="alert alert-danger text-center">
-								<strong>
-									<span class="glyphicon glyphicon-remove"></span>Erreur lors de l\'envoi !
-								</strong> Votre message n\'a pas pu être envoyé !
-							</div>		
-						</div>
-					';
-				}
 
-				unset($_POST['subject']); 
-				unset($_POST['mail_text']);
-				unset($_POST['email']);
-			}
-		?>
+					unset($_POST['subject']); 
+					unset($_POST['mail_text']);
+					unset($_POST['email']);
+				}
+			?>
+		</div>
 
 		<div class="container">
 			<div class="row container">
@@ -209,16 +199,16 @@
 									<h5>Suivi par :  <?php echo "$prenomT_dossier $nomT_dossier ($matricule_dossier)";?></h5>
 									<h5><?php if ($statutDossier != "En cours") echo "Traité le :  ".date("d/m/Y H:i", $dateTraite); else echo "Depuis le :  ".date("d/m/Y H:i", $dateTraite); ?></h5>
 								</div>
-								<div id="panel-statut" class="col-lg-12 btn-group btn-group-justified" role="group">
-									<a href="traiter.php?statut=À traiter" class="btn btn-default<?php if(!($statutDossier == "En cours")) {echo(" disabled");}?>" role="button">
+								<div class="col-lg-12 btn-group btn-group-justified" role="group">
+									<a href="traiter.php?statut=À%20traiter" class="btn btn-default<?php if(!($statutDossier == "En cours")) {echo(" disabled");}?>" role="button">
 										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
 									</a>
-									<a href="traiter.php?statut=En cours"
+									<a href="traiter.php?statut=En%20cours"
 										class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
 								</div>	
-								<div id="panel-statut" class="col-lg-12 btn-group btn-group-justified" role="group">
-									<a href="traiter.php?statut=Classé sans suite"
+								<div class="col-lg-12 btn-group btn-group-justified" role="group">
+									<a href="traiter.php?statut=Classé%20sans%20suite"
 										class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
 										role="button"><span class="glyphicon glyphicon-remove"></span>Classé sans suite</a>
 									<a href="traiter.php?statut=Terminé"
@@ -242,13 +232,11 @@
 											if($telephoneAssure != "") echo "Tel : $telephoneAssure";
 											else echo "N/A";
 										?>
-										</span>
 										/
 										<?php
 											if($mailAssure != "") echo "Email : $mailAssure";
 											else echo "N/A";
 										?>
-										</span>
 									</h5>
 								</div>
 								<div class="col-xs-12 btn-group btn-group-vertical">
@@ -275,7 +263,7 @@
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
 						<h4 class="modal-title"><span class="glyphicon glyphicon-th-list"></span>Historique des messages</h4>
 					</div>
 					<div class="modal-body">
@@ -284,20 +272,17 @@
 							$i = 1;
 
 							if($message == null) {
-								echo '
-									<div class="container-fluid">
-										<div class="alert alert-warning text-center">
-											<strong>
-												<span class="glyphicon glyphicon-floppy-disk"></span>Aucune correspondance !
-											</strong> Aucun message enregistré n\'est affilié à cet assuré.
-										</div>
-									</div>
-								';
+								GenererMessage(
+									"Aucune correspondance !",
+									"Aucun message enregistré n\'est affilié à cet assuré.",
+									"floppy-disk",
+									"warning"
+								);
 							}
 							while ($message != null) {
 								$contenuMessage = ExtraireMessage($message["Contenu"]);
 								echo '
-									<button class="btn btn-primary btn-block" 
+									<div class="btn btn-primary btn-block" 
 										onclick=\'$("#m'.$i.'").toggle(500); $("#m'.$i.'-title").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");\'>
 										<div class="row" style="text-align: left;">
 											<div class="col-lg-8">
@@ -308,7 +293,7 @@
 												| <span class='glyphicon glyphicon-time'></span>".date("d/m/Y H:i:s", strtotime($message["DateEnvoiM"])).'
 											</div>
 										</div>
-									</button> 
+									</div> 
 									<div id="m'.$i.'" class="panel panel-info" style="display: none; margin-bottom: 0px;">
 										<div class="panel-heading">
 											<h5>À : '.$contenuMessage[0].'</h5>
@@ -328,12 +313,12 @@
 			</div>
 		</div>
 
-		<form method="POST" action="traiter.php" class="modal fade" id="myModal" role="dialog">
+		<form method="POST" action="traiter.php" class="modal fade" id="myModal">
 			<div class="modal-dialog">						
 				<!-- Modal content-->
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
 						<h4>Envoyer un mail à l'assuré</h4>
 						<div class="container" style="padding-bottom: 10px">
 							Type de demande : 
@@ -355,7 +340,7 @@
 						<textarea id="mail_text" name="mail_text" rows="15"></textarea>
 					</div>
 					<div class="modal-footer">
-						<button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-send"></span>Envoyer</button>
+						<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-send"></span>Envoyer</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 					</div>
 				</div>
@@ -366,7 +351,9 @@
 			<div class="row container">
 				<div id="panel-pjs" class="col-sm-4">
 					<div class= "panel panel-default">
-						<div class="panel-heading titre text-center">Liste des pièces justificatives</div>
+						<div class="panel-heading text-center">
+							<h4><span class="glyphicon glyphicon-duplicate"></span>Liste des pièces justificatives</h4>
+						</div>
 						<ul class="panel-body list-group">
 						<?php
 							$result = RecupererPJ($link, $codeDossier);
@@ -381,7 +368,13 @@
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
 								//$mnemonique = $justificatif["Mnemonique"];
-								echo("<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'><h5><img class='icon icon-$extension'>$nomFichier</h5></li>");
+								echo("
+								<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>
+									<h5>
+										<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
+										$nomFichier
+									</h5>
+								</li>");
 							}
 						?>
 						</ul>
@@ -389,13 +382,15 @@
 				</div>
 				<div id="panel-apercu" class="col-sm-8">
 					<div class= "panel panel-default">
-						<div class="panel-heading titre text-center">Aperçu</div>
+						<div class="panel-heading text-center">
+							<h4><span class="glyphicon glyphicon-picture"></span>Aperçu</h4>
+						</div>
 						<div class="panel-body">
-							<embed id="apercu" class="panel-body">
+							<embed id="apercu" class="container-fluid">
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</body>	
+	</body>
 </html>

@@ -1,5 +1,9 @@
+var format = ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "pdf"];
+
 $(document).ready(function(){
-    $("#panel-pjs li").click(clickOnPjsLi($(this)));
+    $("#panel-pjs li").click(function(){
+        clickOnPjsLi($(this))
+    });
     
     //Initialisation des écouteurs pour la recherche
     $("#recherche").on("keyup", function() {TrierTableau()});
@@ -9,8 +13,32 @@ $(document).ready(function(){
     $("#mois_nir").change(function() {TrierTableau()});
     $("#nb_page").change(function() {TrierTableau()});
 
+    // Gestion des messages
     $(".alert").hide();
     $(".alert").show(1500);
+
+    // Affichage d'un bouton de suppression lors du survol
+    $(".alert").hover(function() {
+        //Création du bouton de suppression
+        var elt = document.createElement("span");
+        elt.id = "msg_close";
+        elt.className = "glyphicon glyphicon-remove";
+        $(this).find(".alert-title").append(elt);
+
+        //Initialisation de l'évènement "clique"
+        $("#msg_close").click(function() {
+            // On cache le message parent le plus proche
+            $(this).closest(".alert").hide(400, function(){
+                $(this).remove();
+            });
+        });
+    }, function() {
+        // Sinon on le supprime
+        $("#msg_close").remove();
+    });
+
+    // Désactivation de tous les boutons de classe disabled
+    $(".disabled").attr("disabled", true);
 });
 
 //Vérifie et corrige le format du NIR
@@ -58,14 +86,43 @@ function checkFormatMatricule(format) {
 
 //Fonction qui gère modifie le lien vers l'aperçu
 function changePathViewer(path) {
-    $("#apercu").attr("src", path);
+    var tagName = "", type ="";
+    var typeFile = path.substr((path.lastIndexOf('.') + 1));
+    var i = jQuery.inArray(typeFile, format);
+    
+    if(i != -1) {
+        if(format[i] == "pdf") {
+            tagName = "embed";
+            type = "application/pdf";
+        }
+        else {
+            tagName = "img";
+            type = "img/" + typeFile;
+            var alt = "img-" + typeFile;
+        }
+    }
+    else {
+        tagName = "embed";
+        type = "application/" + typeFile;
+    }
+
+    var newElement = '<' + tagName + ' id="apercu" type="' + type + '"';
+
+    if(tagName == "img") {
+        newElement += ' alt="' + alt + '"';
+    }
+
+    newElement += '>' + $('#apercu').html() + '</' + tagName + '>';
+
+    $('#apercu').replaceWith(newElement);
+    $("#apercu").attr("src", path);    
 }
 
 //Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
 //lors d'un clique
 function clickOnPjsLi(node) {
-    $("panel-pjs li").removeClass("onclick-pjs-li");
-    node.addClass("onclick-pjs-li");
+    $("#panel-pjs li").removeClass("pj-selected");
+    $(node).addClass("pj-selected");
 }
 
 function DateToNumber(date) {
