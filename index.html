@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<title>PJPE - Accueil</title>
 		
@@ -12,14 +12,50 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+		<style>
+			.glyphicon {margin-right: 20px;}
+		</style>
+
 		<script>
+			var hover_1 = false;
+			var hover_2 = false;
+
 			$(document).ready(function(){
-			  $("#research").on("keyup", function() {
-				var value = $(this).val().toLowerCase();
-				$("#data-list tr").filter(function() {
-				  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+				$("#msg_1").hide();
+				$("#msg_2").hide();
+
+				$("#first_button").hover(function(event){
+					hover_1 = true;
+				}, function(){
+					hover_1 = false;
 				});
-			  });
+
+				$("#second_button").hover(function(event){
+					hover_2 = true;
+				}, function(){
+					hover_2 = false;
+				});
+				
+				$("body").mousemove(function(){
+					if (hover_1) {
+						$("#msg_1").fadeIn(500);
+						$("#msg_1").offset({top: event.pageY, left: event.pageX});
+					}
+					else {						
+						$("#msg_1").fadeOut(500);
+					}
+
+					if (hover_2) {
+						$("#msg_2").fadeIn(500);
+						$("#msg_2").offset({top: event.pageY, left: event.pageX});
+					}
+					else {						
+						$("#msg_2").fadeOut(500);
+					}
+				});
+
+					
 			});
 		</script>
 	</head>
@@ -31,11 +67,28 @@
 				</div>
 			</div>
 		</nav>
-		<div class="container-fluid text-center">
-			<div class="row">
-				<div id="send_button" class="col-sm-3">
-					<a class="btn btn-lg" href="frontOffice/depot.php">J'envoie mes justificatifs maintenant</a>
+
+		<div class="container-fluid">
+			<div class="row container">
+				<div class="col-lg-1">
+					<a id="first_button" class="btn btn-lg send_button" href="frontOffice/depot.php"><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</a>
 				</div>
+			</div>
+			<div class="row container">
+				<div class="col-lg-1">
+					<a id="second_button" class="btn btn-lg send_button" href="frontOffice/depot.php?RefD"><span class="glyphicon glyphicon-folder-open"></span> J'ai déjà un dossier en cours</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+			<div id="msg_1" class="msg">
+				<h3><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</h3>
+				<h4>Cliquez ici si vous souhaitez effectuer un premier dépôt de vos justificatifs d'arrêts maladies.</h4>
+			</div>
+			<div id="msg_2" class="msg">
+				<h3><span class="glyphicon glyphicon-folder-open"></span> J'ai déjà un dossier en cours</h3>
+				<h4>Cliquez ici si vous possédez déjà une référence de dossier.</h4>
 			</div>
 		</div>
 

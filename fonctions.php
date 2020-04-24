@@ -111,7 +111,12 @@ function ChercherDossierAvecREF($RefD, $link)
 function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
     $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
     $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
-    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT";
+    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT ";
+    $query .= "AND Tr.DateTraiterD = (";
+    $query .= "SELECT MAX(DateTraiterD) ";
+    $query .= "FROM Traiter ";
+    $query .= "WHERE CodeD = $CodeD)";
+
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -285,7 +290,7 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
                 $file = basename($Fichier['name'][$i]);
 
                 $target_dir = "../" . STORAGE_PATH . "/" . $NirA . "/" . $RefD;
-                $ext = pathinfo($file)['extension'];
+                $ext = strtolower(pathinfo($file)['extension']);
 
                 $CheminJ = "$target_dir/$Key" . "_$j.$ext";
                 $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
@@ -344,6 +349,7 @@ function nbDossiersRecus($link)
     $result = mysqli_query($link, $query);
     return mysqli_fetch_array($result);
 }
+
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link)
 {
@@ -444,6 +450,14 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
     }
 }
 
+// Retire un dossier de la table "Traiter"
+function LibererDossier($link, $CodeD)
+{
+    $query = "DELETE FROM Traiter WHERE CodeD = $CodeD";
+    $result = mysqli_query($link, $query);
+    return $result;
+}
+
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier)
 {
@@ -469,10 +483,10 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
                         echo "btn btn-primary disabled";
                         break;
                     case "Classé sans suite":
-                        echo "btn btn-primary";
+                        echo "btn btn-default";
                         break;
                     case "Terminé":
-                        echo "btn btn-primary";
+                        echo "btn btn-default";
                         break;
                 }
             }
@@ -482,10 +496,10 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
                         echo "btn btn-primary disabled";
                         break;
                     case "Classé sans suite":
-                        echo "btn disabled";
+                        echo "btn btn-default disabled";
                         break;
                     case "Terminé":
-                        echo "btn disabled";
+                        echo "btn btn-default disabled";
                         break;
                 }
             }
@@ -493,23 +507,23 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
         case "Classé sans suite":
             switch ($buttonValue) {
                 case "En cours":
-                    echo "btn disabled";
+                    echo "btn btn-default disabled";
                     break;
                 case "Classé sans suite":
                     echo "btn btn-danger disabled";
                     break;
                 case "Terminé":
-                    echo "btn disabled";
+                    echo "btn btn-default disabled";
                     break;
             }
             break;
         case "Terminé":
             switch ($buttonValue) {
                 case "En cours":
-                    echo "btn disabled";
+                    echo "btn btn-default disabled";
                     break;
                 case "Classé sans suite":
-                    echo "btn disabled";
+                    echo "btn btn-default disabled";
                     break;
                 case "Terminé":
                     echo "btn btn-success disabled";
@@ -618,15 +632,4 @@ function ExtraireMessage($Contenu) {
 
     return [$mail, $objet, $texte, $refD];
 }
-
-// Renvoie la date de format aaaa-mm-jj hh:MM:ss en jj / mm / aaaa hh:MM:ss
-function dateFR($date) {
-    $annee = substr($date, 0, 4);
-    $mois = substr($date, 5, 2);
-    $jour = substr($date, 8, 2);
-    $heure = substr($date, 11);
-
-    return "$jour / $mois / $annee $heure";
-}
-
 ?>

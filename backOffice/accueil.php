@@ -36,7 +36,7 @@ if (isset($_SESSION["matricule"])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
 	<meta charset="utf-8">
@@ -87,7 +87,7 @@ if (isset($_SESSION["matricule"])) {
 				<ul class="nav navbar-nav" id="menu">
 					<li class="active"><a href="accueil.php"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
 					<li><a href="corbeille_generale.php"><span class="glyphicon glyphicon-list-alt"></span> Corbeille générale</a></li>
-					<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-folder-open"></span> Ma Corbeille</a></li>
+					<li><a href="ma_corbeille.php"><span class="glyphicon glyphicon-inbox"></span> Ma Corbeille</a></li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right dropdown">

@@ -19,11 +19,13 @@
 
     if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
-            $ReferenceDossier = $_GET["RefD"];
-            if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
-            if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-            if(!DossierExiste($_GET["RefD"], $link)) {
-                RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+            if($_GET["RefD"] != "") {
+                $ReferenceDossier = $_GET["RefD"];
+                if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
+                if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
+                if(!DossierExiste($_GET["RefD"], $link)) {
+                    RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+                }
             }
             $repost = True;  // Ceci n'est pas un premier dépôt
         }
@@ -135,6 +137,11 @@
                         checkButtonRefD();
                     }
                 }
+
+                $(document).ready(function(){
+                    $(".alert").hide();
+                    $(".alert").show(1500);
+                });
             </script>
         <?php endif ?>
 
@@ -184,65 +191,57 @@
         </div>
     <?php endif ?>
 
-        <div class="container">
-            <div class="row">
-                <!-- Message en cas d'erreur d'authentification -->
-                <?php if($msg_error_nir_ref) : ?>
-                    <div class="col-sm-12">
-                        <div class="alert alert-danger">
-                            <h3>
-                                <strong>
-                                    <span class="glyphicon glyphicon-remove"></span>Échec lors de l'authentification !
-                                </strong>
-                            </h3>
-                            <p>Ces identifiants sont invalides !</p>
-                        </div>
-                    </div>
-                <?php endif ?>
+        <div class="container-fluid">
+            <!-- Message en cas d'erreur d'authentification -->
+            <?php if($msg_error_nir_ref) : ?>
+                <div class="alert alert-danger">
+                    <h3>
+                        <strong>
+                            <span class="glyphicon glyphicon-remove"></span>Échec lors de l'authentification !
+                        </strong>
+                    </h3>
+                    <p>Ces identifiants sont invalides !</p>
+                </div>
+            <?php endif ?>
                 
-                <!-- Message en cas de référence de dossier valide -->                
-                <?php if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) : ?>
-                    <div class="col-sm-12">
-                        <div class="alert alert-info">
-                            <h3>
-                                <strong>
-                                    <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR
-                                </strong>
-                            </h3>
-                            <p>Dans le but de vous authentifier, merci de saisir votre NIR dans le champ précu à cet effet.</p>
-                        </div>
-                    </div>
-                <?php endif ?>  
+            <!-- Message en cas de référence de dossier valide -->                
+            <?php if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) : ?>
+                <div class="alert alert-info">
+                    <h3>
+                        <strong>
+                            <span class="glyphicon glyphicon-user"></span>Veuillez saisir votre NIR<?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo ", ainsi que la référence du dossier qui vous a été délivrée";?>.
+                        </strong>
+                    </h3>
+                    <p>Dans le but de vous authentifier, merci de saisir votre NIR
+                        <?php if(isset($_GET["RefD"]) && $_GET["RefD"] == "") echo " et la référence de votre dossier";?> dans le champ précu à cet effet.</p>
+                </div>
+            <?php endif ?>  
 
-                <!-- Message en cas d'erreur de NIR inconnu -->
-                <?php if ($msg_error_nir) : ?>
-                    <div class="col-sm-12">
-                        <div class="alert alert-danger">
-                            <h3>
-                                <strong>
-                                    <span class="glyphicon glyphicon-remove"></span>NIR non enregistré !
-                                </strong>
-                            </h3>
-                            <p>Il semblerait que ce NIR ne soit affilié à aucun dossier.</p>
-                        </div>
-                    </div>
-                <?php endif ?>     
+            <!-- Message en cas d'erreur de NIR inconnu -->
+            <?php if ($msg_error_nir) : ?>
+                <div class="alert alert-danger">
+                    <h3>
+                        <strong>
+                            <span class="glyphicon glyphicon-remove"></span>NIR non enregistré !
+                        </strong>
+                    </h3>
+                    <p>Il semblerait que ce NIR ne soit affilié à aucun dossier.</p>
+                </div>
+            <?php endif ?>     
 
-                <!-- Message en cas d'erreur de référence inconnue -->
-                <?php if ($msg_error_ref) : ?>
-                    <div class="col-sm-12">
-                        <div class="alert alert-warning">
-                            <h3>
-                                <strong>
-                                    <span class="glyphicon glyphicon-link"></span>Référence invalide
-                                </strong>
-                            </h3>
-                            <p>
-                                Ce lien ne permet pas de référencer un dossier enregistré !
-                            </p>
-                        </div>
-                    </div>
-                <?php endif ?>
+            <!-- Message en cas d'erreur de référence inconnue -->
+            <?php if ($msg_error_ref) : ?>
+                <div class="alert alert-warning">
+                    <h3>
+                        <strong>
+                            <span class="glyphicon glyphicon-link"></span>Référence invalide
+                        </strong>
+                    </h3>
+                    <p>
+                        Ce lien ne permet pas de référencer un dossier enregistré !
+                    </p>
+                </div>
+            <?php endif ?>
             </div>
         </div>
 

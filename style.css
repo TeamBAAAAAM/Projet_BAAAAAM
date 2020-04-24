@@ -2,7 +2,6 @@ body {
 	background: url(img/background.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
-	min-width: 545px;
 	font-family: "Calibri";
 }
 
@@ -13,6 +12,7 @@ body {
 	background-color: #339966;
 	color: white;
 	box-shadow: 1px 1px 10px grey;
+	margin-bottom: 150px;
 }
 
 .welcome {
@@ -40,23 +40,52 @@ body {
 	background-color: white;
 }
 
-#send_button a {
+a.send_button {
+	background-color: rgba(255, 255, 255, 0.774);
+	box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
 	text-decoration: none;
-	color: rgb(13, 236, 114);
-	background-color: white;
-	box-shadow: 1px 1px 10px rgb(22, 15, 29);
-	border: 3px solid #2e242433;
-	border-radius: 15px;
+	margin-top: 15px;
+	font-size: 30px;
+	padding: 15px 20px;
 	transition: background-color 1s, box-shadow 1s;
-	margin-top: 200px;
-	font-size: 34px;
-	padding: 15px 25px;
 }
 
-#send_button a:hover {
-	box-shadow: 1px 1px 10px rgb(59, 41, 78);
-	background-color: rgb(13, 236, 114);
+#first_button {
+	color: rgb(71, 184, 122);
+}
+#first_button:hover {
+	background-color: rgb(71, 184, 122);
 	color: white;
+	box-shadow: none;
+}
+
+#second_button {
+	color: rgb(7, 69, 110);
+}
+#second_button:hover {
+	background-color: rgb(7, 69, 110);
+	color: white;
+	box-shadow: none;
+}
+
+.msg {
+	position: absolute;
+	box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
+	text-decoration: none;
+	margin-top: 15px;
+	font-size: 30px;
+	padding: 15px 20px;
+	border-radius: 30px;
+	width: 650px;
+	transition: background-color 1s, box-shadow 1s;
+}
+
+#msg_1 {background-color: rgba(71, 184, 122, 0.900); color: white}
+#msg_2 {background-color: rgba(7, 69, 110, 0.900); color: white;}
+
+.msg > h3 {
+	padding-bottom: 10px;
+	border-bottom: 1px solid white;
 }
 
 /*note*/
