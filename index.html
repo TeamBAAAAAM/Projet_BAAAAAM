@@ -1,82 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
-		<title>PJPE - Accueil</title>
-		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
+		<!-- IMPORTATION DES FRAMEWORK (Bootstrap et JQuery) --> 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style.css">
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
-		<style>
-			.glyphicon {margin-right: 20px;}
-		</style>
-
-		<script>
-			var hover_1 = false;
-			var hover_2 = false;
-
-			$(document).ready(function(){
-				$("#msg_1").hide();
-				$("#msg_2").hide();
-
-				$("#first_button").hover(function(event){
-					hover_1 = true;
-				}, function(){
-					hover_1 = false;
-				});
-
-				$("#second_button").hover(function(event){
-					hover_2 = true;
-				}, function(){
-					hover_2 = false;
-				});
-				
-				$("body").mousemove(function(){
-					if (hover_1) {
-						$("#msg_1").fadeIn(500);
-
-						// Pour le mettre au dessus du pointeur
-						var y =  $(".msg").height();
-						y += parseInt($(".msg").css("padding-bottom"), 10);
-						y += parseInt($(".msg").css("padding-top"), 10);
-						y += 10;
-
-						var x =  20;
-					
-						$("#msg_1").offset({top: event.pageY - y, left: event.pageX + x});
-					}
-					else {						
-						$("#msg_1").fadeOut(300);
-					}
-
-					if (hover_2) {
-						$("#msg_2").fadeIn(500);
-						
-						var y = parseInt($("#msg_2").css("padding-bottom"), 10);
-						y += parseInt($("#msg_2").css("padding-top"), 10);
-						y += 10;
-
-						var x =  20;
-					
-						$("#msg_2").offset({top: event.pageY + y, left: event.pageX + x});
-					}
-					else {						
-						$("#msg_2").fadeOut(300);
-					}
-				});
-
-					
-			});
-		</script>
+		<script src="script.js"></script>
+		
+		<title>PJPE - Accueil</title>
 	</head>
 	<body>
-		<nav class="navbar navbar-default header welcome">
+		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">
 					<h1>Bienvenue sur PJPE</h1>
@@ -84,14 +24,12 @@
 			</div>
 		</nav>
 
-		<div class="container-fluid">
-			<div class="row container">
-				<div class="col-lg-1">
+		<div id="button_container" class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
 					<a id="first_button" class="btn btn-lg send_button" href="frontOffice/depot.php"><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</a>
 				</div>
-			</div>
-			<div class="row container">
-				<div class="col-lg-1">
+				<div class="col-lg-12">
 					<a id="second_button" class="btn btn-lg send_button" href="frontOffice/depot.php?RefD"><span class="glyphicon glyphicon-folder-open"></span> J'ai déjà un dossier en cours</a>
 				</div>
 			</div>
@@ -139,7 +77,7 @@
 				<div class="col-sm-6">
 					<div class="title_footer">Contact</div>
 					<div id="contact" class="row">
-						<iframe class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr" style="border:0;" allowfullscreen=""></iframe>	
+						<iframe id="google_maps" class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr" allowfullscreen=""></iframe>	
 						<div class="col-sm-7 text-left">
 							<div class="col-sm-12">Caisse Primaire d'Assurance Maladie</div>
 							<div class="col-sm-12">3, Boulevard du Professeur Léopold Escande</div>	

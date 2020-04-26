@@ -540,6 +540,7 @@ function DossiersCorbeilleGenerale($link)
 {
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
     $result = mysqli_query($link, $query);
+    
     return $result;
 }
 
