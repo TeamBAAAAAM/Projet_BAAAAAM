@@ -39,7 +39,7 @@ $(document).ready(function(){
     $("html").mousemove(function(){
         if (hover_1) { // Et qu'il survole le premier bouton
             // Alors le premier message s'affiche
-            $("#msg_1").fadeIn(500);
+            $("#msg_1").fadeIn(250);
 
             // Le message est légerment décalement pour éviter d'être sur le pointeur
             // à l'aide des variables x (position horizontale) et y (position verticale)
@@ -56,12 +56,12 @@ $(document).ready(function(){
         }
         else {					
             // Sinon, il est caché
-            $("#msg_1").fadeOut(300);
+            $("#msg_1").fadeOut(100);
         }
 
         if (hover_2) { // Et qu'il survole le deuxième bouton
             // Alors le deuxième message s'affiche
-            $("#msg_2").fadeIn(500);
+            $("#msg_2").fadeIn(250);
             
             // Le message est légerment décalement pour éviter d'être sur le pointeur
             // à l'aide des variables x (position horizontale) et y (position verticale)
@@ -70,19 +70,20 @@ $(document).ready(function(){
             else var x = -$(".msg").width() / 2 - 20;
             var y = parseInt($("#msg_2").css("padding-bottom"), 10);
             y += parseInt($("#msg_2").css("padding-top"), 10);
-            y += 20;
+            if(window.innerWidth >= 768) y += 20;
+            else y = -40;
 
             // Le deuxième message suit le pointeur de la souris
             $("#msg_2").offset({top: event.pageY - y, left: event.pageX + x});
         }
         else {						
             // Sinon, il est caché
-            $("#msg_2").fadeOut(300);
+            $("#msg_2").fadeOut(100);
         }
 
         if (hover_3) { // Et qu'il survole le troisième bouton
             // Alors le troisième message s'affiche
-            $("#msg_3").fadeIn(500);
+            $("#msg_3").fadeIn(250);
             
             // Le message est légerment décalement pour éviter d'être sur le pointeur
             // à l'aide des variables x (position horizontale) et y (position verticale)
@@ -98,7 +99,7 @@ $(document).ready(function(){
         }
         else {						
             // Sinon, il est caché
-            $("#msg_3").fadeOut(300);
+            $("#msg_3").fadeOut(100);
         }
     });        
 });

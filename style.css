@@ -293,6 +293,10 @@ a.send_button {
     #msg_2 {
         border-top-left-radius: 30px;
     }
+
+    #msg_3 {
+        border-top-left-radius: 30px;
+    }
 }
 
 @media(min-width:768px) {
