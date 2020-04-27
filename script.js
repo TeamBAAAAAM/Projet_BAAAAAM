@@ -49,7 +49,7 @@ $(document).ready(function(){
             var y =  $("#msg_1").height();
             y += parseInt($("#msg_1").css("padding-bottom"), 10);
             y += parseInt($("#msg_1").css("padding-top"), 10);
-            y += 10;
+            y += 20;
 
             // Le premier message suit le pointeur de la souris
             $("#msg_1").offset({top: event.pageY - y, left: event.pageX + x});
@@ -66,8 +66,8 @@ $(document).ready(function(){
             // Le message est légerment décalement pour éviter d'être sur le pointeur
             // à l'aide des variables x (position horizontale) et y (position verticale)
             // et selon la taille de l'écran
-            if(window.innerWidth >= 768) var x =  20;
-            else var x = -$(".msg").width() / 2 - 20;
+            if(window.innerWidth >= 768) var x =  40;
+            else var x = -$(".msg").width() / 2 - 0;
             var y = parseInt($("#msg_2").css("padding-bottom"), 10);
             y += parseInt($("#msg_2").css("padding-top"), 10);
             if(window.innerWidth >= 768) y += 20;
