@@ -23,7 +23,7 @@ body {
 -------------------------------------------------------*/
 
 .header {
-	padding: 10px 32px;
+    padding: 10px 32px;
     color: #396;
     background-color: white;
     box-shadow: 1px 1px 10px grey;
@@ -199,9 +199,10 @@ a.send_button {
     a.send_button {
         width: 100%;
         margin-top: 5px;
-        font-size: 15px;
         padding: 4px 10px;
+        font-size: 15px;
     }
+
     footer {
         margin-top: 20px;
     }
@@ -211,22 +212,27 @@ a.send_button {
     #contact > * {
         text-align: center;
     }
+
     a.send_button {
         width: 100%;
         margin-top: 10px;
-        font-size: 20px;
         padding: 8px 15px;
+        font-size: 20px;
     }
+
     footer {
         margin-top: 40px;
     }
+
     .msg {
         width: 350px;
         margin-top: 15px;
     }
+
     .msg > h3 {
         font-size: 20px;
     }
+
     .msg > h4 {
         font-size: 15px;
     }
@@ -250,25 +256,29 @@ a.send_button {
         width: 350px;
         margin-top: 15px;
     }
+
     .msg > h3 {
         font-size: 20px;
     }
+
     .msg > h4 {
         font-size: 15px;
     }
 }
 
-@media(max-width:768px) {    
+@media(max-width:768px) {
+    .msg {
+        z-index: 9999999;
+    }
+
     #msg_1 {
         border-bottom-left-radius: 30px;
-        z-index: 9999999;
     }
+
     #msg_2 {
         border-top-left-radius: 30px;
-        z-index: 9999999;
     }
 }
-
 
 @media(min-width:768px) {
     #button_container {
