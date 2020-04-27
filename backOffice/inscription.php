@@ -4,7 +4,7 @@
 require('../fonctions.php');
 
 //Connexion
-$connexion= connexionMySQL();
+$connexion= connecterBD();
 
 // Démerrage de la session 
 session_start();

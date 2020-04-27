@@ -2,7 +2,7 @@
 	session_start();
     require("../fonctions.php");
     // Connexion à la BD
-    $link = connexionMySQL();
+    $link = connecterBD();
 	
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
@@ -11,7 +11,7 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else {
-		RedirigerVers("se_connecter.php");
+		redirigerVers("se_connecter.php");
 	}
 ?>
 <!DOCTYPE html>
@@ -137,7 +137,7 @@
 				</thead>
 				<tbody id="data-list">
 				<?php
-					$result = DossiersCorbeilleTechnicien($link, $codeT);
+					$result = dossiersCorbeilleTechnicien($link, $codeT);
 					if ($result != NULL)
 						$rows = mysqli_num_rows($result);
 					else $rows = 0;

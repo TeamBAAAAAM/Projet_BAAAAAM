@@ -3,7 +3,7 @@
     require('../fonctions.php');
 
     //Connexion à la base de données
-    $connexion= connexionMySQL();
+    $connexion= connecterBD();
 
     // On démarre la session
     session_start();

@@ -4,7 +4,7 @@
 require('../fonctions.php');
 
 //Connexion
-$connexion= connexionMysql();
+$connexion= connecterBD();
 
 // Récupération du matricule 
 $matricule= $_POST['matricule'];
@@ -39,7 +39,7 @@ $_SESSION['mdp']=$mot_de_passe;
             <h1><span class='glyphicon glyphicon-floppy-saved'></span>Résultat de l'enregistrement</h1>
             
             <?php
-                $verif = VerificationMat($connexion, $matricule);
+                $verif = verifierMatricule($connexion, $matricule);
                 
                 // Vérification de la connexion 
                 if ($connexion != null) {

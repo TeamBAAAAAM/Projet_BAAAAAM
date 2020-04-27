@@ -4,12 +4,12 @@ require("../fonctions.php");
 setlocale(LC_TIME, "fr_FR");
 
 // Connexion à la BD
-$link = connexionMySQL();
+$link = connecterBD();
 
 //Vérification des identifiants
 if (isset($_POST["matricule"]) && isset($_POST["mdp"])) {
-	if (!AuthentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
-		RedirigerVers("se_connecter.php?msg_erreur=msg_3");
+	if (!authentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
+		redirigerVers("se_connecter.php?msg_erreur=msg_3");
 	}
 }
 
@@ -20,10 +20,10 @@ if (isset($_SESSION["matricule"])) {
 	$nomT = $_SESSION["nomT"];
 	$prenomT = $_SESSION["prenomT"];
 } else {
-	if (!isset($_POST["matricule"])) RedirigerVers("se_connecter.php");
+	if (!isset($_POST["matricule"])) redirigerVers("se_connecter.php");
 	else {
 		$matricule = $_POST["matricule"];
-		$technicien = DonneesTechnicien($link, $matricule);
+		$technicien = donneesTechnicien($link, $matricule);
 		$codeT = $technicien["CodeT"];
 		$nomT = $technicien["NomT"];
 		$prenomT = $technicien["PrenomT"];

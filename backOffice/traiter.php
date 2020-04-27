@@ -2,7 +2,7 @@
 	session_start();
     require_once("../fonctions.php");
     // Connexion à la BD
-	$link = connexionMySQL();
+	$link = connecterBD();
 
 	// Récupération des données du technicien connecté
 	if(isset($_SESSION["matricule"])){
@@ -11,36 +11,36 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else {
-		RedirigerVers("se_connecter.php");
+		redirigerVers("se_connecter.php");
 	}
 
 	//Changement de statut si un statut est indiqué dans l'URL
 	if(isset($_GET["statut"])) {
 		if(isset($_GET["codeD"])) $_SESSION["codeDossier"] = $_GET["codeD"];
-		TraiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
+		traiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
 
 		if($_GET["statut"] == "À traiter") {
-			LibererDossier($link, $_SESSION["codeDossier"]);
-			RedirigerVers("corbeille_generale.php");
+			libererDossier($link, $_SESSION["codeDossier"]);
+			redirigerVers("corbeille_generale.php");
 		}
 
 		//Suppression des variables transmises par la méthode GET
-		RedirigerVers("traiter.php");
+		redirigerVers("traiter.php");
 	}
 	// Récupération des données du dossier en cours de traitement
 	else if(isset($_GET["codeD"])) {
 		$_SESSION["codeDossier"] = $_GET["codeD"];
 		//Suppression des variables transmises par la méthode GET
-		RedirigerVers("traiter.php");
+		redirigerVers("traiter.php");
 	}
 		
 	//S'il n'y a pas de code dossier
 	if(!isset($_SESSION["codeDossier"])) {	
-		RedirigerVers("accueil.php");
+		redirigerVers("accueil.php");
 	}
 
 	//Variables du dossier et de l'assuré
-	$dossier = ChercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
+	$dossier = chercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
 	$dateReception = strtotime($dossier["DateD"]);
@@ -59,7 +59,7 @@
 	$dateTraite = strtotime($dossier["DateTraiterD"]);
 
 	//Récupération des messages de l'assuré
-	$messagesAssure = ListeMessages($codeAssure, $link);
+	$messagesAssure = listeMessages($codeAssure, $link);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -118,7 +118,7 @@
 		<div class="container-fluid">
 			<?php
 				if(isset($_POST['email'])) {
-					if(EnvoyerMailDemandePJs($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
+					if(envoyerMailDemandePJ($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
 						GenererMessage (
 							"Mail envoyé !",
 							"Votre message a bien été envoyé.",
@@ -132,7 +132,7 @@
 						$contenu = explode("'", $contenu);
 						$contenu = implode("\\'", $contenu);
 
-						if(EnregistrerMessageAssure($codeAssure, $codeT, $contenu, $link)) {						
+						if(enregistrerMessageAssure($codeAssure, $codeT, $contenu, $link)) {						
 							GenererMessage (
 								"Mail enregistré !",
 								"Votre message a bien été enregistré.",
@@ -142,10 +142,10 @@
 							
 							//Reconnexion à la BD en cas de réussite de l'enregistrement
 							mysqli_close($link);
-							$link = connexionMySQL();
+							$link = connecterBD();
 
 							//Récupération des messages de l'assuré
-							$messagesAssure = ListeMessages($codeAssure, $link);
+							$messagesAssure = listeMessages($codeAssure, $link);
 						}
 						else {						
 							GenererMessage (
@@ -189,15 +189,15 @@
 										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
 									</a>
 									<a href="traiter.php?statut=En%20cours"
-										class="<?php ClassBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
+										class="<?php classBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
 								</div>	
 								<div class="col-lg-12 btn-group btn-group-justified" role="group">
 									<a href="traiter.php?statut=Classé%20sans%20suite"
-										class="<?php ClassBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
+										class="<?php classBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
 										role="button"><span class="glyphicon glyphicon-remove"></span>Classé sans suite</a>
 									<a href="traiter.php?statut=Terminé"
-										class="<?php ClassBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
+										class="<?php classBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-ok"></span>Terminé</a>
 								</div>
 							</div>
@@ -257,7 +257,7 @@
 							$i = 1;
 
 							if($message == null) {
-								GenererMessage(
+								genererMessage(
 									"Aucune correspondance !",
 									"Aucun message enregistré n\'est affilié à cet assuré.",
 									"floppy-disk",
@@ -265,7 +265,7 @@
 								);
 							}
 							while ($message != null) {
-								$contenuMessage = ExtraireMessage($message["Contenu"]);
+								$contenuMessage = extraireMessage($message["Contenu"]);
 								echo '
 									<div class="btn btn-primary btn-block" 
 										onclick=\'$("#m'.$i.'").toggle(500); $("#m'.$i.'-title").toggleClass("glyphicon-chevron-right glyphicon-chevron-down");\'>
@@ -341,7 +341,7 @@
 						</div>
 						<ul class="panel-body list-group">
 						<?php
-							$result = RecupererPJ($link, $codeDossier);
+							$result = recupererJustificatifs($link, $codeDossier);
 							if ($result != NULL)
 								$rows = mysqli_num_rows($result);
 							else $rows = 0;

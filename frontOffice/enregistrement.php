@@ -4,7 +4,7 @@
     require_once("../fonctions.php");
     
     //Ouverture de la connexion à la BD
-    $link = connexionMySQL();
+    $link = connecterBD();
 ?>
 
 <!DOCTYPE html>
@@ -52,16 +52,16 @@
 
                 <div class="container-fluid">
                     <?php
-                        if(empty($_POST) && empty($_GET)) RedirigerVers("depot.php");
+                        if(empty($_POST) && empty($_GET)) redirigerVers("depot.php");
 
                         // Si l'assuré n'existe pas déjà dans la BD
-                        if(!AssureExiste($_POST["nir"], $link)) {
+                        if(!assureExiste($_POST["nir"], $link)) {
                             // Enregistrement de l'assuré dans la BD
-                            if(!EnregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) { // Message d'échec
+                            if(!enregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) { // Message d'échec
                                 echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement de l'assuré !</div>";
                             } else {
                                 //Création du dossier d'un assuré dont le nom est son NIR (en local)
-                                if(!CreerDossierNIR($_POST["nir"])) { // Message d'échec
+                                if(!creerRepertoireNIR($_POST["nir"])) { // Message d'échec
                                     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de la création du dossier du NIR de l'assuré' !</div>";
                                 } else { // Message de réussite
                                     $_SESSION["MessageAssure"] = "
@@ -116,21 +116,21 @@
                         }
 
                         // Récupération des données de l'assuré dans la BD
-                        $assure = ChercherAssureAvecNIR($_POST["nir"], $link);
+                        $assure = chercherAssureAvecNIR($_POST["nir"], $link);
 
                         //Si une référence de dossier n'a pas encore été enregistré
                         if(!isset($_SESSION["RefD"])) {
-                            $_SESSION["RefD"] = GenererReferenceDossier(8, $link);
+                            $_SESSION["RefD"] = genererReferenceDossier(8, $link);
                             // Enregistrement du dossier dans la BD
-                            if(!EnregistrerDossier($assure["CodeA"], $_POST["date_arret"], $_SESSION["RefD"], $link)) { // Message d'échec
+                            if(!enregistrerDossier($assure["CodeA"], $_POST["date_arret"], $_SESSION["RefD"], $link)) { // Message d'échec
                                 echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement du dossier dans la base de données !</div>";
                             } else {
                                 //Création du dossier de l'arrêt maladie dont le nom est sa référence (en local)
-                                if(!CreerDossierAM($_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
+                                if(!creerRepertoireAM($_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
                                     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec lors de la création du dossier !</div>";
                                 } else {
                                     // Récupération des données du dossier dans la BD
-                                    $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
+                                    $dossier = chercherDossierAvecREF($_SESSION["RefD"], $link);
                                     // Message de réussite
                                     $_SESSION["MessageDossier"] = "
                                         <ul class='list-group'>
@@ -158,7 +158,7 @@
                             }                           
                         } else { // Message d'information si le dossier existe déjà
                             // Récupération des données du dossier dans la BD
-                            $dossier = ChercherDossierAvecREF($_SESSION["RefD"], $link);
+                            $dossier = chercherDossierAvecREF($_SESSION["RefD"], $link);
                             $_SESSION["MessageDossier"] = "
                                         <ul class='list-group'>
                                             <li class='list-group-item list-group-item-success'> 
@@ -183,7 +183,7 @@
                         if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
                         
                         // Enregistrement des PJ
-                        $resultats = EnregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
+                        $resultats = enregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
                         if($resultats != null) { // Message de réussite
                             echo "
                             <ul class='list-group'>
