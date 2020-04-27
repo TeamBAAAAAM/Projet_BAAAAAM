@@ -1,27 +1,27 @@
 <?php
     session_start();
-
-    require_once("../fonctions.php");
-    
-    //Ouverture de la connexion à la BD
+    require_once("../fonctions.php");    
+    //Connexion à la BD
     $link = connecterBD();
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
     <head>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <!-- Pour l'exportation en PDF -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+            <!-- Pour l'exportation en PDF -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
         <script src="script.js"></script>
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>PJPE - Enregistrement des documents</title>
     </head>    

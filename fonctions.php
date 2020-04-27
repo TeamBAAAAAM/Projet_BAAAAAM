@@ -5,6 +5,8 @@
 
 /******************************************************************/
 
+// Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
+// Puis par ordre alphabétique
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES
@@ -20,7 +22,7 @@ define("PORT", "3306");         // Nom du port de connexion
  	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
 ------------------------------------------------------------------*/
 
-define("STORAGE_PATH", "piecesJustificatives");     // NB : À partir de la racine
+define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la racine
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR GÉNÉRER LE MESSAGE DE DEMANDE DE PIECES
@@ -58,6 +60,23 @@ function connecterBD() {
     return $link;
 }
 
+/* Génère un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function genererMessage($title, $body, $icon, $type) {
+    echo "
+        <div class='alert alert-$type'>
+            <h3>
+                <strong class='alert-title'>
+                    <span class='glyphicon glyphicon-$icon'></span>$title
+                </strong>
+            </h3>
+            <p>
+                $body
+            </p>
+        </div>
+    ";
+}
+
 /* Redirige vers la page '$nomPage' */
 function redirigerVers($nomPage) {
     $host = $_SERVER['HTTP_HOST'];
@@ -69,7 +88,7 @@ function redirigerVers($nomPage) {
 
 
 /*------------------------------------------------------------------
- 	FONCTIONS : FRONT OFFICE
+ 	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
 ------------------------------------------------------------------*/
 
 /* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
@@ -120,21 +139,21 @@ function chercherREFAvecCodeD($codeDossier, $link) {
     return mysqli_fetch_array($result);
 }
 
-/* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (à renseigner tout en haut) */
+/* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
 function creerRepertoireAM($ref, $nir) {
     $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir . "/" . $ref;
     return mkdir($dirname);
 }
 
-/* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (à renseigner tout en haut) */
+/* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
 function creerRepertoireNIR($nir) {
     $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir;
     return mkdir($dirname);
 }
 
-/* Vérifie si le dossier de référence $ref existe déjà dans la base de données */
+/* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
 /* => [Vrai si la référence de dossier est reconnue, Faux sinon] */
 function dossierExiste($ref, $link) {
     $query = "SELECT RefD FROM Dossier WHERE RefD = '$ref'";
@@ -297,7 +316,7 @@ function fichierExiste($link, $chemin){
 
 
 /*------------------------------------------------------------------
- 	FONCTIONS : BACK OFFICE
+ 	FONCTIONS : BACK OFFICE (INTERFACE TECHNICIEN)
 ------------------------------------------------------------------*/
 
 /* Vérifie que le technicien de matricule '$matricule' possède bien le mot de passe '$mdpt' */
@@ -341,8 +360,8 @@ function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
 /* => $sessionValue correspond au statut du dossier en cours ($_SESSION['statut'])          */
 /* => $buttonValue est soit 'En cours', soit 'Classé sans suite' ou bien 'Terminé'          */
 /* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
-/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier */
-/* => Le statut du dossier courant                                                          */
+/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
+/* => le statut du dossier courant                                                          */
 function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
@@ -413,7 +432,7 @@ function donneesTechnicien($link, $matricule) {
     return mysqli_fetch_array($result);
 }
 
-/* Renvoie la liste complètes des dossiers à traiter et en cours de traitement */
+/* Renvoie la liste complète des dossiers contenus dans la BD */
 /* => [Objet de type array si le technicien a des dossiers dans sa corbeille, NULL sinon] */
 function dossiersCorbeilleGenerale($link) {
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD "
@@ -467,7 +486,7 @@ function envoyerMailConfirmationEnregistrement($mail, $ref) {
     return mail($mail, $subject, $txt);
 }
 
-/* Envoie un mail de sujet '$subject'* et de contenu '$txt' à l'adresse $mail */
+/* Envoie un mail de sujet '$subject' et de contenu '$txt' à l'adresse '$mail' */
 /* => [Vrai si le message a bien été envoyé, Faux sinon] */
 function envoyerMailDemandePJ($mail, $subject, $txt) {
     return mail($mail, $subject, $txt);
@@ -476,7 +495,7 @@ function envoyerMailDemandePJ($mail, $subject, $txt) {
 /* Extrait les informations d'un message pour les renvoyer sous forme d'une liste */
 /* => [Objet de type array contenant l'adresse email de l'assuré, l'objet et le contenu du message] */
 /* => [ainsi que la référence du dossier]                                                           */
-/* => Ne fonctionne que sur les message générés automatiquement                                     */
+/* => Ne fonctionne que sur les messages générés automatiquement                                     */
 function extraireMessage($contenu) {
     //Position de l'adresse email
     $deb = strpos($contenu, "À : ") + strlen("À : ");
@@ -502,24 +521,7 @@ function extraireMessage($contenu) {
     return [$mail, $objet, $texte, $ref];
 }
 
-/* Génère un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
-/* => [Objet de type array si le dossier existe, NULL sinon] */
-function genererMessage($title, $body, $icon, $type) {
-    echo "
-        <div class='alert alert-$type'>
-            <h3>
-                <strong class='alert-title'>
-                    <span class='glyphicon glyphicon-$icon'></span>$title
-                </strong>
-            </h3>
-            <p>
-                $body
-            </p>
-        </div>
-    ";
-}
-
-/* Remet le dossier de code '$codeDossier' de la liste des dossiers traités */
+/* Retire le dossier de code '$codeDossier' de la liste des dossiers traités */
 /* => [Vrai si le retrait a bien été effectué, Faux sinon] */
 function libererDossier($link, $codeDossier) {
     $query = "DELETE FROM Traiter WHERE CodeD = $codeDossier";
@@ -554,7 +556,7 @@ function nbDossiersATraiter($link) {
     return mysqli_fetch_array($result);
 }
 
-/* Renvoie le nombre de dossiers restant à traiter */
+/* Renvoie le nombre total de dossiers restant à traiter */
 /* => [Entier nul ou posiitf] */
 function nbDossiersATraiterTotal($link) {
     $query = "SELECT COUNT(*) AS nbDossiersAtraiterTotal "
@@ -589,7 +591,7 @@ function nbDossiersRecus($link) {
     return mysqli_fetch_array($result);
 }
 
-/* Renvoie le nombre de dossiers terminés d'être traiter au cours de la journée */
+/* Renvoie le nombre de dossiers classés comme 'Terminé' au cours de la journée */
 /* => [Entier nul ou posiitf] */
 function nbDossiersTermines($link) {
     $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersTermines "
@@ -613,7 +615,8 @@ function recupererJustificatifs($link, $codeDossier) {
 
     return $result;
 }
-/* Affilie le dossier de code '$codeDossier' au technicien de code '$codeTechnicien' et son statut en '$statut' */
+
+/* Affilie le dossier de code '$codeDossier' au technicien de code '$codeTechnicien' et change son statut en '$statut' */
 /* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
 function traiterDossier($codeTechnicien, $codeDossier, $statut, $link) {
     $keys = ""; $values = "";
@@ -647,7 +650,7 @@ function traiterDossier($codeTechnicien, $codeDossier, $statut, $link) {
     }
 }
 
-/* Vérifie l'unicité du matricule $matricule */
+/* Vérifie l'unicité du matricule '$matricule' */
 /* => ["Unique" si c'est vrai, ... ???] */
 function verifierMatricule($link, $matricule) {
     $query = "SELECT * FROM technicien WHERE Matricule='$matricule'";

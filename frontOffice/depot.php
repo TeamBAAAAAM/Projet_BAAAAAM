@@ -79,23 +79,27 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
+
+        <!-- AFFICHAGE DU FORMULAIRE SI REFERENCE DE DOSSIER EXISTANTE -->
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show(); //Le formulaire est affiché
+                $("#form_panel").show();
             });
         </script>
-    <?php endif ?>
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php endif ?>
 
         <title>PJPE - Dépôt des documents</title>
     </head>
