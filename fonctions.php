@@ -351,10 +351,8 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
  	FONCTIONS : BACK OFFICE
 ------------------------------------------------------------------*/
 
-
-/*          CONNEXION DU TECHNICIEN                 */
-
-//Vérification de l'unicité du matricule 
+/* Vérifie l'unicité du matricule $matricule */
+/* => ["Unique" si c'est vrai, ... ???] */
 function VerificationMat($connexion, $matricule)
 {
     $requete = "SELECT * FROM technicien WHERE Matricule='$matricule'";
@@ -373,7 +371,9 @@ function VerificationMat($connexion, $matricule)
 
 /*          REQUETES POUR RECAPITULATIF             */
 
-// Nombre de dossiers recus à la date courante
+
+/* Renvoie le nombre de dossiers reçus au cours de la journée */
+/* => [Entier nul ou posiitf] */
 function nbDossiersRecus($link)
 {
     $query = "SELECT COUNT(*) AS nbDossiersRecus "
@@ -384,7 +384,8 @@ function nbDossiersRecus($link)
     return mysqli_fetch_array($result);
 }
 
-// Nombre de dossiers restant à traiter au total
+/* Renvoie le nombre de dossiers restant à traiter */
+/* => [Entier nul ou posiitf] */
 function nbDossiersATraiterTotal($link)
 {
     $query = "SELECT COUNT(*) AS nbDossiersAtraiterTotal "
@@ -395,7 +396,8 @@ function nbDossiersATraiterTotal($link)
     return mysqli_fetch_array($result);
 }
 
-// Nombre de dossiers restant à traiter à la date courante
+/* Renvoie le nombre de dossiers restant à traiter au cours de la journée */
+/* => [Entier nul ou posiitf] */
 function nbDossiersATraiter($link)
 {
     $query = "SELECT COUNT(*) AS nbDossiersAtraiter "
@@ -407,7 +409,8 @@ function nbDossiersATraiter($link)
     return mysqli_fetch_array($result);
 }
 
-// Nombre de dossiers classés sans suite à la date courante
+/* Renvoie le nombre de dossiers classés sans suite au cours de la journée */
+/* => [Entier nul ou posiitf] */
 function nbDossiersClasses($link)
 {
     $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersClasses "
@@ -420,7 +423,8 @@ function nbDossiersClasses($link)
     return mysqli_fetch_array($result);
 }
 
-// Nombre de dossiers terminés à la date courante
+/* Renvoie le nombre de dossiers terminés d'être traiter au cours de la journée */
+/* => [Entier nul ou posiitf] */
 function nbDossiersTermines($link)
 {
     $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersTermines "
@@ -435,7 +439,8 @@ function nbDossiersTermines($link)
 
 /*      FONCTIONS POUR TECHNICIEN    */
 
-// Récupère les informations d'un technicien à partir du matricule
+/* Renvoie les informations du technicien ayant le matricule '$matricule' sous la forme d'une liste */
+/* => [Objet de type array si le technicien est déjà enregistré, NULL sinon] */
 function DonneesTechnicien($link, $matricule) {
     $query = "SELECT CodeT, NomT, PrenomT "
             ."FROM technicien t "
@@ -445,7 +450,8 @@ function DonneesTechnicien($link, $matricule) {
     return mysqli_fetch_array($result);
 }
 
-// Vérifie les identifiants d'un technicien (VRAI si les données correspondent, FAUX sinon)
+/* Vérifie le technicien de matricule '$matricule' possède bien le mot de passe '$mdpt' */
+/* => [Vrai si le technicien est bien authentifié, Faux sinon] */
 function AuthentifierTechnicien($link, $matricule, $mdpT) {
     $query = "SELECT Matricule, MdpT "
             ."FROM Technicien T "
@@ -459,7 +465,8 @@ function AuthentifierTechnicien($link, $matricule, $mdpT) {
 
 /*      TRAITEMENT D'UN DOSSIER      */
 
-// Changement du statut d'un dossier
+/* Change le statut du dossier de code '$codeDossier' en '$statut' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
 function ChangerStatutDossier($link, $codeDossier, $statut)
 {
     $query = "UPDATE dossier SET StatutD = '$statut' WHERE CodeD = '$codeDossier'";
@@ -468,8 +475,8 @@ function ChangerStatutDossier($link, $codeDossier, $statut)
     return $result;
 }
 
-//Traite un dossier en indiquant dans la BD, le nom du technicien
-//Et modifie le statut d'un dossier
+/* Affilie le dossier de code '$codeD' au technicien de code '$codeT' et son statut en '$statutD' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
 function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
 {
     $keys = "";
@@ -506,7 +513,8 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
     }
 }
 
-// Retire un dossier de la table "Traiter"
+/* Remet le dossier de code '$codeD' de la liste des dossiers traités */
+/* => [Vrai si le retrait a bien été effectué, Faux sinon] */
 function LibererDossier($link, $CodeD)
 {
     $query = "DELETE FROM Traiter WHERE CodeD = $CodeD";
@@ -515,7 +523,8 @@ function LibererDossier($link, $CodeD)
     return $result;
 }
 
-// Récupération des fichiers d'un dossier
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function RecupererPJ($link, $codeDossier)
 {
     $query = "SELECT CheminJ, Mnemonique "
@@ -527,13 +536,14 @@ function RecupererPJ($link, $codeDossier)
     return $result;
 }
 
-//Active ou désactive un bouton permettant de modifier le statut d'un dossier
-//Appelée dans la page 'traiter.php'
-//$sessionValue = $_SESSION['statut'] (statut actuel)
-//$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
-//$codeT_dossier est le code du technicien qui est actuellement connecté
-//Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier
-//Le statut du dossier courant
+/* Renvoie la classe CSS correspondante pour chaque bouton du fichier traiter.php           */
+/* => Effectue seulement un affichage (pas de valeur de retour)                             */
+/* => Active ou désactive un bouton permettant de modifier le statut d'un dossier           */
+/* => $sessionValue correspond au statut du dossier en cours ($_SESSION['statut'])          */
+/* => $buttonValue est soit 'En cours', soit 'Classé sans suite' ou bien 'Terminé'          */
+/* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
+/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier */
+/* => Le statut du dossier courant                                                          */
 function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
@@ -595,7 +605,8 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
 
 /*          CORBEILLE GENERALE         */
 
-// Liste de tous les dossiers (ceux à traiter sont affichés par défaut)
+/* Renvoie la liste complètes des dossiers à traiter et en cours de traitement */
+/* => [Objet de type array si le technicien a des dossiers dans sa corbeille, NULL sinon] */
 function DossiersCorbeilleGenerale($link)
 {
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD "
@@ -610,7 +621,8 @@ function DossiersCorbeilleGenerale($link)
 
 /*      CORBEILLE D'UN TECHNICIEN      */
 
-// Liste des dossiers en cours de traitement par le technicien connecté
+/* Renvoie la liste des dossiers en cours de traitement par le technicien de code '$codeT' */
+/* => [Objet de type array si le technicien a des dossiers dans sa corbeille, NULL sinon] */
 function DossiersCorbeilleTechnicien($link, $codeT) {
     $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD "
             ."FROM dossier d, assure a, technicien t, traiter tr "
@@ -624,7 +636,8 @@ function DossiersCorbeilleTechnicien($link, $codeT) {
     return $result;
 }
 
-// Envoie un mail de confirmation d'enregistrement
+/* Envoie un mail de confirmation d'enregistrement de données à l'adresse $mailA */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
 function EnvoyerMailConfirmationEnregistrement($mailA, $refD)
 {
     $subject = "PJPE - Confirmation d'enregistrement";
@@ -633,12 +646,14 @@ function EnvoyerMailConfirmationEnregistrement($mailA, $refD)
     return mail($mailA, $subject, $txt);
 }
 
-// Envoie un mail de demande de PJs à l'assuré
+/* Envoie un mail de sujet '$subject'* et de contenu '$txt' à l'adresse $mailA */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
 function EnvoyerMailDemandePJs($mailA, $subject, $txt) {
     return mail($mailA, $subject, $txt);
 }
 
-// Enregistre le mail envoyé à un assuré
+/* Enregistre le contenu d'un mail envoyé à l'assuré de code '$codeA' par le technicien de code '$codeT'*/
+/* => [Vrai si l'neregitrement a bien été effectué, Faux sinon] */
 function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
     $keys = ""; $values = "";
     if($CodeA != NULL) {$keys .= "CodeA, "; $values .= $CodeA.", ";}
@@ -655,6 +670,8 @@ function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
     return mysqli_query($link, $query);
 }
 
+/* Renvoie les informations concernant tous les messages envoyés à l'assuré de code '$codeA' */
+/* => [Objet de type array contenant l'adresse email de l'assuré, l'objet et le contenu du message] */
 // Liste des messages adressés à un assuré
 function ListeMessages($CodeA, $link) {
     $query = "SELECT DateEnvoiM, Contenu, T.Matricule "
@@ -667,7 +684,10 @@ function ListeMessages($CodeA, $link) {
     return mysqli_query($link, $query);
 }
 
-// Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
+/* Extrait les informations d'un message pour les renvoyer sous forme d'une liste */
+/* => [Objet de type array contenant l'adresse email de l'assuré, l'objet et le contenu du message] */
+/* => [ainsi que la référence du dossier]                                                           */
+/* => Ne fonctionne que sur les message générés automatiquement                                     */
 function ExtraireMessage($Contenu) {
     //Position de l'adresse email
     $deb = strpos($Contenu, "À : ") + strlen("À : ");
@@ -693,7 +713,9 @@ function ExtraireMessage($Contenu) {
     return [$mail, $objet, $texte, $refD];
 }
 
-// Créer un message
+
+/* Génère un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function GenererMessage($title, $body, $icon, $type) {
     echo "
         <div class='alert alert-$type'>
