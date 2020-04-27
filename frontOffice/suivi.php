@@ -288,9 +288,9 @@
 								</button>
 							</div>
 							<div class="col-sm-4">
-								<a href="depot.php?delete_session=1" class="btn btn-default btn-lg">
+								<a href="../" class="btn btn-danger btn-lg">
 									<span class="glyphicon glyphicon-new-window"></span>
-									Effectuer un nouveau dépot
+									Retour à l'accueil
 								</a>
 							</div>
 						</div>
