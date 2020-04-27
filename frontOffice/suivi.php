@@ -2,18 +2,18 @@
     session_start();
 	require_once("../fonctions.php");
 
-	$link = connexionMySQL();
+    if(isset($_GET["delete_session"])) {
+        if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      
+        if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
+        redirigerVers('suivi.php'); // Suppresion des valeurs du POST
+	}
+		
+	$link = connecterBD();
 	$post_ok = False; // Ceci n'est pas une demande d'authentification
 	
 	$msg_error_nir = False; // Il n'y a pas de message d'erreur pour le NIR
     $msg_error_ref = False; // Il n'y a pas de message d'erreur pour la référence du dossier
 	$msg_error_nir_ref = False; // Il n'y a pas de correspondance
-
-    if(isset($_GET["delete_session"])) {
-        if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      
-        if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-        RedirigerVers('suivi.php'); // Suppresion des valeurs du POST
-    }
 	
 	if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
@@ -21,8 +21,8 @@
                 $ReferenceDossier = $_GET["RefD"];
                 if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
                 if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-                if(!DossierExiste($_GET["RefD"], $link)) {
-                    RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+                if(!dossierExiste($_GET["RefD"], $link)) {
+                    redirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
                 }
             }
             $post_ok = False;  // Ceci n'est pas un premier dépôt
@@ -43,21 +43,21 @@
 	
 	if(isset($_POST["nir"])) {
         //Vérification de la correspondance entre le NIR et la référence du dossier
-        if(NirRefExiste($_POST["nir"], $_POST["refD"], $link)) {
-            $_SESSION["Assure"] = ChercherAssureAvecNIR($_POST["nir"], $link);      
+        if(estAssocie($_POST["nir"], $_POST["refD"], $link)) {
+            $_SESSION["Assure"] = chercherAssureAvecNIR($_POST["nir"], $link);      
 			$_SESSION["RefD"] = $_POST["refD"];
-			$tmp = ChercherDossierAvecREF($_POST["refD"], $link);
+			$tmp = chercherDossierAvecREF($_POST["refD"], $link);
 			
             $_SESSION["Assure"]["DateD"] = $tmp["DateD"];
             $_SESSION["Assure"]["StatutD"] = $tmp["StatutD"];
             $_SESSION["Assure"]["DateTraiterD"] = $tmp["DateAM"];
 			$_SESSION["Assure"]["DateAM"] = $tmp["DateAM"];
 			
-            RedirigerVers('suivi.php'); // Suppresion des valeurs du POST
+            redirigerVers('suivi.php'); // Suppresion des valeurs du POST
         }
         else {
-            if(!AssureExiste($_POST["nir"], $link)) $msg = "RefD=".$_POST["refD"]."&msg_error_nir=1";
-            if(!DossierExiste($_POST["refD"], $link)) {
+            if(!assureExiste($_POST["nir"], $link)) $msg = "RefD=".$_POST["refD"]."&msg_error_nir=1";
+            if(!dossierExiste($_POST["refD"], $link)) {
                 if($msg != "") $msg .= "&";
                 $msg = "msg_error_ref=1";
             }
@@ -67,7 +67,7 @@
             }
 		}
 
-        RedirigerVers('suivi.php?'.$msg); // Passage des varaibles par la méthode GET
+        redirigerVers('suivi.php?'.$msg); // Passage des varaibles par la méthode GET
 	}
 
 	if(isset($_SESSION["Assure"])) {
