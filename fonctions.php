@@ -1,35 +1,49 @@
 <?php
+/******************************************************************/
 
-//Variables de connexion
-define("HOST", "localhost");
-define("USER", "root");
-define("PWD_MYSQL", "");
-define("BD_MYSQL", "bd_cpam");
-define("PORT", "3306");
+/*   FICHIER CONTENANT LES FONCTIONS PHP UTILISÉES POUR LE SITE   */
 
-//Chemin vers l'espace où sont enregistrés les dossiers des dossiers
-//NB : À partir de la racine
-define("STORAGE_PATH", "piecesJustificatives");
-
-//Message pour l'assuré (généré en JavaScript)
-define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");
-define("DEPOSITE_LINK", GenererLienDepot());
-define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");
-
-/* ************************************************ */
-/*              FONCTIONS GENERALES                 */
-/* ************************************************ */
+/******************************************************************/
 
 
-//  Connexion a la base de donnees
-function connexionMySQL()
-{
-    //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
+/*------------------------------------------------------------------
+ 	VARIABLE GLOBALE DE CONNEXION À LA BASE DE DONNÉES
+------------------------------------------------------------------*/
+
+define("HOST", "localhost");    // Nom du host
+define("USER", "root");         // Nom d'utilisateur
+define("PWD_MYSQL", "");        // Mot de passe
+define("BD_MYSQL", "bd_cpam");  // Nom de la base de données
+define("PORT", "3306");         // Nom du port de connexion
+
+/*------------------------------------------------------------------
+ 	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
+------------------------------------------------------------------*/
+
+define("STORAGE_PATH", "piecesJustificatives");     // NB : À partir de la racine
+
+/*------------------------------------------------------------------
+ 	VARIABLE GLOBALE POUR GÉNÉRER LE MESSAGE DE DEMANDE DE PIECES
+------------------------------------------------------------------*/
+
+define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message
+define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
+define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");                  // Message du footer
+
+
+/*------------------------------------------------------------------
+ 	FONCTIONS GÉNÉRALES
+------------------------------------------------------------------*/
+
+/* Connecte à la base de données */
+function connexionMySQL() {
+    // Connexion à la base données avec une lecture encodée en UTF-8
+    // (NB : Renseigner les variables de connexion plus haut)
     $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
     mysqli_query($link, 'SET NAMES utf8');
 
-    /* Vérification de la connexion */
-    if ($link == NULL) {
+    // Vérification de la connexion
+    if ($link == NULL) { // Si la connexion a échoué
         echo "Erreur : Impossible de se connecter à MySQL." . "<br>";
         echo "Errno de débogage : " . mysqli_connect_errno() . "<br>";
         echo "Erreur de débogage : " . mysqli_connect_error() . "<br>";
@@ -40,28 +54,25 @@ function connexionMySQL()
             return null;
         }
     }
+
     return $link;
 }
 
-// Redirection vers une page différente du même dossier
+/* Redirige vers la page '$nomPage' */
 function RedirigerVers($nomPage) {
     $host = $_SERVER['HTTP_HOST'];
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     header("Location: http://$host$uri/$nomPage");
+    
     exit;
 }
 
-// Retourne le lien à la racine du site WEB
-function GenererLienDepot() {
-    $host = $_SERVER['HTTP_HOST'];
-    return "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php";
-}
 
-/* ************************************************ */
-/*                  FRONT OFFICE                    */
-/* ************************************************ */
+/*------------------------------------------------------------------
+ 	FONCTIONS : FRONT OFFICE
+------------------------------------------------------------------*/
 
-//Vérifie si la référence d'un dossier est affilié au NIR passé en paramètre
+/* Vérifie si la référence d'un dossier '$refD' est bien affilié à un NIR '$nirA' */
 function NirRefExiste($NirA, $RefD, $link) {
     $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.RefD = '".$RefD."'" ;
     $result = mysqli_query($link, $query);
@@ -69,26 +80,25 @@ function NirRefExiste($NirA, $RefD, $link) {
     return (mysqli_fetch_array($result) != NULL);
 }
 
-// Renvoie un caractère aléatoire compris dans $listeChar
+/* Renvoie un caractère aléatoire compris dans '$listeChar' */
 function CaractereAleatoire() {
     $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return $listeChar[rand(0, strlen($listeChar) - 1)];
 }
 
-//Genère une référence valide pour un dossier
-function GenererReferenceDossier($nbChar, $link)
-{
+/* Genère une référence unique de taille '$nbChar' d'un dossier */
+function GenererReferenceDossier($nbChar, $link) {
     do {
         $ref = "";
         for($i = 0 ; $i < $nbChar ; $i++) {
-            $ref .= CaractereAleatoire();
+            $ref .= CaractereAleatoire(); //Sélection d'un caractère aléatoire
         }
     } while(DossierExiste($ref, $link));
 
     return $ref;
 }
 
-//Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
+/* Renvoie les informations de l'assuré ayant le NIR '$nirA' sous la forme d'une liste */
 function ChercherAssureAvecNIR($NirA, $link)
 {
     $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
@@ -97,7 +107,7 @@ function ChercherAssureAvecNIR($NirA, $link)
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
+/* Renvoie les informations d'un dossier ayant pour référence '$refD' sous la forme d'une liste */
 function ChercherDossierAvecREF($RefD, $link)
 {
     $query = "SELECT * FROM Assure A, Dossier D ";
@@ -107,7 +117,7 @@ function ChercherDossierAvecREF($RefD, $link)
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier traité ou en cours de traitemnet
+/* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeD' */
 function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
     $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
     $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
@@ -122,7 +132,7 @@ function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
+/* Renvoie la référence du dossier ayant pour code '$codeD' sous la forme d'une liste */
 function ChercherREFAvecCodeD($CodeD, $link)
 {
     $query = "SELECT RefD FROM Assure A, Dossier D ";
@@ -132,7 +142,7 @@ function ChercherREFAvecCodeD($CodeD, $link)
     return mysqli_fetch_array($result);
 }
 
-//Retourne le code correspond au mnémonique entré en paramètre
+/* Renvoie les informations correspondant au mnémonique '$mnemonique' */
 function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
 {
     $query = "SELECT * FROM Listemnemonique ";
@@ -143,9 +153,12 @@ function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
     return mysqli_fetch_array($result);
 }
 
-/*      Vérification d'existence dans la BD        */
+/*------------------------------------------------------------------
+ 	Vérification d'existence dans la BD
+------------------------------------------------------------------*/
 
-//Vérifie si un assuré est déjà enregistré
+/* Vérifie si '$nirA' correspond au NIR d'un assuré déjà enregistré dans la base de données */
+/* => [Vrai si le NIR est reconnu, Faux sinon] */
 function AssureExiste($NirA, $link)
 {
     $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
@@ -153,7 +166,8 @@ function AssureExiste($NirA, $link)
     return (mysqli_fetch_array($result) != NULL);
 }
 
-//Vérifie si la référence donnée en paramètre n'est pas déjà utilisé
+/* Vérifie si le dossier de référence $refD existe déjà dans la base de données */
+/* => [Vrai si la référence de dossier est reconnue, Faux sinon] */
 function DossierExiste($RefD, $link)
 {
     $query = "SELECT RefD FROM Dossier WHERE RefD = '" . $RefD . "'";
@@ -161,14 +175,16 @@ function DossierExiste($RefD, $link)
     return (mysqli_fetch_array($result) != NULL);
 }
 
-// Vérifie si un justificatif est dans la BD
+/* Vérifie si le chemin $chemin exite déjà dans la base de données */
+/* => [Vrai si le chemin est déjà enregistré, Faux sinon] */
 function FichierExiste($link, $path){
     $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '" . $path . "'";
     $result = mysqli_query($link, $query);
     return (mysqli_fetch_array($result) != NULL);
 }
 
-//Enregistre les données d'un assuré dans la BD
+/* Enregistre les données d'un assuré dans la base de données */
+/* => [Vrai si les données de l'assuré ont bien été enregistrées, Faux sinon] */
 function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link)
 {
     $keys = "";
@@ -206,8 +222,8 @@ function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link)
     return mysqli_query($link, $query);
 }
 
-//Enregistre un dossier puis renvoie True si la manoeuvre a réussi
-//False sinon
+/* Enregistre les informations concernant un nouveau dossier */
+/* => [Vrai si les informations du dossier ont bien été enregistrées, Faux sinon] */
 function EnregistrerDossier($CodeA, $DateAM, $RefD, $link)
 {
     $keys = "";
@@ -229,6 +245,8 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link)
     return mysqli_query($link, $query);
 }
 
+/* Créé le dossier de l'assuré ayant pour NIR $nirA  */
+/* => [Vrai si les données de l'assuré ont bien été enregistrées, Faux sinon] */
 //Créer le dossier d'un assuré dont le nom est son numéro NIR en local
 function CreerDossierNIR($NirA)
 {
