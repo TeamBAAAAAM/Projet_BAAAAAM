@@ -73,6 +73,7 @@ function RedirigerVers($nomPage) {
 ------------------------------------------------------------------*/
 
 /* Vérifie si la référence d'un dossier '$refD' est bien affilié à un NIR '$nirA' */
+/* => [Vrai s'il y a bien une correspondance entre le NIR '$nirA' et la référence '$redD', Faux sinon] */
 function NirRefExiste($NirA, $RefD, $link) {
     $query = "SELECT a.* "
             ."FROM Assure a, Dossier d  "
@@ -85,12 +86,14 @@ function NirRefExiste($NirA, $RefD, $link) {
 }
 
 /* Renvoie un caractère aléatoire compris dans '$listeChar' */
+/* => [Caractère de la liste '$listeChar'] */
 function CaractereAleatoire() {
     $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return $listeChar[rand(0, strlen($listeChar) - 1)];
 }
 
 /* Genère une référence unique de taille '$nbChar' d'un dossier */
+/* => [Chaine de caractères de taille '$nbChar'] */
 function GenererReferenceDossier($nbChar, $link) {
     do {
         $ref = "";
@@ -103,6 +106,7 @@ function GenererReferenceDossier($nbChar, $link) {
 }
 
 /* Renvoie les informations de l'assuré ayant le NIR '$nirA' sous la forme d'une liste */
+/* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
 function ChercherAssureAvecNIR($NirA, $link)
 {
     $query = "SELECT * FROM Assure WHERE NirA = '$NirA'";
@@ -112,6 +116,7 @@ function ChercherAssureAvecNIR($NirA, $link)
 }
 
 /* Renvoie les informations d'un dossier ayant pour référence '$refD' sous la forme d'une liste */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function ChercherDossierAvecREF($RefD, $link)
 {
     $query = "SELECT * FROM Assure A, Dossier D "
@@ -122,6 +127,7 @@ function ChercherDossierAvecREF($RefD, $link)
 }
 
 /* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeD' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
     $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T "
             ."WHERE A.CodeA = D.CodeA AND D.CodeD = $CodeD "
@@ -135,6 +141,7 @@ function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
 }
 
 /* Renvoie la référence du dossier ayant pour code '$codeD' sous la forme d'une liste */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function ChercherREFAvecCodeD($CodeD, $link)
 {
     $query = "SELECT RefD FROM Assure A, Dossier D "
@@ -145,6 +152,7 @@ function ChercherREFAvecCodeD($CodeD, $link)
 }
 
 /* Renvoie les informations correspondant au mnémonique '$mnemonique' */
+/* => [Objet de type array si le mnémonique existe, NULL sinon] */
 function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
 {
     $query = "SELECT * FROM Listemnemonique "
@@ -249,23 +257,24 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link)
     return mysqli_query($link, $query);
 }
 
-/* Créé le dossier de l'assuré ayant pour NIR $nirA  */
-/* => [Vrai si les données de l'assuré ont bien été enregistrées, Faux sinon] */
-//Créer le dossier d'un assuré dont le nom est son numéro NIR en local
+/* Créé un dossier ayant pour nom '$nirA' à l'emplacement 'STORAGE_PATH' (à renseigner tout en haut) */
+/* => [Vrai si le dossier de l'assuré a bien été créé, Faux sinon] */
 function CreerDossierNIR($NirA)
 {
     $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $NirA;
     return mkdir($dirname);
 }
 
-//Créer le dossier de l'arrêt maladie d'un assuré en local
+/* Créé le dossier ayant pour nom '$refD' à l'emplacement 'STORAGE_PATH/$nirA' (à renseigner tout en haut) */
+/* => [Vrai si le dossier de l'assuré a bien été créé, Faux sinon] */
 function CreerDossierAM($RefD, $NirA)
 {
     $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $NirA . "/" . $RefD;
     return mkdir($dirname);
 }
 
-//Fonction qui enregistre les données d'un fichier dans la base de données
+/* Enregistre les informations concernant un nouveau fichier */
+/* => [Vrai si les informations du fichier ont bien été enregistrées, Faux sinon] */
 function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link)
 {
     $keys = "";
@@ -297,11 +306,11 @@ function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link)
     return mysqli_query($link, $query);
 }
 
-//Enregistre les fichiers contenus dans le dossier d'un assuré
-//Renvoie une liste avec une ligne pour un fichier
-//1er paramètre de type Booléen qui est TRUE si l'enregistrement a réussi, FALSE sinon
-//2ème paramètre de type String qui correspond au nom du fichier téléchargé
-//3ème paramètre correspond au mnémonique complet affilié au fichier
+/* Enregistre les fichiers de '$ListeFichiers' à l'emplacement 'STORAGE_PATH/$nirA/$refD' */
+/* => [Liste(A : Booléen, B : Chaîne de caractères, C : Chaîne de caractères)]  */
+/*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
+/*      => B = Nom du fichier téléchargé                                        */
+/*      => C = Mnémonique complet affilié au fichier                            */
 function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
 {
     $resultats = array();
@@ -338,9 +347,9 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
 }
 
 
-/* ************************************************ */
-/*                  BACK OFFICE                     */
-/* ************************************************ */
+/*------------------------------------------------------------------
+ 	FONCTIONS : BACK OFFICE
+------------------------------------------------------------------*/
 
 
 /*          CONNEXION DU TECHNICIEN                 */
