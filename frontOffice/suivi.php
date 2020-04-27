@@ -345,7 +345,7 @@
 				</div>
 
 				<div class="progress">
-					<div class="progress-bar progress-bar-warning active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:36.80%">
+					<div class="progress-bar progress-bar-striped progress-bar-warning active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:36.80%">
 						Dossier réceptionné
 					</div>
 				</div>
