@@ -87,7 +87,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
-    <?php if ($repost || $repost_ok) : ?>
+        <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
                 $("#form_panel").show(); //Le formulaire est affiché
@@ -397,7 +397,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je reconnais avoir pris connaissance et j'accepte les <a href="../documentation-juridique/cgu.html">conditions générales d'utilisation</a> du site. <span class="champ_obligatoire">(*)</span> </span>
+                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je reconnais avoir pris connaissance et j'accepte les <a target="_blank" href="../documentation-juridique/cgu.html">conditions générales d'utilisation</a> du site. <span class="champ_obligatoire">(*)</span> </span>
                                 </div>
                             </div>
 

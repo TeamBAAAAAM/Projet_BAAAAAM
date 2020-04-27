@@ -147,7 +147,7 @@
 				<?php					
 					$result = DossiersCorbeilleGenerale($link);
 					$rows = mysqli_num_rows($result);
-                    for ($i = 0; $i < $rows + 100; $i++) {
+                    for ($i = 0; $i < $rows; $i++) {
 						$donnees = mysqli_fetch_array($result);
 						echo("<tr><td>".date("d/m/Y", strtotime($donnees['DateD']))."</td>
 								    <td>".$donnees['RefD']."</td>
