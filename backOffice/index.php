@@ -15,18 +15,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 	<head>		
-        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+		<!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="style.css">
-
-        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="script.js"></script>
+        <!--<link rel="stylesheet" href="styleTech.css">-->
+		
+		<!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="script.js"></script>
 
         <title>PJPE - Connexion</title>
 	</head>
@@ -40,8 +41,8 @@
                         Matricule <span class="champ_obligatoire">(*)</span> :
                     </strong>
                 </label>
-                <input type="text" placeholder="Veuillez renseigner votre matricule" 
-                    name="matricule" required>
+                <input id="mat" type="text" placeholder="Veuillez renseigner votre matricule" 
+                    name="matricule" onKeyUp="checkFormatMatricule('# ## ##')" value="<?php if (isset($_SESSION["matricule"])) echo $_SESSION["matricule"]; ?>" required>
 
                 <?php
 		            if (isset($_GET["msg_erreur"])) {
