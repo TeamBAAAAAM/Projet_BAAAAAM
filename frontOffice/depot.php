@@ -51,7 +51,7 @@
             RedirigerVers('depot.php'); // Suppresion des valeurs du POST
         }     
         else {           
-            if(!AssureExiste($_POST["nir"], $link)) $msg .= "RefD=".$_POST["refD"]."&msg_error_nir=1";
+            if(!AssureExiste($_POST["nir"], $link)) $msg = "RefD=".$_POST["refD"]."&msg_error_nir=1";
             if(!DossierExiste($_POST["refD"], $link)) {
                 if($msg != "") $msg .= "&";
                 $msg = "msg_error_ref=1";
@@ -103,7 +103,7 @@
 		<nav class="navbar navbar-default header welcome">
 			<div class="container">
 				<div class="navbar-header">
-					<a href="../index.html"><h1>PJPE</h1></a>
+					<a href="../index.html"><h1>PJPE - Dépôt des documents</h1></a>
 				</div>
 			</div>
         </nav>
@@ -404,8 +404,6 @@
                             <div id="champ_obligatoire" class="champ_obligatoire">                    
                                 <p>(*) : Champs obligatoires</p>
                             </div>
-
-                            <input name="page" type="hidden" value="depot.html">
                         <?php endif ?>
 
                             

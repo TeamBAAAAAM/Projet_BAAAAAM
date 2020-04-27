@@ -145,6 +145,28 @@ li.list-group-item {
 	font-size: larger;
 }
 
+/* Bar de progression du suivi */
+.bar-icons {
+	background: none;
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 64px;
+}
+.bar-icons.danger {color: #a94442;}
+.bar-icons.success {color: #3c763d;}
+.bar-icons.info {color: #31708f;}
+.bar-icons.warning {color: #8a6d3b;}
+
+.bar-icons .icon.disabled {
+	background-color: #1e1a25;
+	color: transparent;
+	text-shadow: 2px 2px 3px rgba(255,255,255,0.75);
+	-webkit-background-clip: text;
+	   -moz-background-clip: text;
+			background-clip: text;
+}
+
 /*note*/
 .note {
 	font-style: italic;

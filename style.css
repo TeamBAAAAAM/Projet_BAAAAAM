@@ -153,6 +153,16 @@ a.send_button {
     box-shadow: none;
 }
 
+#third_button {
+    color: rgb(110, 7, 7);
+}
+
+#third_button:hover {
+    color: white;
+    background-color: rgb(110, 7, 7);
+    box-shadow: none;
+}
+
 .glyphicon {
     margin-right: 20px;
 }
@@ -181,9 +191,14 @@ a.send_button {
 }
 
 #msg_2 {
-    border-top-left-radius: 0;
     color: white;
     background-color: rgba(3, 30, 48, 0.9);
+}
+
+#msg_3 {
+    border-top-left-radius: 0;
+    color: white;
+    background-color: rgba(48, 3, 3, 0.9);
 }
 
 .msg > h3 {

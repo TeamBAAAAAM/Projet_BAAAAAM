@@ -11,6 +11,7 @@
 
 var hover_1 = false; // Vrai si le premier bouton est survolé, faux sinon
 var hover_2 = false; // Vrai si le deuxième bouton est survolé, faux sinon
+var hover_3 = false; // Vrai si le troisième bouton est survolé, faux sinon
 
 $(document).ready(function(){
     // Gestion de l'évènement de survol
@@ -26,6 +27,12 @@ $(document).ready(function(){
     }, function(){
         hover_2 = false; // Elle passe à faux sinon
     });
+    // Si le troisième bouton est survolé
+    $("#third_button").hover(function(event){
+        hover_3 = true; // Alors, la variable 'hover_3' passe à vrai
+    }, function(){
+        hover_3 = false; // Elle passe à faux sinon
+    });
     
     // Gestion de l'évènement de la souris en mouvement
     // Si le pointeur de la souris se déplace
@@ -39,9 +46,9 @@ $(document).ready(function(){
             // et selon la taille de l'écran
             if(window.innerWidth >= 768) var x =  20;
             else var x = -$(".msg").width() / 2 - 20;
-            var y =  $(".msg").height();
-            y += parseInt($(".msg").css("padding-bottom"), 10);
-            y += parseInt($(".msg").css("padding-top"), 10);
+            var y =  $("#msg_1").height();
+            y += parseInt($("#msg_1").css("padding-bottom"), 10);
+            y += parseInt($("#msg_1").css("padding-top"), 10);
             y += 10;
 
             // Le premier message suit le pointeur de la souris
@@ -63,15 +70,35 @@ $(document).ready(function(){
             else var x = -$(".msg").width() / 2 - 20;
             var y = parseInt($("#msg_2").css("padding-bottom"), 10);
             y += parseInt($("#msg_2").css("padding-top"), 10);
-            y += 10;
+            y += 20;
 
-        
             // Le deuxième message suit le pointeur de la souris
-            $("#msg_2").offset({top: event.pageY + y, left: event.pageX + x});
+            $("#msg_2").offset({top: event.pageY - y, left: event.pageX + x});
         }
         else {						
             // Sinon, il est caché
             $("#msg_2").fadeOut(300);
+        }
+
+        if (hover_3) { // Et qu'il survole le troisième bouton
+            // Alors le troisième message s'affiche
+            $("#msg_3").fadeIn(500);
+            
+            // Le message est légerment décalement pour éviter d'être sur le pointeur
+            // à l'aide des variables x (position horizontale) et y (position verticale)
+            // et selon la taille de l'écran
+            if(window.innerWidth >= 768) var x =  20;
+            else var x = -$(".msg").width() / 2 - 20;
+            var y = parseInt($("#msg_3").css("padding-bottom"), 10);
+            y += parseInt($("#msg_3").css("padding-top"), 10);
+            y += 10;
+
+            // Le troisième message suit le pointeur de la souris
+            $("#msg_3").offset({top: event.pageY + y, left: event.pageX + x});
+        }
+        else {						
+            // Sinon, il est caché
+            $("#msg_3").fadeOut(300);
         }
     });        
 });
