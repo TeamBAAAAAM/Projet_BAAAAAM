@@ -74,7 +74,11 @@ function RedirigerVers($nomPage) {
 
 /* Vérifie si la référence d'un dossier '$refD' est bien affilié à un NIR '$nirA' */
 function NirRefExiste($NirA, $RefD, $link) {
-    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.RefD = '".$RefD."'" ;
+    $query = "SELECT a.* "
+            ."FROM Assure a, Dossier d  "
+            ."WHERE a.NirA = '$NirA' "
+            ."AND d.CodeA = a.CodeA "
+            ."AND d.RefD = '$RefD'" ;
     $result = mysqli_query($link, $query);
         
     return (mysqli_fetch_array($result) != NULL);
@@ -101,7 +105,7 @@ function GenererReferenceDossier($nbChar, $link) {
 /* Renvoie les informations de l'assuré ayant le NIR '$nirA' sous la forme d'une liste */
 function ChercherAssureAvecNIR($NirA, $link)
 {
-    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
+    $query = "SELECT * FROM Assure WHERE NirA = '$NirA'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -110,8 +114,8 @@ function ChercherAssureAvecNIR($NirA, $link)
 /* Renvoie les informations d'un dossier ayant pour référence '$refD' sous la forme d'une liste */
 function ChercherDossierAvecREF($RefD, $link)
 {
-    $query = "SELECT * FROM Assure A, Dossier D ";
-    $query .= "WHERE A.CodeA = D.CodeA AND RefD = '" . $RefD . "'";
+    $query = "SELECT * FROM Assure A, Dossier D "
+            ."WHERE A.CodeA = D.CodeA AND RefD = '$RefD'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -119,14 +123,12 @@ function ChercherDossierAvecREF($RefD, $link)
 
 /* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeD' */
 function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
-    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
-    $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
-    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT ";
-    $query .= "AND Tr.DateTraiterD = (";
-    $query .= "SELECT MAX(DateTraiterD) ";
-    $query .= "FROM Traiter ";
-    $query .= "WHERE CodeD = $CodeD)";
-
+    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T "
+            ."WHERE A.CodeA = D.CodeA AND D.CodeD = $CodeD "
+            ."AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT "
+            ."AND Tr.DateTraiterD = (SELECT MAX(DateTraiterD) "
+                                    ."FROM Traiter "
+                                    ."WHERE CodeD = $CodeD)";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -135,8 +137,8 @@ function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
 /* Renvoie la référence du dossier ayant pour code '$codeD' sous la forme d'une liste */
 function ChercherREFAvecCodeD($CodeD, $link)
 {
-    $query = "SELECT RefD FROM Assure A, Dossier D ";
-    $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '" . $CodeD . "'";
+    $query = "SELECT RefD FROM Assure A, Dossier D "
+            ."WHERE A.CodeA = D.CodeA AND CodeD = $CodeD";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -145,9 +147,8 @@ function ChercherREFAvecCodeD($CodeD, $link)
 /* Renvoie les informations correspondant au mnémonique '$mnemonique' */
 function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
 {
-    $query = "SELECT * FROM Listemnemonique ";
-    $query .= "WHERE Mnemonique = '" . $Mnemonique . "'";
-
+    $query = "SELECT * FROM Listemnemonique "
+            ."WHERE Mnemonique = '$Mnemonique'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -161,8 +162,9 @@ function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
 /* => [Vrai si le NIR est reconnu, Faux sinon] */
 function AssureExiste($NirA, $link)
 {
-    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
+    $query = "SELECT * FROM Assure WHERE NirA = '$NirA'";
     $result = mysqli_query($link, $query);
+
     return (mysqli_fetch_array($result) != NULL);
 }
 
@@ -170,16 +172,18 @@ function AssureExiste($NirA, $link)
 /* => [Vrai si la référence de dossier est reconnue, Faux sinon] */
 function DossierExiste($RefD, $link)
 {
-    $query = "SELECT RefD FROM Dossier WHERE RefD = '" . $RefD . "'";
+    $query = "SELECT RefD FROM Dossier WHERE RefD = '$RefD'";
     $result = mysqli_query($link, $query);
+
     return (mysqli_fetch_array($result) != NULL);
 }
 
 /* Vérifie si le chemin $chemin exite déjà dans la base de données */
 /* => [Vrai si le chemin est déjà enregistré, Faux sinon] */
 function FichierExiste($link, $path){
-    $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '" . $path . "'";
+    $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '$path'";
     $result = mysqli_query($link, $query);
+
     return (mysqli_fetch_array($result) != NULL);
 }
 
@@ -217,7 +221,7 @@ function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO assure(" . $keys . ") VALUES (" . $values . ")";
+    $query = "INSERT INTO assure($keys) VALUES ($values)";
 
     return mysqli_query($link, $query);
 }
@@ -240,7 +244,7 @@ function EnregistrerDossier($CodeA, $DateAM, $RefD, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO dossier(" . $keys . ") VALUES (" . $values . ")";
+    $query = "INSERT INTO dossier($keys) VALUES ($values)";
 
     return mysqli_query($link, $query);
 }
@@ -288,7 +292,7 @@ function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO justificatif(" . $keys . ") VALUES (" . $values . ")";
+    $query = "INSERT INTO justificatif($keys) VALUES ($values)";
 
     return mysqli_query($link, $query);
 }
@@ -363,40 +367,60 @@ function VerificationMat($connexion, $matricule)
 // Nombre de dossiers recus à la date courante
 function nbDossiersRecus($link)
 {
-    $query = "SELECT count(*) AS nbDossiersRecus FROM dossier d WHERE DATE(d.DateD) = CURDATE()";
+    $query = "SELECT COUNT(*) AS nbDossiersRecus "
+            ."FROM dossier d "
+            ."WHERE DATE(d.DateD) = CURDATE()";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers restant à traiter au total
 function nbDossiersATraiterTotal($link)
 {
-    $query = "SELECT count(*) AS nbDossiersAtraiterTotal FROM dossier d WHERE d.StatutD = 'À traiter'";
+    $query = "SELECT COUNT(*) AS nbDossiersAtraiterTotal "
+            ."FROM dossier d "
+            ."WHERE d.StatutD = 'À traiter'";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers restant à traiter à la date courante
 function nbDossiersATraiter($link)
 {
-    $query = "SELECT count(*) AS nbDossiersAtraiter FROM dossier d WHERE d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";
+    $query = "SELECT COUNT(*) AS nbDossiersAtraiter "
+            ."FROM dossier d "
+            ."WHERE d.StatutD = 'À traiter' "
+            ."AND DATE(d.DateD) = CURDATE()";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers classés sans suite à la date courante
 function nbDossiersClasses($link)
 {
-    $query = "SELECT count(DISTINCT d.CodeD) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
+    $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersClasses "
+            ."FROM dossier d, traiter t "
+            ."WHERE d.CodeD = t.CodeD "
+            ."AND d.StatutD = 'Classé sans suite' "
+            ."And DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
 // Nombre de dossiers terminés à la date courante
 function nbDossiersTermines($link)
 {
-    $query = "SELECT count(DISTINCT d.CodeD) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
+    $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersTermines "
+            ."FROM dossier d, traiter t "
+            ."WHERE d.CodeD = t.CodeD "
+            ."AND d.StatutD = 'Terminé' "
+            ."AND DATE(t.DateTraiterD) = CURDATE()";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
@@ -404,18 +428,22 @@ function nbDossiersTermines($link)
 
 // Récupère les informations d'un technicien à partir du matricule
 function DonneesTechnicien($link, $matricule) {
-    $query = "Select CodeT, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
+    $query = "SELECT CodeT, NomT, PrenomT "
+            ."FROM technicien t "
+            ."WHERE t.Matricule = '$matricule'";
     $result = mysqli_query($link, $query);
+
     return mysqli_fetch_array($result);
 }
 
 // Vérifie les identifiants d'un technicien (VRAI si les données correspondent, FAUX sinon)
 function AuthentifierTechnicien($link, $matricule, $mdpT) {
-    $query = "SELECT Matricule, MdpT ";
-    $query .= "FROM Technicien T ";
-    $query .= "WHERE Matricule = '$matricule' ";
-    $query .= "AND MdpT = '$mdpT'";
+    $query = "SELECT Matricule, MdpT "
+            ."FROM Technicien T "
+            ."WHERE Matricule = '$matricule' "
+            ."AND MdpT = '$mdpT'";
     $result = mysqli_query($link, $query);
+
     return (mysqli_fetch_array($result) != NULL);
 }
 
@@ -427,6 +455,7 @@ function ChangerStatutDossier($link, $codeDossier, $statut)
 {
     $query = "UPDATE dossier SET StatutD = '$statut' WHERE CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);
+
     return $result;
 }
 
@@ -450,7 +479,7 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
+    $query = "INSERT INTO traiter($keys) VALUES ($values)";
 
     if(mysqli_query($link, $query)) {
         if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
@@ -473,15 +502,19 @@ function LibererDossier($link, $CodeD)
 {
     $query = "DELETE FROM Traiter WHERE CodeD = $CodeD";
     $result = mysqli_query($link, $query);
+
     return $result;
 }
 
 // Récupération des fichiers d'un dossier
 function RecupererPJ($link, $codeDossier)
 {
-    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l "
-        . "WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
+    $query = "SELECT CheminJ, Mnemonique "
+            ."FROM justificatif j, listemnemonique l "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);
+
     return $result;
 }
 
@@ -556,7 +589,10 @@ function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
 // Liste de tous les dossiers (ceux à traiter sont affichés par défaut)
 function DossiersCorbeilleGenerale($link)
 {
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD "
+            ."FROM dossier d, assure a "
+            ."WHERE d.CodeA = a.CodeA "
+            ."ORDER BY d.DateD";
     $result = mysqli_query($link, $query);
     
     return $result;
@@ -567,19 +603,15 @@ function DossiersCorbeilleGenerale($link)
 
 // Liste des dossiers en cours de traitement par le technicien connecté
 function DossiersCorbeilleTechnicien($link, $codeT) {
-    //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a WHERE t.CodeD=d.CodeD and d.CodeA=a.CodeA';
-
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
-    $query .= "FROM dossier d, assure a, technicien t, traiter tr ";
-    $query .= "WHERE d.CodeA = a.CodeA ";
-    $query .= "AND d.CodeD = tr.CodeD ";
-    $query .= "AND t.CodeT = tr.CodeT ";
-    $query .= "AND t.CodeT = '$codeT' ";
-    $query .= "AND d.StatutD = 'En cours' ";
-
-    //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
-
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD "
+            ."FROM dossier d, assure a, technicien t, traiter tr "
+            ."WHERE d.CodeA = a.CodeA "
+            ."AND d.CodeD = tr.CodeD "
+            ."AND t.CodeT = tr.CodeT "
+            ."AND t.CodeT = '$codeT' "
+            ."AND d.StatutD = 'En cours' ";
     $result = mysqli_query($link, $query);
+
     return $result;
 }
 
@@ -609,19 +641,19 @@ function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO message(".$keys.") VALUES (".$values.")";
+    $query = "INSERT INTO message($keys) VALUES ($values)";
 
     return mysqli_query($link, $query);
 }
 
 // Liste des messages adressés à un assuré
 function ListeMessages($CodeA, $link) {
-    $query = "SELECT DateEnvoiM, Contenu, T.Matricule ";
-    $query .= "FROM Message M, Assure A, Technicien T ";
-    $query .= "WHERE A.CodeA = M.CodeA ";
-    $query .= "AND A.CodeA = $CodeA ";
-    $query .= "AND T.CodeT = M.CodeT ";
-    $query .= "ORDER BY DateEnvoiM DESC";
+    $query = "SELECT DateEnvoiM, Contenu, T.Matricule "
+            ."FROM Message M, Assure A, Technicien T "
+            ."WHERE A.CodeA = M.CodeA "
+            ."AND A.CodeA = $CodeA "
+            ."AND T.CodeT = M.CodeT "
+            ."ORDER BY DateEnvoiM DESC";
  
     return mysqli_query($link, $query);
 }
