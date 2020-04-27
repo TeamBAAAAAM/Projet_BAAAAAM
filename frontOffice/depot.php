@@ -5,10 +5,10 @@
     if(isset($_GET["delete_session"])) {
         if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      
         if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-        RedirigerVers('depot.php'); // Suppresion des valeurs du POST
+        redirigerVers('depot.php'); // Suppresion des valeurs du POST
     }
 
-    $link = connexionMySQL();
+    $link = connecterBD();
     $repost = False; // Ceci est un premier dépôt
     $repost_ok = False; // Ceci n'est pas une demande d'authentification
 
@@ -22,8 +22,8 @@
                 $ReferenceDossier = $_GET["RefD"];
                 if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);
                 if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-                if(!DossierExiste($_GET["RefD"], $link)) {
-                    RedirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
+                if(!dossierExiste($_GET["RefD"], $link)) {
+                    redirigerVers('depot.php?msg_error_ref=1'); // Passage des varaibles par la méthode GET
                 }
             }
             $repost = True;  // Ceci n'est pas un premier dépôt
@@ -44,15 +44,15 @@
 
     if(isset($_POST["nir"])) {
         //Vérification de la correspondance entre le NIR et la référence du dossier
-        if(NirRefExiste($_POST["nir"], $_POST["refD"], $link)) {
-            $_SESSION["Assure"] = ChercherAssureAvecNIR($_POST["nir"], $link);      
+        if(estAssocie($_POST["nir"], $_POST["refD"], $link)) {
+            $_SESSION["Assure"] = chercherAssureAvecNIR($_POST["nir"], $link);      
             $_SESSION["RefD"] = $_POST["refD"];
-            $_SESSION["Assure"]["DateAM"] = ChercherDossierAvecREF($_POST["refD"], $link)["DateAM"];
-            RedirigerVers('depot.php'); // Suppresion des valeurs du POST
+            $_SESSION["Assure"]["DateAM"] = chercherDossierAvecREF($_POST["refD"], $link)["DateAM"];
+            redirigerVers('depot.php'); // Suppresion des valeurs du POST
         }     
         else {           
-            if(!AssureExiste($_POST["nir"], $link)) $msg = "RefD=".$_POST["refD"]."&msg_error_nir=1";
-            if(!DossierExiste($_POST["refD"], $link)) {
+            if(!assureExiste($_POST["nir"], $link)) $msg .= "RefD=".$_POST["refD"]."&msg_error_nir=1";
+            if(!dossierExiste($_POST["refD"], $link)) {
                 if($msg != "") $msg .= "&";
                 $msg = "msg_error_ref=1";
             }
@@ -62,7 +62,7 @@
             }
         }
 
-        RedirigerVers('depot.php?'.$msg); // Passage des varaibles par la méthode GET
+        redirigerVers('depot.php?'.$msg); // Passage des varaibles par la méthode GET
     }
 
     if(isset($_SESSION["Assure"])) {
@@ -79,23 +79,27 @@
 <!DOCTYPE html>
 <html lang="fr">
     <head>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="style.css">
-        
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
+
+        <!-- AFFICHAGE DU FORMULAIRE SI REFERENCE DE DOSSIER EXISTANTE -->
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show(); //Le formulaire est affiché
+                $("#form_panel").show();
             });
         </script>
-    <?php endif ?>
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?php endif ?>
 
         <title>PJPE - Dépôt des documents</title>
     </head>

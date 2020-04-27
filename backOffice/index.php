@@ -1,43 +1,32 @@
 <?php
-    //Charger les fonctions de connexion dans un autre fichier 
+    session_start();
     require('../fonctions.php');
 
     //Connexion à la base de données
-    $connexion= connexionMySQL();
+    $connexion= connecterBD();
 
-    // On démarre la session
-    session_start();
-
-    //Déconnexion
-    $_SESSION = array();
-    session_destroy();
+    //Suppression des données en session après déconnexion
+    if (isset($_GET["logout"])){
+        session_destroy();
+        $_SESSION = array();
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 	<head>		
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		
-        <!-- importer le fichier de style -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="styleTech.css">
-		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-		<script src="script.js"></script>
-		
-		<script>
-			$(document).ready(function(){
-			  $("#research").on("keyup", function() {
-				var value = $(this).val().toLowerCase();
-				$("#data-list tr").filter(function() {
-				  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-				});
-			  });
-            });
-		</script>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
 
         <title>PJPE - Connexion</title>
 	</head>

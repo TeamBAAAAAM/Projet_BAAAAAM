@@ -2,7 +2,7 @@
 	session_start();
     require("../fonctions.php");
     // Connexion à la BD
-    $link = connexionMySQL();
+    $link = connecterBD();
 	
 	// Récupération des données du technicien
 	if(isset($_SESSION["matricule"])){
@@ -11,21 +11,23 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else {
-		RedirigerVers("se_connecter.php");
+		redirigerVers("se_connecter.php");
 	}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 	<head>
+		<!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		
+
+		<!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style.css">
-		
+
+		<!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 		<script src="script.js"></script>
 
         <title>PJPE - Corbeille Générale</title>
@@ -61,7 +63,7 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="se_connecter.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
@@ -145,7 +147,7 @@
 				</thead>
 				<tbody id="data-list">
 				<?php					
-					$result = DossiersCorbeilleGenerale($link);
+					$result = dossiersCorbeilleGenerale($link);
 					$rows = mysqli_num_rows($result);
                     for ($i = 0; $i < $rows; $i++) {
 						$donnees = mysqli_fetch_array($result);

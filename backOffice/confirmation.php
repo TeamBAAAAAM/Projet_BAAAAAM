@@ -1,52 +1,51 @@
 <?php
+    session_start();
+    require('../fonctions.php');
 
-//Charger les fonctions de connexion dans un autre fichier 
-require('../fonctions.php');
+    //Connexion à la BD
+    $connexion= connecterBD();
 
-//Connexion
-$connexion= connexionMysql();
+    // Récupération des données du formulaire d'inscription 
+    $matricule= $_POST['matricule'];
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $mot_de_passe = $_POST['mdp'];
 
-// Récupération du matricule 
-$matricule= $_POST['matricule'];
-$nom = $_POST['nom'];
-$prenom = $_POST['prenom'];
-$mot_de_passe = $_POST['mdp'];
-
-
-// On met en session les variables déjà saisie par le technicien 
-session_start();
-
-$_SESSION['mat'] = $matricule;
-$_SESSION['nom'] = $nom;
-$_SESSION['prenom'] = $prenom;
-$_SESSION['mdp']=$mot_de_passe;
+    // Mise en session pour remplir automatiquement à la connexion
+    $_SESSION['matricule'] = $matricule;
 
 ?>
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <meta charset="UTF-8">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-		<link rel="stylesheet" href="style.css">
-		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <title>Confirmation de l'enregistrement</title>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
+
+        <title>Confirmation de l'inscription</title>
     </head>
     <body>
         <div id="confirmation_inscription" class="container-fluid">
             <h1><span class='glyphicon glyphicon-floppy-saved'></span>Résultat de l'enregistrement</h1>
             
             <?php
-                $verif = VerificationMat($connexion, $matricule);
+                $verif = verifierMatricule($connexion, $matricule);
                 
                 // Vérification de la connexion 
                 if ($connexion != null) {
                     // D'abord, on vérifie que les 2 mots de passe rentrés par le technicien sont identiques
                     if (!($mot_de_passe === $_POST['conf'])) {
-                        // Les 2 mot de passe sont différents 
-                        $msg_erreur_mdp = msg_2;
+                        // Les 2 mots de passe sont différents 
+                        $msg_erreur_mdp = 'msg_2';
                     }
 
                     // Ensuite, on vérifie l'unicité de la matricule  
@@ -96,9 +95,9 @@ $_SESSION['mdp']=$mot_de_passe;
                         }       
                     }    
                     else {
-                        // Sinon, on est dans le cas où les 2mdps sont identiques mais la matricule est déjà attribuée à un technicien
-                        // Dans ce  dernier cas , on le redirige vers la page d'inscription 
-                        $msg_erreur = msg_1;
+                        // Sinon, on est dans le cas où les 2mdps sont identiques mais le matricule est déjà attribué à un technicien
+                        // Dans ce  dernier cas, on le redirige vers la page d'inscription 
+                        $msg_erreur = 'msg_1';
                     }
 
                     if(isset($msg_erreur) && isset($msg_erreur_mdp)) {

@@ -4,7 +4,7 @@
 require('../fonctions.php');
 
 //Connexion
-$connexion= connexionMySQL();
+$connexion= connecterBD();
 
 // Démerrage de la session 
 session_start();
@@ -13,15 +13,20 @@ session_start();
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <title>Inscription</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="styleInsc.css">
-        
+        <link rel="stylesheet" href="style.css">
+
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
+
+        <title>Inscription</title>
     <body>
         <nav class="navbar navbar-default header welcome">
 			<div class="container">
@@ -57,7 +62,7 @@ session_start();
                             </h5>
                             <p>
                                 Cela signifie que vous êtes déjà inscrit dans la base, auquel cas 
-                                vous pouvez vous <a href='index.php' class='btn btn-primary' role='button'>
+                                vous pouvez vous <a href='se_connecter.php' class='btn btn-primary' role='button'>
                                 <span class='glyphicon glyphicon-log-in'></span>
                                 Connecter directement</a>, 
                                 ou alors que ce matricule est déjà attribué à un autre technicien, 
@@ -139,7 +144,7 @@ session_start();
             S'enregistrer
         </button>
         
-        <a href="index.php" class="btn btn-danger" onclick="confirmation(event)" id="annulation">
+        <a href="se_connecter.php" class="btn btn-danger" onclick="confirmation(event)" id="annulation">
             <span class='glyphicon glyphicon-remove'></span> 
             Annuler
         </a>

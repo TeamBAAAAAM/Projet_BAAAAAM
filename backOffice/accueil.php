@@ -1,29 +1,19 @@
 <?php
-session_start();
-require("../fonctions.php");
-setlocale(LC_TIME, "fr_FR");
+	session_start();
+	require("../fonctions.php");
+	setlocale(LC_TIME, "fr_FR");
 
-// Connexion à la BD
-$link = connexionMySQL();
+	// Connexion à la BD
+	$link = connecterBD();
 
-//Vérification des identifiants
-if (isset($_POST["matricule"]) && isset($_POST["mdp"])) {
-	if (!AuthentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
-		RedirigerVers("se_connecter.php?msg_erreur=msg_3");
-	}
-}
-
-// Récupération des données du technicien
-if (isset($_SESSION["matricule"])) {
-	$matricule = $_SESSION["matricule"];
-	$codeT = $_SESSION["codeT"];
-	$nomT = $_SESSION["nomT"];
-	$prenomT = $_SESSION["prenomT"];
-} else {
-	if (!isset($_POST["matricule"])) RedirigerVers("se_connecter.php");
-	else {
+	// Récupération des données du technicien après connexion
+	if (isset($_POST["matricule"]) && isset($_POST["mdp"])) {
+		//Vérification des identifiants
+		if (!authentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
+			redirigerVers("se_connecter.php?msg_erreur=msg_3");
+		}
 		$matricule = $_POST["matricule"];
-		$technicien = DonneesTechnicien($link, $matricule);
+		$technicien = donneesTechnicien($link, $matricule);
 		$codeT = $technicien["CodeT"];
 		$nomT = $technicien["NomT"];
 		$prenomT = $technicien["PrenomT"];
@@ -32,23 +22,33 @@ if (isset($_SESSION["matricule"])) {
 		$_SESSION["codeT"] = $codeT;
 		$_SESSION["nomT"] = $nomT;
 		$_SESSION["prenomT"] = $prenomT;
-	}
-}
+	} else {
+		if (isset($_SESSION["matricule"])) { // s'il est déjà connecté
+			$matricule = $_SESSION["matricule"];
+			$codeT = $_SESSION["codeT"];
+			$nomT = $_SESSION["nomT"];
+			$prenomT = $_SESSION["prenomT"];
+		} else {
+			redirigerVers("se_connecter.php");
+		}
+	}	
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="style.css">
-	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-	<script src="script.js"></script>
+    <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
 
 	<title>PJPE - Réception des documents</title>
 </head>
@@ -84,7 +84,7 @@ if (isset($_SESSION["matricule"])) {
 							<?php echo ("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 						</a>
 						<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-							<li role="presentation"><a role="menuitem" href="index.php"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+							<li role="presentation"><a role="menuitem" href="se_connecter.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 						</ul>
 					</li>
 				</ul>
