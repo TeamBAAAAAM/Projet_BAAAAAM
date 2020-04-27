@@ -1,16 +1,15 @@
 <?php
-    //Charger les fonctions de connexion dans un autre fichier 
+    session_start();
     require('../fonctions.php');
 
     //Connexion à la base de données
     $connexion= connecterBD();
 
-    // On démarre la session
-    session_start();
-
-    //Déconnexion
-    $_SESSION = array();
-    session_destroy();
+    //Suppression des données en session après déconnexion
+    if (isset($_GET["logout"])){
+        session_destroy();
+        $_SESSION = array();
+    }
 ?>
 
 <!DOCTYPE html>

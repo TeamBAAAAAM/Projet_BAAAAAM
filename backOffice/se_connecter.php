@@ -1,25 +1,23 @@
 <?php
-    //Charger les fonctions de connexion dans un autre fichier 
+    session_start();
     require('../fonctions.php');
 
     //Connexion à la base de données
     $connexion= connecterBD();
 
-    // On démarre la session
-    session_start();
-
-    //Déconnexion
-    $_SESSION = array();
-    session_destroy();
+    //Suppression des données en session après déconnexion
+    if (isset($_GET["logout"])){
+        session_destroy();
+        $_SESSION = array();
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 	<head>		
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		
-        <!-- importer le fichier de style -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="styleTech.css">
 		
@@ -52,7 +50,7 @@
                     </strong>
                 </label>
                 <input id="mat" type="text" placeholder="Veuillez renseigner votre matricule" 
-                    name="matricule" onKeyUp="checkFormatMatricule('# ## ##')" required>
+                    name="matricule" onKeyUp="checkFormatMatricule('# ## ##')" value="<?php if (isset($_SESSION["matricule"])) echo $_SESSION["matricule"]; ?>" required>
 
                 <?php
 		            if (isset($_GET["msg_erreur"])) {

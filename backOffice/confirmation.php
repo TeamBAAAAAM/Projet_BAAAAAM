@@ -1,25 +1,18 @@
 <?php
+    session_start();
+    require('../fonctions.php');
 
-//Charger les fonctions de connexion dans un autre fichier 
-require('../fonctions.php');
+    //Connexion à la BD
+    $connexion= connecterBD();
 
-//Connexion
-$connexion= connecterBD();
+    // Récupération des données du formulaire d'inscription 
+    $matricule= $_POST['matricule'];
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $mot_de_passe = $_POST['mdp'];
 
-// Récupération du matricule 
-$matricule= $_POST['matricule'];
-$nom = $_POST['nom'];
-$prenom = $_POST['prenom'];
-$mot_de_passe = $_POST['mdp'];
-
-
-// On met en session les variables déjà saisie par le technicien 
-session_start();
-
-$_SESSION['mat'] = $matricule;
-$_SESSION['nom'] = $nom;
-$_SESSION['prenom'] = $prenom;
-$_SESSION['mdp']=$mot_de_passe;
+    // Mise en session pour remplir automatiquement à la connexion
+    $_SESSION['matricule'] = $matricule;
 
 ?>
 <!DOCTYPE html>
@@ -45,8 +38,8 @@ $_SESSION['mdp']=$mot_de_passe;
                 if ($connexion != null) {
                     // D'abord, on vérifie que les 2 mots de passe rentrés par le technicien sont identiques
                     if (!($mot_de_passe === $_POST['conf'])) {
-                        // Les 2 mot de passe sont différents 
-                        $msg_erreur_mdp = msg_2;
+                        // Les 2 mots de passe sont différents 
+                        $msg_erreur_mdp = 'msg_2';
                     }
 
                     // Ensuite, on vérifie l'unicité de la matricule  
@@ -96,9 +89,9 @@ $_SESSION['mdp']=$mot_de_passe;
                         }       
                     }    
                     else {
-                        // Sinon, on est dans le cas où les 2mdps sont identiques mais la matricule est déjà attribuée à un technicien
-                        // Dans ce  dernier cas , on le redirige vers la page d'inscription 
-                        $msg_erreur = msg_1;
+                        // Sinon, on est dans le cas où les 2mdps sont identiques mais le matricule est déjà attribué à un technicien
+                        // Dans ce  dernier cas, on le redirige vers la page d'inscription 
+                        $msg_erreur = 'msg_1';
                     }
 
                     if(isset($msg_erreur) && isset($msg_erreur_mdp)) {

@@ -57,7 +57,7 @@ session_start();
                             </h5>
                             <p>
                                 Cela signifie que vous êtes déjà inscrit dans la base, auquel cas 
-                                vous pouvez vous <a href='index.php' class='btn btn-primary' role='button'>
+                                vous pouvez vous <a href='se_connecter.php' class='btn btn-primary' role='button'>
                                 <span class='glyphicon glyphicon-log-in'></span>
                                 Connecter directement</a>, 
                                 ou alors que ce matricule est déjà attribué à un autre technicien, 
@@ -139,7 +139,7 @@ session_start();
             S'enregistrer
         </button>
         
-        <a href="index.php" class="btn btn-danger" onclick="confirmation(event)" id="annulation">
+        <a href="se_connecter.php" class="btn btn-danger" onclick="confirmation(event)" id="annulation">
             <span class='glyphicon glyphicon-remove'></span> 
             Annuler
         </a>
