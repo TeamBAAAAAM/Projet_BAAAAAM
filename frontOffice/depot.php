@@ -1,21 +1,26 @@
 <?php
-    session_start();
-    require_once("../fonctions.php");
+    session_start();                    // Démarrage de la session
+    require_once("../fonctions.php");   // Récupération des fonctions
 
+    /* S'il s'agit  d'une supression de session */
     if(isset($_GET["delete_session"])) {
         if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      
         if(isset($_SESSION["RefD"])) unset($_SESSION["RefD"]);
-        redirigerVers('depot.php'); // Suppresion des valeurs du POST
+        redirigerVers('depot.php'); // Suppresion des valeurs du POST et du GET
     }
 
+    /* Récupération de la connexion à la base de données */
     $link = connecterBD();
-    $repost = False; // Ceci est un premier dépôt
-    $repost_ok = False; // Ceci n'est pas une demande d'authentification
 
-    $msg_error_nir = False; // Il n'y a pas de message d'erreur pour le NIR
-    $msg_error_ref = False; // Il n'y a pas de message d'erreur pour la référence du dossier
-    $msg_error_nir_ref = False; // Il n'y a pas de correspondance
+    /* Initialisation des variables */
+    $repost = False;                // Ceci est un premier dépôt
+    $repost_ok = False;             // Ceci n'est pas une demande d'authentification
 
+    $msg_error_nir = False;         // Il n'y a pas de message d'erreur pour le NIR
+    $msg_error_ref = False;         // Il n'y a pas de message d'erreur pour la référence du dossier
+    $msg_error_nir_ref = False;     // Il n'y a pas de correspondance
+
+    /* Récupération des valeurs contnus dans l'URL */
     if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
             if($_GET["RefD"] != "") {
@@ -89,7 +94,7 @@
 
         <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
 
         <!-- AFFICHAGE DU FORMULAIRE SI REFERENCE DE DOSSIER EXISTANTE -->
@@ -230,7 +235,7 @@
                                 <div class="col-sm-4">
                                     <label for="nir" class="control-label">N° Sécurité sociale <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon"><i class="	glyphicon glyphicon-barcode"></i></span>
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-barcode"></i></span>
                                         <input id="nir" type="text" class="form-control" name="nir"
                                             pattern="^[0-9]( [0-9]{2}){3}( [0-9]{3}){2}$"
                                             placeholder="# ## ## ## ### ###"

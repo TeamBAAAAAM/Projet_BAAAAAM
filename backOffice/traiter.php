@@ -88,7 +88,7 @@
 			</div>
 		</nav>
 
-		<nav class="navbar navbar-inverse navbar-static-top police" data-spy="affix" data-offset-top="90">
+		<nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">

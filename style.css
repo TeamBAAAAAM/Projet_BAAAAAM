@@ -154,12 +154,12 @@ a.send_button {
 }
 
 #third_button {
-    color: rgb(110, 7, 7);
+    color: rgb(110,7,7);
 }
 
 #third_button:hover {
     color: white;
-    background-color: rgb(110, 7, 7);
+    background-color: rgb(110,7,7);
     box-shadow: none;
 }
 

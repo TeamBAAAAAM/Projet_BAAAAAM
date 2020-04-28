@@ -1,152 +1,341 @@
-.header {
-	padding: 10px 32px;
-	border: none;
-	border-radius: 0px;
-	background-color: #339966;
-	color: white;
-	box-shadow: 1px 1px 10px grey;
-	margin-bottom: 0px;
+/******************************************************************/
+
+/*     FEUILLE DE STYLE DES PAGES CÔTÉ TECHNICIEN (CONNECTÉ)      */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------
+ 	STYLE GÉNÉRAL
+-------------------------------------------------------*/
+
+.glyphicon {
+    margin: 0 5px;
 }
 
-.header img {
-	margin-left: 15px;
-	height: 50px;
+/*------------------------------------------------------
+ 	ENTÊTE DE LA PAGE
+-------------------------------------------------------*/
+
+.affix {
+    z-index: 9999 !important;
+    top: 0;
+    width: 100%;
+}
+
+.affix + .container {
+    padding-top: 71px;
+}
+
+.affix + .container {
+    padding-top: 71px;
+}
+
+.header {
+    margin-bottom: 0;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 0;
+    color: white;
+    background-color: #396;
+    box-shadow: 1px 1px 10px grey;
 }
 
 .header .dropdown {
-	margin-left: 0px;
+    margin-left: 0;
 }
 
 .header .dropdown > button {
-	color: #339966;
-	padding-left: 20px;
-	padding-right: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #396;
+}
+
+.header img {
+    height: 50px;
+    margin-left: 15px;
 }
 
 .navbar-header > button {
-	height: 50px;
+    height: 50px;
 }
 
-#research, #data-table {
-	margin: 20px 0px;
+.navbar-menu-police {
+    font-size: 17px;
+}
+
+/*------------------------------------------------------
+ 	CHAMPS DE SAISI POUR LA RECHERCHE
+-------------------------------------------------------*/
+
+.container-accueil {
+    margin: 5% 0%;
+}
+
+#container_filters > .row > * {
+    margin-bottom: 15px;
+}
+
+#research,
+#data-table {
+    margin: 20px 0;
 }
 
 #research {
-	margin-left: 10%;
-	margin-right: 10%;
-	width: 80%;
+    width: 80%;
+    margin-right: 10%;
+    margin-left: 10%;
 }
 
-#container_form {
-	padding: 30px 20px;
+/*------------------------------------------------------
+ 	TABLEAUX RÉCAPITULATIFS DE LA PAGE D'ACCUEIL
+-------------------------------------------------------*/
+
+.table-item-title {
+    font-size: 17px;
 }
 
-#container_form h2 {
-	margin-bottom: 35px;
+.table-header-title {
+    font-size: 23px;
 }
 
-#container_form a {
-	margin-left: 35px;
+/*------------------------------------------------------
+ 	BOITE DE DIALOGUE POUR L'ENVOI DES MAILS
+-------------------------------------------------------*/
+
+#mail_text {
+    width: 100%;
 }
 
-.container-accueil {
-	margin: 5% 0%;
-}
+/*------------------------------------------------------
+ 	ZONE D'APERCU DES DOCUMENTS JUSTIFICATIFS
+-------------------------------------------------------*/
 
-.glyphicon {
-	margin: 0px 5px;
-}
-
-.police {
-	font-size: 17px;
-}
-.titre {
-	font-size: 23px;
-}
-
-#panel-pjs .panel-body, #panel-apercu .panel-body {
-	overflow-y: scroll;
-	padding: 0px;
+#panel-apercu .panel-body,
+#panel-pjs .panel-body {
+    height: 1000px;
 }
 
 #apercu {
-	width: 100%;
-	border: none;
+    width: 100%;
+    height: inherit;
+    border: none;
 }
 
-/*Boite de dialogue pour l'envoi d'un mail*/
-#mail_text {
-	width: 100%;
+/*------------------------------------------------------
+ 	LISTES DES PIÈCES JUSTIFICATIVES
+-------------------------------------------------------*/
+
+#panel-pjs .icon {
+    height: 45px;
+    margin-right: 10px;
 }
 
-/* Listes des pièces justificatives */
+#panel-pjs .panel-body,
+#panel-apercu .panel-body {
+    padding: 0;
+    overflow-y: scroll;
+}
+
 #panel-pjs li {
-	box-shadow: 1px 1px 3px black;
-	cursor: pointer;
+    box-shadow: 1px 1px 3px black;
+    cursor: pointer;
 }
-#panel-pjs li h5{
-	margin: 0px;
+
+#panel-pjs li h5 {
+    margin: 0;
 }
+
 #panel-pjs li:hover {
-	background-color: lightgray;
-	box-shadow: 1px 1px 3px black inset;
+    background-color: lightgray;
+    box-shadow: 1px 1px 3px black inset;
 }
 
 .pj-selected {
-	background-color: gray;
-	color: white;
-	box-shadow: 1px 1px 10px black;
+    color: white;
+    background-color: gray;
+    box-shadow: 1px 1px 10px black;
 }
 
-#confirmation_inscription {
-	margin-top: 100px;
-    width: 80%;
-	padding: 30px;
-	border: 1px solid #f1f1f1;
-	background: #fff;
-	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+/*------------------------------------------------------
+ 	GESTION DES MESSAGES
+-------------------------------------------------------*/
+
+body:not(#body_sign) div.alert {
+    margin: 30px 150px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    min-width: 440px;
 }
 
-#filter_button > .row > * {
-	margin-bottom: 15px;
+body:not(#body_sign) div.alert > h3 {
+    margin-top: 0;
 }
 
-.icon {
-	height: 45px;
-	margin-right: 10px;
-}
-
-/* Message */
-div.alert {
-	margin: 30px 150px;
-	margin-top: 0px;
-	margin-bottom: 20px;
-	min-width: 440px;
-}
-div.alert > h3 {
-	margin-top: 0px;
-}
-
-/* Bouton de fermeture de message */
 #msg_close {
-	float: right;
-	font-size: 24px;
-}
-#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
-#msg_close + h3 {margin-top: 0px;}
-
-
-/* Note: Try to remove the following lines to see the effect of CSS positioning */
-.affix {
-	top: 0;
-	width: 100%;
-	z-index: 9999 !important;
+    float: right;
+    font-size: 24px;
 }
 
-.affix + .container {
-	padding-top: 71px;
+#msg_close:hover {
+    color: rgb(0,0,0,0.25);
 }
 
-.affix + .container {
-	padding-top: 71px;
+#msg_close + h3 {
+    margin-top: 0;
+}
+
+/******************************************************************/
+
+/*   FEUILLE DE STYLE DES PAGES DE CONNEXION ET D'INSCRIPTION     */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------
+ 	CORPS DE LA PAGE 
+-------------------------------------------------------*/
+
+#body_sign {
+    overflow-x: hidden;
+    background-color: WhiteSmoke;
+}
+
+#body_sign #connexion {
+    width: 600px;
+    margin-top: 5%;
+}
+
+#body_sign #connexion h2 {
+    width: 60%;
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+#body_sign .container_sign {
+    margin-bottom: 50px;
+    padding: 30px;
+    border: 1px solid #f1f1f1;
+    background: #fff;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2) ,0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#body_sign div#inscription {
+    width: 50%;
+    margin-top: 50px;
+}
+
+#body_sign div#connexion {
+    width: 40%;
+    margin-top: 100px;
+}
+
+#body_sign div#confirmation_inscription {	
+    width: 60%;
+    margin-top: 100px;
+}
+
+#body_sign input[type=text],
+#body_sign input[type=password] {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+}
+
+#body_sign input[type=submit] {
+    width: 100%;
+    margin: 8px 0;
+    padding: 14px 20px;
+    border: 1px solid white;
+    font-weight: bold;
+    color: white;
+    background-color: #03057b;
+    transition: background-color 0.25s;
+    cursor: pointer;
+}
+
+#body_sign input[type=submit]:hover {
+    border: 1px solid #03057b;
+    color: #03057B;
+    background-color: white;
+}
+
+#body_sign label {
+    margin-top: 16px;
+}
+
+#body_sign .float-right {
+    float: right;
+}
+
+#body_sign div.certif {
+    margin-bottom: 10px;
+}
+
+#body_sign .champ_obligatoire {
+    font-style: italic;
+    color: #03057B;
+}
+
+#body_sign div.champ_obligatoire {
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+/*------------------------------------------------------
+ 	ENTÊTE DES PAGES
+-------------------------------------------------------*/
+
+#body_sign .header {
+    margin-bottom: 0;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 0;
+    color: white;
+    background-color: #EFF6FB;
+    box-shadow: 1px 1px 10px grey;
+}
+
+/*------------------------------------------------------
+ 	BOUTONS DES PAGES
+-------------------------------------------------------*/
+
+#body_sign a:not(.btn) {
+    text-decoration: none;
+    color: #03057B;
+}
+
+#body_sign a:not(.btn):hover {
+    text-decoration: none;
+    color: dodgerblue;
+}
+
+/*------------------------------------------------------
+ 	MESSAGES
+-------------------------------------------------------*/
+
+#body_sign div.alert {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#body_sign div.alert h3 {
+	margin-top: 0px;
+}
+
+#body_sign div.alert h3 > *:not(.glyphicon) {
+	font-size: 16px;
+}
+
+#body_sign div.alert h3 > *:not(.glyphicon):hover {
+	font-size: 16px;
+}
+
+#body_sign div.alert h3 > .glyphicon:last-child {
+	font-size: 12px;
 }

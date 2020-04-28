@@ -40,7 +40,7 @@
 			</div>
 		</nav>
 
-		<nav class="navbar navbar-inverse navbar-static-top police" data-spy="affix" data-offset-top="90">
+		<nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
@@ -71,7 +71,7 @@
 		</nav>
 		
 		<div class="container">
-			<div id="filter_button" class="container-fluid">
+			<div id="container_filters" class="container-fluid">
 				<div class="row">
 					<div class="col-lg-6">
 						<label for="date_debut"><i class="glyphicon glyphicon-search"></i>Recherche un élément</label>
@@ -109,14 +109,16 @@
 						<label for="nb_page"><i class="glyphicon glyphicon-list-alt"></i>Nombre de lignes</label>
 						<select class="form-control" id="nb_page">
 						<?php
-							for($i = 1 ; $i < 19 ; $i += 1) {
+							// Insertion des options de la liste déroulante
+							// permettant de fixer le nombre de lignes par pages
+							for($i = 1 ; $i <= 19 ; $i += 1) { // De 1 à 19 (en pas normal)
 								if($i == 10) echo "<option value='$i' selected>$i</option>";
 								else echo "<option value='$i'>$i</option>";
 							}
-							for($i = 20 ; $i < 99 ; $i += 10) {
+							for($i = 20 ; $i <= 99 ; $i += 10) { // De 20 à 99 (en pas de 10)
 								echo "<option value='$i'>$i</option>";
 							}
-							for($i = 100 ; $i < 500 ; $i += 100) {
+							for($i = 100 ; $i <= 500 ; $i += 100) { // De 100 à 500 (en pas de 100)
 								echo "<option value='$i'>$i</option>";
 							}
 						?>
@@ -125,8 +127,6 @@
 				</div>
 			</div>
 			
-			<input type="hidden" id="statut" value="En cours">
-
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -134,14 +134,17 @@
 						<th>N° de demande</th>
 						<th>NIR</th>
 						<th>Statut</th>
-					</tr>    
+					</tr>
 				</thead>
 				<tbody id="data-list">
 				<?php
+					// Affichage de la corbeille personnelle du technicien connecté
 					$result = dossiersCorbeilleTechnicien($link, $codeT);
-					if ($result != NULL)
+					
+					if ($result != NULL) 
 						$rows = mysqli_num_rows($result);
 					else $rows = 0;
+
 					for ($i = 0; $i < $rows ; $i++){
 						$donnees = mysqli_fetch_array($result);
 						echo ("<tr><td>".date("d/m/Y", strtotime($donnees['DateD']))."</td>

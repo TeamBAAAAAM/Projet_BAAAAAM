@@ -1,3 +1,16 @@
+
+/******************************************************************/
+
+/*   SCRIPT JS POUR LA GESTION DES PAGES CÔTÉ TECHNICIEN          */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------------------
+ 	FONCTIONS GÉNÉRALES
+------------------------------------------------------------------*/
+
+/* Connecte à la base de données */
 var format = ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "pdf"];
 
 $(document).ready(function(){
@@ -41,7 +54,8 @@ $(document).ready(function(){
     $(".disabled").attr("disabled", true);
 });
 
-//Vérifie et corrige le format du NIR
+/* Vérifie et corrige la valeur du champ de saisi du matricule en fonction du format 'format' */
+/* => Ne renvoie rien. NB : l'id du input text doit être 'mat' et le format de la formt '#### ####'*/
 function checkFormatMatricule(format) {
 	formatNIR = format;
 
@@ -94,6 +108,7 @@ function changePathViewer(path) {
         if(format[i] == "pdf") {
             tagName = "embed";
             type = "application/pdf";
+            path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
         }
         else {
             tagName = "img";
@@ -104,6 +119,7 @@ function changePathViewer(path) {
     else {
         tagName = "embed";
         type = "application/" + typeFile;
+        path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
     }
 
     var newElement = '<' + tagName + ' id="apercu" type="' + type + '"';
@@ -285,5 +301,14 @@ function CliquePageBouton(numPage) {
         else {
             element.hide();
         }
+    }
+}
+
+/* Ouvre une boîte de dialogue pour vérifier l'annulation de saisi d'un formulaire */
+/* => Mettre en valeur de l'attribut 'onClick' avec pour paramètre 'event' */
+function confirmationAnnulation(event) {
+    event.preventDefault();     // Pour empêcher d'être redirigeé malgré une indication négative
+    if(confirm("Êtes-vous bien sûr de vouloir annuler votre saisie ?")) {
+        window.location = event.target.href; // Redirection vers le lien de l'attribut 'href'
     }
 }
