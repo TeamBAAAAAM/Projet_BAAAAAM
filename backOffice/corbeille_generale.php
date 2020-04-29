@@ -1,16 +1,17 @@
 <?php 
 	session_start();
-    require("../fonctions.php");
+	require("../fonctions.php");
+	
     // Connexion à la BD
     $link = connecterBD();
 	
-	// Récupération des données du technicien
+	// Récupération des données du technicien pour affichage s'il est connecté
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else {
+	} else { // Redirection sinon
 		redirigerVers("se_connecter.php");
 	}
 ?>
@@ -120,6 +121,7 @@
 						<label for="nb_page"><i class="glyphicon glyphicon-list-alt"></i>Nombre de lignes</label>
 						<select class="form-control" id="nb_page">
 						<?php
+							// Gestion du nombre de lignes du tableau à afficher
 							for($i = 1 ; $i < 19 ; $i += 1) {
 								if($i == 10) echo "<option value='$i' selected>$i</option>";
 								else echo "<option value='$i'>$i</option>";
@@ -146,7 +148,8 @@
 					</tr>    
 				</thead>
 				<tbody id="data-list">
-				<?php					
+				<?php
+					// Récupération des dossiers à afficher 
 					$result = dossiersCorbeilleGenerale($link);
 					$rows = mysqli_num_rows($result);
                     for ($i = 0; $i < $rows; $i++) {
@@ -156,18 +159,18 @@
 									<td>".$donnees['NirA']."</td>
 									<td>".$donnees['StatutD']."</td>
 									<td>");
-								
-						if($donnees['StatutD'] == "À traiter")  {
+						// Gestion des boutons faisant le lien vers la page de traitement
+						if($donnees['StatutD'] == "À traiter")  { // Si on clique sur un dossier à traiter
 							$class =  "btn btn-success";
 							$icon = "glyphicon-plus";
-							$variables = "codeD=".$donnees['CodeD']."&statut=En cours";
-						}
-						else {
+							$variables = "codeD=".$donnees['CodeD']."&statut=En cours"; // Le statut passera automatiquement à "En cours"
+						} else { // S'il n'est pas "A traiter", le dossier est consultable
 							$class =  "btn btn-primary";
 							$icon = "glyphicon-search";
 							$variables = "codeD=".$donnees['CodeD'];
-						}
-						
+						}						
+						// Passage du code et/ou du statut du dossier par la méthode GET
+						// pour gérer l'affichage sur traiter.php
 						echo("<a href='traiter.php?$variables' class='$class' role='button'>
 							<span class='glyphicon $icon'></span>
 						</a>");
