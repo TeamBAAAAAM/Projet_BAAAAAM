@@ -1,6 +1,7 @@
 <?php
 	session_start();
 	require("../fonctions.php");
+	// Format des dates en français
 	setlocale(LC_TIME, "fr_FR");
 
 	// Connexion à la BD
@@ -23,7 +24,7 @@
 		$_SESSION["nomT"] = $nomT;
 		$_SESSION["prenomT"] = $prenomT;
 	} else {
-		if (isset($_SESSION["matricule"])) { // s'il est déjà connecté
+		if (isset($_SESSION["matricule"])) { // S'il est déjà connecté
 			$matricule = $_SESSION["matricule"];
 			$codeT = $_SESSION["codeT"];
 			$nomT = $_SESSION["nomT"];
@@ -108,37 +109,25 @@
 						<tr>
 							<td><span class="glyphicon glyphicon-download"></span> Dossiers reçus </td>
 							<td>
-								<?php
-								$result = nbDossiersRecus($link);
-								echo $result["nbDossiersRecus"];
-								?>
+								<?php echo nbDossiersRecus($link)["nbDossiersRecus"]; ?>
 							</td>
 						</tr>
 						<tr>
 							<td><span class="glyphicon glyphicon-pencil"></span> Dossiers à traiter</td>
 							<td>
-								<?php
-								$result = nbDossiersATraiter($link);
-								echo $result["nbDossiersAtraiter"];
-								?>
+								<?php echo nbDossiersATraiter($link)["nbDossiersAtraiter"]; ?>
 							</td>
 						</tr>
 						<tr>
 							<td><span class="glyphicon glyphicon-alert"></span> Dossiers classés sans suite</td>
 							<td>
-								<?php
-								$result = nbDossiersClasses($link);
-								echo $result["nbDossiersClasses"];
-								?>
+								<?php echo nbDossiersClasses($link)["nbDossiersClasses"]; ?>
 							</td>
 						</tr>
 						<tr>
 							<td><span class="glyphicon glyphicon-ok"></span> Dossiers terminés</td>
 							<td>
-								<?php
-								$result = nbDossiersTermines($link);
-								echo $result["nbDossiersTermines"];
-								?>
+								<?php echo nbDossiersTermines($link)["nbDossiersTermines"]; ?>
 							</td>
 						</tr>
 					</tbody>
@@ -155,10 +144,7 @@
 					<tbody id="data-list">
 						<tr>
 							<td class="text-center">
-								<?php
-								$result = nbDossiersATraiterTotal($link);
-								echo $result["nbDossiersAtraiterTotal"];
-								?>
+								<?php echo nbDossiersATraiterTotal($link)["nbDossiersAtraiterTotal"]; ?>
 							</td>
 						</tr>
 					</tbody>
