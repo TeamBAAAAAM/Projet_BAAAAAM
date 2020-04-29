@@ -1,16 +1,17 @@
 <?php 
 	session_start();
-    require("../fonctions.php");
+	require("../fonctions.php");
+	
     // Connexion à la BD
     $link = connecterBD();
 	
-	// Récupération des données du technicien
+	// Récupération des données du technicien s'il est connecté
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else {
+	} else { // Redirection sinon
 		redirigerVers("se_connecter.php");
 	}
 ?>
@@ -109,6 +110,7 @@
 						<label for="nb_page"><i class="glyphicon glyphicon-list-alt"></i>Nombre de lignes</label>
 						<select class="form-control" id="nb_page">
 						<?php
+							// Gestion du nombre de lignes du tableau à afficher
 							for($i = 1 ; $i < 19 ; $i += 1) {
 								if($i == 10) echo "<option value='$i' selected>$i</option>";
 								else echo "<option value='$i'>$i</option>";
@@ -138,6 +140,7 @@
 				</thead>
 				<tbody id="data-list">
 				<?php
+					// Récupération des dossiers en cours de traitement par le technicien connecté
 					$result = dossiersCorbeilleTechnicien($link, $codeT);
 					if ($result != NULL)
 						$rows = mysqli_num_rows($result);
