@@ -34,12 +34,12 @@
 		redirigerVers("traiter.php");
 	}
 		
-	//S'il n'y a pas de code dossier
+	// S'il n'y a pas de code dossier
 	if(!isset($_SESSION["codeDossier"])) {	
 		redirigerVers("accueil.php");
 	}
 
-	//Variables du dossier et de l'assuré
+	// Données du dossier et de l'assuré
 	$dossier = chercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
@@ -52,13 +52,14 @@
 	$telephoneAssure = $dossier["TelA"];
 	$mailAssure = $dossier["MailA"];
 	$dateArretMaladie = strtotime($dossier["DateAM"]);
-	$codeT_dossier = $dossier["CodeT"];
+	$dateTraite = strtotime($dossier["DateTraiterD"]);
+	// Données du technicien en charge du dossier
+	$codeT_dossier = $dossier["CodeT"]; 
 	$matricule_dossier = $dossier["Matricule"];
 	$nomT_dossier = $dossier["NomT"];
 	$prenomT_dossier = $dossier["PrenomT"];
-	$dateTraite = strtotime($dossier["DateTraiterD"]);
 
-	//Récupération des messages de l'assuré
+	// Récupération des messages envoyés à l'assuré
 	$messagesAssure = listeMessages($codeAssure, $link);
 ?>
 <!DOCTYPE html>
