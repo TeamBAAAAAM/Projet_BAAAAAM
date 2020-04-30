@@ -1,6 +1,7 @@
 <?php 
 	session_start();
-    require_once("../fonctions.php");
+	require_once("../fonctions.php");
+	
     // Connexion à la BD
 	$link = connecterBD();
 
@@ -10,31 +11,33 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else {
+	} else { // Redirection sinon
 		redirigerVers("se_connecter.php");
 	}
 
-	//Changement de statut si un statut est indiqué dans l'URL
-	if(isset($_GET["statut"])) {
+	// Récupération des données du dossier en cours de traitement
+	if(isset($_GET["statut"])) { // Nouveau statut du dossier 
+
+		// Mise en session du code du dossier
 		if(isset($_GET["codeD"])) $_SESSION["codeDossier"] = $_GET["codeD"];
+		// Mise à jour de la BD selon le changement de statut demandé
 		traiterDossier($codeT, $_SESSION["codeDossier"], $_GET["statut"], $link);
 
+		// Sortie d'un dossier de la corbeille d'un technicien
 		if($_GET["statut"] == "À traiter") {
 			libererDossier($link, $_SESSION["codeDossier"]);
 			redirigerVers("corbeille_generale.php");
 		}
-
-		//Suppression des variables transmises par la méthode GET
+		// Redirection pour supprimer les variables transmises dans l'URL
 		redirigerVers("traiter.php");
-	}
-	// Récupération des données du dossier en cours de traitement
-	else if(isset($_GET["codeD"])) {
+
+	} else if(isset($_GET["codeD"])) {
 		$_SESSION["codeDossier"] = $_GET["codeD"];
-		//Suppression des variables transmises par la méthode GET
+		// Redirection pour supprimer les variables transmises dans l'URL
 		redirigerVers("traiter.php");
 	}
 		
-	//S'il n'y a pas de code dossier
+	// Redirection s'il n'y a pas de code dossier pour restreindre l'accès à la page traiter.php
 	if(!isset($_SESSION["codeDossier"])) {	
 		redirigerVers("accueil.php");
 	}
@@ -148,8 +151,7 @@
 
 							//Récupération des messages de l'assuré
 							$messagesAssure = listeMessages($codeAssure, $link);
-						}
-						else {						
+						} else {						
 							GenererMessage (
 								"Erreur lors de l\'enregistrement !",
 								"Votre message n\'a pas pu être enregistré !",
@@ -157,8 +159,7 @@
 								"danger"
 							);
 						}
-					}
-					else {				
+					} else {				
 						GenererMessage (
 							"Erreur lors de l\'envoi !",
 							"Votre message n\'a pas pu être envoyé !",
@@ -166,7 +167,7 @@
 							"danger"
 						);
 					}
-
+					// Suppression après envoi
 					unset($_POST['subject']); 
 					unset($_POST['mail_text']);
 					unset($_POST['email']);
@@ -180,6 +181,7 @@
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="row">
+								<!-- Affichage des informations relatives au dossier -->
 								<div class="col-xs-12">
 									<h3><span class="glyphicon glyphicon-folder-open"></span> DOSSIER No : <?php echo $refDossier;?></h3>
 									<h5>Date de réception :  <?php echo date("d/m/Y", $dateReception);?></h5>
@@ -187,17 +189,20 @@
 									<h5><?php if ($statutDossier != "En cours") echo "Traité le :  ".date("d/m/Y H:i", $dateTraite); else echo "Depuis le :  ".date("d/m/Y H:i", $dateTraite); ?></h5>
 								</div>
 								<div class="col-lg-12 btn-group btn-group-justified" role="group">
+									<!-- Pour sortir un dossier de la corbeille d'un technicien -->
 									<a href="traiter.php?statut=À%20traiter" class="btn btn-default<?php if(!($statutDossier == "En cours")) {echo(" disabled");}?>" role="button">
-										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter
-									</a>
+										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter</a>
+									<!-- Pour un dossier En cours -->
 									<a href="traiter.php?statut=En%20cours"
 										class="<?php classBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
 								</div>	
 								<div class="col-lg-12 btn-group btn-group-justified" role="group">
+									<!-- Pour mettre le dossier à Classé sans suite -->
 									<a href="traiter.php?statut=Classé%20sans%20suite"
 										class="<?php classBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
 										role="button"><span class="glyphicon glyphicon-remove"></span>Classé sans suite</a>
+									<!-- Pour mettre le dossier à Terminé -->
 									<a href="traiter.php?statut=Terminé"
 										class="<?php classBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-ok"></span>Terminé</a>
@@ -219,7 +224,7 @@
 											if($telephoneAssure != "") echo "Tel : $telephoneAssure";
 											else echo "N/A";
 										?>
-										/
+										
 										<?php
 											if($mailAssure != "") echo "Email : $mailAssure";
 											else echo "N/A";
@@ -227,10 +232,12 @@
 									</h5>
 								</div>
 								<div class="col-xs-12 btn-group btn-group-vertical">
+									<!-- Seul le technicien en charge du dossier peut envoyer un mail -->
 									<button type="button" class="btn btn-default<?php if($codeT != $codeT_dossier) echo " disabled";?>" 
 									data-toggle="modal" data-target="#myModal">
 										<span class="glyphicon glyphicon-send"></span>Envoyer un mail à l'assuré
 									</button>
+									<!-- Bouton actif seulement s'il existe des messages enregistrés -->
 									<button type="button" class="btn btn-default<?php if($messagesAssure == null) echo " disabled";?>" 
 									data-toggle="modal" data-target="#myModal2">
 										<span class="glyphicon glyphicon-th-list"></span>Historique des messages
@@ -343,18 +350,19 @@
 						</div>
 						<ul class="panel-body list-group">
 						<?php
+							// Récupération des justificatifs envoyés
 							$result = recupererJustificatifs($link, $codeDossier);
 							if ($result != NULL)
 								$rows = mysqli_num_rows($result);
 							else $rows = 0;
 							for ($i = 0; $i < $rows; $i++){
+								// Récupération du chemin de chaque fichier
 								$justificatif = mysqli_fetch_array($result);
 								$cheminFichier = $justificatif["CheminJ"];
 								$nomFichier = strrchr($cheminFichier, '/');
 								$nomFichier = substr($nomFichier, 1);
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
-								//$mnemonique = $justificatif["Mnemonique"];
 								echo("
 								<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>
 									<h5>
