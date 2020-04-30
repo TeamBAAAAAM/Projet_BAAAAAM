@@ -37,7 +37,7 @@
             if (empty($_SESSION) && isset($_GET['logout'])) {
                 echo "<div class='container-fluid'>";
                 genererMessage(
-                    "Déconnexion réussi !",
+                    "Déconnexion réussie !",
                     "Vous avez été correctement déconnecter.",
                     "log-out",
                     "success"
