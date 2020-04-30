@@ -29,7 +29,7 @@ define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la ra
 ------------------------------------------------------------------*/
 
 // Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
-// précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
+// précisées dans le fichier README.md > Section "Installation" puis "Initialisation de SENDGRID"
 define("SENDGRID_API_KEY", "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");    // Clé d'API pour SENDGRID
 define("SENDER_EMAIL_ADDRESS", "no-reply-pjpe-cpam@yopmail.com");
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
