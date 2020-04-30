@@ -2,6 +2,16 @@
     session_start();                    // Démarrage de la session
     require_once("../fonctions.php");   // Récupération des fonctions
 
+    /* Suppression des données de session du dernier dépôt (page d'enregistrement) */
+    if(isset($_SESSION["MessageAssure"])
+    && isset($_SESSION["MessageDossier"])
+    && isset($_SESSION["MessageFichiers"])) {
+        if(isset($_SESSION["MessageAssure"])) {unset($_SESSION["MessageAssure"]);}
+        if(isset($_SESSION["MessageDossier"])) {unset($_SESSION["MessageDossier"]);}
+        if(isset($_SESSION["MessageFichiers"])) {unset($_SESSION["MessageFichiers"]);}
+        if(isset($_SESSION["RefD"])) {unset($_SESSION["RefD"]);}
+    }
+
     /* S'il s'agit  d'une supression de session */
     if(isset($_GET["delete_session"])) {
         if(isset($_SESSION["Assure"])) unset($_SESSION["Assure"]);      

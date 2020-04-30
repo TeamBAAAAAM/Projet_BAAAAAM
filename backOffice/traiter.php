@@ -116,12 +116,11 @@
 					</ul>
 				</div>
 			</div>
-		</nav>
-		
+		</nav>		
 		<div class="container-fluid">
 			<?php
 				if(isset($_POST['email'])) {
-					if(envoyerMailDemandePJ($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
+					if(envoyerMailDemandePJ($mailAssure, $refDossier, $_POST['mail_text'])) {
 						GenererMessage (
 							"Mail envoyé !",
 							"Votre message a bien été envoyé.",
@@ -130,7 +129,7 @@
 						);
 
 						$contenu = "À : $mailAssure\n";
-						$contenu .= "Objet : ".$_POST['subject']."\n";
+						$contenu .= "Objet : ".MAIL_REQUEST_SUBJECT." [REF. ".$refDossier."]"."\n";
 						$contenu .= "Message : ".$_POST['mail_text'];
 						$contenu = explode("'", $contenu);
 						$contenu = implode("\\'", $contenu);
