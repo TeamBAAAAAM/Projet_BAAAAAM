@@ -11,7 +11,6 @@
         $_SESSION = array();
     }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 	<head>		
@@ -79,7 +78,6 @@
                     <a id="inscrire" href='inscription.php'> Pas enregistré ? </a>             
                     <a id="oubli" href=''> Mot de passe oublié ? </a>
                 </div>
-
             </form>
         </div>
     </body>

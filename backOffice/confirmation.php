@@ -13,7 +13,8 @@
 
     // Mise en session pour remplir automatiquement à la connexion
     $_SESSION['matricule'] = $matricule;
-
+    $_SESSION['nom'] = $nom;
+    $_SESSION['prenom'] = $prenom;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -33,11 +34,12 @@
 
         <title>Confirmation de l'inscription</title>
     </head>
-    <body>
-        <div id="confirmation_inscription" class="container-fluid">
+    <body id="body_sign">
+        <div id="confirmation_inscription" class="container container_sign">
             <h1><span class='glyphicon glyphicon-floppy-saved'></span>Résultat de l'enregistrement</h1>
             
             <?php
+                // Authentification du technitien
                 $verif = verifierMatricule($connexion, $matricule);
                 
                 // Vérification de la connexion 
@@ -62,52 +64,44 @@
                         // Exécution de la requête.
                         $result = mysqli_stmt_execute($requete);
                                     
-                        if ($result != null) {//L'enregistrement s'est fait avec succès 
-                            //echo("<p><b>Ordre SQL :</b> $insertTech</p>");
-                            //echo(mysqli_affected_rows($connexion) . " client(s) ajout&eacute;(s)");
-                            echo("
-                                <div class='alert alert-success'>
-                                    <h5>
-                                        <span class='glyphicon glyphicon-ok'></span>
-                                        <strong>Votre enregistrement s'est effectué avec succès !</strong>
-                                    </h5>
-                                    <p>
-                                        <a href='se_connecter.php' class='btn btn-primary' role='button'>
-                                            <span class='glyphicon glyphicon-log-in'></span>
-                                            Connectez vous maintenant
-                                        </a>
-                                    </p>
-                                </div>
-                            ");
-                            //$message= 'Votre connef';       
-                            //header('Refresh:5;url=se_connecter.php?id=2');
-                            //echo $message;
+                        if ($result != null) {// L'enregistrement s'est effectué avec succès                            
+                            genererMessage(
+                                "Votre enregistrement s'est effectué avec succès !",
+                                "<p>
+                                    <a href='se_connecter.php' class='btn btn btn-primary' role='button'>
+                                        <span class='glyphicon glyphicon-log-in'></span>
+                                        Connectez vous maintenant
+                                    </a>
+                                 </p>
+                                ",
+                                "ok",
+                                "success"
+                            );
                         }
                         else {
-                            echo("
-                                <div class='alert alert-danger'>
-                                    <h5><strong>Une erreur technique est survenue !</strong></h5>
-                                    <p>
-                                        Veuillez recommencer ultérieurement. ".mysqli_error($connexion)."
-                                    </p>
-                                </div>
-                            ");
+                            genererMessage(
+                                "Une erreur technique est survenue !",
+                                "Veuillez recommencer ultérieurement. ".mysqli_error($connexion),
+                                "remove",
+                                "danger"
+                            );
                         }       
                     }    
                     else {
-                        // Sinon, on est dans le cas où les 2mdps sont identiques mais le matricule est déjà attribué à un technicien
-                        // Dans ce  dernier cas, on le redirige vers la page d'inscription 
+                        // Sinon, on est dans le cas où les 2 mots de passes sont identiques 
+                        // mais le matricule est déjà attribué à un technicien,
+                        // dans ce  dernier cas, on le redirige vers la page d'inscription 
                         $msg_erreur = 'msg_1';
                     }
 
                     if(isset($msg_erreur) && isset($msg_erreur_mdp)) {
-                        header("Location:inscription.php?msg_erreur_mdp=$msg_erreur_mdp&msg_erreur=$msg_erreur");
+                        redirigerVers("inscription.php?msg_erreur_mdp=$msg_erreur_mdp&msg_erreur=$msg_erreur");
                     }
                     else if(isset($msg_erreur_mdp)) {
-                        header("Location:inscription.php?msg_erreur_mdp=$msg_erreur_mdp");
+                        redirigerVers("inscription.php?msg_erreur_mdp=$msg_erreur_mdp");
                     }
                     else if(isset($msg_erreur)) {
-                        header("Location:inscription.php?msg_erreur=$msg_erreur");
+                        redirigerVers("inscription.php?msg_erreur=$msg_erreur");
                     }
                 }
             ?>

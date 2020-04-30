@@ -178,60 +178,68 @@
                                             </li>
                                         </ul>";
                         }
-                            
-                        if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
-                        if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
                         
                         // Enregistrement des PJ
-                        $resultats = enregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
-                        if($resultats != null) { // Message de réussite
-                            echo "
-                            <ul class='list-group'>
-                                <li class='list-group-item panel_header_fichier'>   
-                                    <h3>Enregistrement de vos fichiers</h3>
-                                </li>
-                            ";
+                        if(!isset($_SESSION["MessageFichiers"])) {
+                            $resultats = enregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
+                            if($resultats != null) { // Message de réussite
+                                $_SESSION["MessageFichiers"] = "
+                                <ul class='list-group'>
+                                    <li class='list-group-item panel_header_fichier'>   
+                                        <h3>Enregistrement de vos fichiers</h3>
+                                    </li>
+                                ";
 
-                            foreach($resultats as $resultat) {
-                                if($resultat[0]) { //Si l'envoi a réussi
-                                    echo "
-                                        <li class='list-group-item list-group-item-default'>
+                                foreach($resultats as $resultat) {
+                                    if($resultat[0]) { //Si l'envoi a réussi
+                                        $_SESSION["MessageFichiers"] .= "
+                                            <li class='list-group-item list-group-item-default'>
+                                                    <span class='glyphicon glyphicon-save-file'></span>
+                                                    $resultat[1]
+                                                    <span class='label label-success label_enregistrement'>
+                                                        &#10004; <strong>Enregistré</strong>
+                                                    </span>
+                                                    <span class='badge'>
+                                                        $resultat[2]
+                                                    </span>
+                                            </li>
+                                        ";
+                                    } else {
+                                        $_SESSION["MessageFichiers"] .= "
+                                            <li class='list-group-item list-group-item-default'>
                                                 <span class='glyphicon glyphicon-save-file'></span>
-                                                $resultat[1]
-                                                <span class='label label-success label_enregistrement'>
-                                                    &#10004; <strong>Enregistré</strong>
+                                                $resultat[1] 
+                                                <span class='label label-danger label_enregistrement'>
+                                                    &#10006; <strong>Échec</strong>
                                                 </span>
                                                 <span class='badge'>
                                                     $resultat[2]
                                                 </span>
-                                        </li>
-                                    ";
-                                } else {
-                                    echo "
-                                        <li class='list-group-item list-group-item-default'>
-                                            <span class='glyphicon glyphicon-save-file'></span>
-                                            $resultat[1] 
-                                            <span class='label label-danger label_enregistrement'>
-                                                &#10006; <strong>Échec</strong>
-                                            </span>
-                                            <span class='badge'>
-                                                $resultat[2]
-                                            </span>
-                                        </li>
-                                    ";
-                                }
-                            }       
-                            echo "
-                                </ul>
-                            ";                 
-                        }
+                                            </li>
+                                        ";
+                                    }
+                                }       
+                                $_SESSION["MessageFichiers"] .= "
+                                    </ul>
+                                ";
+
+                                // Envoi d'un mail de confirmation
+                                if(envoyerMailConfirmationEnregistrement($assure['PrenomA'], $assure['NomA'], $assure['MailA'])) {
+                                    $title = "Mail de confirmation d'enregitrement";
+                                    $body = "Un mail a été envoyé à l'adresse mail ".$assure['MailA'].".";
+                                    genererMessage($title, $body, "ok", "success");
+                                }               
+                            }
+                        }               
+                        
+                        // Affichage des messages
+                        if(isset($_SESSION["MessageAssure"])) {echo($_SESSION["MessageAssure"]);}
+                        if(isset($_SESSION["MessageDossier"])) {echo($_SESSION["MessageDossier"]);}
+                        if(isset($_SESSION["MessageFichiers"])) {echo($_SESSION["MessageFichiers"]);}
                     ?>
                 </div>
                 <hr>
-                <div class="container text-center ignore"> 
-                    <a type="button" class="btn btn-info" target="_blank" href="<?php echo 'mailConfirmation.php?MailA='.($assure['MailA']);?>">
-                        <strong>&#9993;</strong> Envoyer par mail
-                    </a>               
+                <div class="container text-center ignore">    
                     <button type="button" class="btn btn-warning" onClick="imprimerPage();">
                         <strong>&#128438;</strong> Imprimer
                     </button>             

@@ -42,7 +42,7 @@
 		redirigerVers("accueil.php");
 	}
 
-	//Variables du dossier et de l'assuré
+	// Données du dossier et de l'assuré
 	$dossier = chercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
 	$refDossier = $dossier["RefD"];
 	$codeDossier = $dossier["CodeD"];
@@ -55,13 +55,14 @@
 	$telephoneAssure = $dossier["TelA"];
 	$mailAssure = $dossier["MailA"];
 	$dateArretMaladie = strtotime($dossier["DateAM"]);
-	$codeT_dossier = $dossier["CodeT"];
+	$dateTraite = strtotime($dossier["DateTraiterD"]);
+	// Données du technicien en charge du dossier
+	$codeT_dossier = $dossier["CodeT"]; 
 	$matricule_dossier = $dossier["Matricule"];
 	$nomT_dossier = $dossier["NomT"];
 	$prenomT_dossier = $dossier["PrenomT"];
-	$dateTraite = strtotime($dossier["DateTraiterD"]);
 
-	//Récupération des messages de l'assuré
+	// Récupération des messages envoyés à l'assuré
 	$messagesAssure = listeMessages($codeAssure, $link);
 ?>
 <!DOCTYPE html>
@@ -91,7 +92,7 @@
 			</div>
 		</nav>
 
-		<nav class="navbar navbar-inverse navbar-static-top police" data-spy="affix" data-offset-top="90">
+		<nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
@@ -118,12 +119,11 @@
 					</ul>
 				</div>
 			</div>
-		</nav>
-		
+		</nav>		
 		<div class="container-fluid">
 			<?php
 				if(isset($_POST['email'])) {
-					if(envoyerMailDemandePJ($mailAssure, $_POST['subject'], $_POST['mail_text'])) {
+					if(envoyerMailDemandePJ($mailAssure, $refDossier, $_POST['mail_text'])) {
 						GenererMessage (
 							"Mail envoyé !",
 							"Votre message a bien été envoyé.",
@@ -132,7 +132,7 @@
 						);
 
 						$contenu = "À : $mailAssure\n";
-						$contenu .= "Objet : ".$_POST['subject']."\n";
+						$contenu .= "Objet : ".MAIL_REQUEST_SUBJECT." [REF. ".$refDossier."]"."\n";
 						$contenu .= "Message : ".$_POST['mail_text'];
 						$contenu = explode("'", $contenu);
 						$contenu = implode("\\'", $contenu);

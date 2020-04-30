@@ -56,12 +56,13 @@ function showInfo() {
 }
 
 //Scroll vers le div d'identifiants "id"
-function goToByScroll(id, duration) {
+function goToByScroll(id, duration, margin_top) {
     // Remove "link" from the ID
     id = id.replace("link", "");
+
     // Scroll
     $('html,body').animate({
-        scrollTop: $("#" + id).offset().top
+        scrollTop: $("#" + id).offset().top + margin_top
     }, duration);
 }
 
@@ -72,7 +73,7 @@ function refreshForm() {
         $("#form_panel").hide(); //On affiche le formulaire
         $("#form_panel").show(500); //On affiche le formulaire
     }
-    goToByScroll('form_panel', 1000); //On scroll sur le formulaire
+    goToByScroll('form_panel', 1000, 50); //On scroll sur le formulaire
 }
 
 //Désactivation de l'évènement clique pour un objet dont le
@@ -320,6 +321,7 @@ $(document).ready(function(){
         if(currentPJ == "independant") {
             // Si on clique sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
+                $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 hideForm(); // Le formulaire se ferme
                 $("#lien_ameli").show();  // Le message vers AMELI s'ouvre
             });
@@ -327,11 +329,13 @@ $(document).ready(function(){
         else {
             // Si on clique mais pas sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
+                $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 showForm(); // Le formulaire s'ouvre
                 $("#lien_ameli").hide();  // Le message vers AMELI se ferme
             });
         }
-	}
+    }
+    
 	$("#checkref").hide();
 
 	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier

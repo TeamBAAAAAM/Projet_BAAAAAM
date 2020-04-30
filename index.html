@@ -1,127 +1,124 @@
 <!DOCTYPE html>
 <html lang="fr">
+    <head>
+        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head>
-    <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
 
-    <!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
 
-    <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script src="script.js"></script>
-
-    <title>PJPE - Accueil</title>
-</head>
-
-<body>
-    <!-- HEADER -->
-    <nav class="navbar navbar-default header">
-        <div class="container">
-            <div class="navbar-header">
-                <h1>Bienvenue sur PJPE</h1>
-            </div>
-        </div>
-    </nav>
-
-    <!-- BOUTONS -->
-    <div id="button_container" class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <a id="first_button" class="btn btn-lg send_button" href="frontOffice/depot.php?delete_session"><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</a>
-            </div>
-            <div class="col-lg-12">
-                <a id="second_button" class="btn btn-lg send_button" href="frontOffice/depot.php?RefD"><span class="glyphicon glyphicon-folder-open"></span> Je souhaite redéposer des documents</a>
-            </div>
-            <div class="col-lg-12">
-                <a id="third_button" class="btn btn-lg send_button" href="frontOffice/suivi.php?delete_session"><span class="glyphicon glyphicon-search"></span> Je veux voir où en est mon dossier</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- INFO-BULLE -->
-    <div class="container-fluid">
-        <div id="msg_1" class="msg">
-            <h3><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</h3>
-            <h4>Cliquez ici si vous souhaitez effectuer un premier dépôt de vos justificatifs d'arrêts maladies.</h4>
-        </div>
-        <div id="msg_2" class="msg">
-            <h3><span class="glyphicon glyphicon-folder-open"></span> Je souhaite redéposer des documents</h3>
-            <h4>Cliquez ici si vous possédez déjà une référence de dossier.</h4>
-        </div>
-        <div id="msg_3" class="msg">
-            <h3><span class="glyphicon glyphicon-search"></span> Je veux voir où en est mon dossier</h3>
-            <h4>Cliquez ici pour connaitre l'état d'avancement de votre dossier.</h4>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="container-fluid text-center">
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="title_footer">Présentation</div>
-                <div class="row">
-                    <p>Ajouter une description ici.</p>
+        <title>PJPE - Accueil</title>
+    </head>
+    <body>
+        <!-- HEADER -->
+        <nav class="navbar navbar-default header">
+            <div class="container">
+                <div class="navbar-header">
+                    <h1>Bienvenue sur PJPE</h1>
                 </div>
             </div>
-            <div id="links" class="col-sm-3">
-                <div class="title_footer">Liens utiles</div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <a class="col-sm-12" href="https://www.ameli.fr/haute-garonne" target="_blank">
-								Site ameli - Haute Garonne
-							</a>
-                    </div>
-                    <div class="col-sm-12">
-                        <a class="col-sm-12" href="https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_somtc=true" target="_blank">
-								Mon compte ameli
-							</a>
-                    </div>
-                    <div class="col-sm-12">
-                        <a class="col-sm-12" href="https://www.oups.gouv.fr/">
-                            <img src="img/logo_oups.svg" alt="Logo oups.gouv.fr">
-                        </a>
-                    </div>
+        </nav>
+
+        <!-- BOUTONS -->
+        <div id="button_container" class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <a id="first_button" class="btn btn-lg send_button" href="frontOffice/depot.php?delete_session"><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</a>
+                </div>
+                <div class="col-lg-12">
+                    <a id="second_button" class="btn btn-lg send_button" href="frontOffice/depot.php?RefD"><span class="glyphicon glyphicon-folder-open"></span> Je souhaite redéposer des documents</a>
+                </div>
+                <div class="col-lg-12">
+                    <a id="third_button" class="btn btn-lg send_button" href="frontOffice/suivi.php?delete_session"><span class="glyphicon glyphicon-search"></span> Je veux voir où en est mon dossier</a>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="title_footer">Contact</div>
-                <div id="contact" class="row">
-                    <iframe id="google_maps" class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr"
-                        allowfullscreen=""></iframe>
-                    <div class="col-sm-7 text-left">
-                        <div class="col-sm-12">Caisse Primaire d'Assurance Maladie</div>
-                        <div class="col-sm-12">3, Boulevard du Professeur Léopold Escande</div>
-                        <div class="col-sm-12">Haute-Garonne (31) - 31093 Toulouse</div>
+        </div>
+
+        <!-- INFO-BULLE -->
+        <div class="container-fluid">
+            <div id="msg_1" class="msg">
+                <h3><span class="glyphicon glyphicon-send"></span> J'envoie mes justificatifs</h3>
+                <h4>Cliquez ici si vous souhaitez effectuer un premier dépôt de vos justificatifs d'arrêts maladies.</h4>
+            </div>
+            <div id="msg_2" class="msg">
+                <h3><span class="glyphicon glyphicon-folder-open"></span> Je souhaite redéposer des documents</h3>
+                <h4>Cliquez ici si vous possédez déjà une référence de dossier.</h4>
+            </div>
+            <div id="msg_3" class="msg">
+                <h3><span class="glyphicon glyphicon-search"></span> Je veux voir où en est mon dossier</h3>
+                <h4>Cliquez ici pour connaitre l'état d'avancement de votre dossier.</h4>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="container-fluid text-center">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="title_footer">Présentation</div>
+                    <div class="row">
+                        <p>Ajouter une description ici.</p>
+                    </div>
+                </div>
+                <div id="links" class="col-sm-3">
+                    <div class="title_footer">Liens utiles</div>
+                    <div class="row">
                         <div class="col-sm-12">
-                            <img src="img/num_tel.png" alt="36 46">
+                            <a class="col-sm-12" href="https://www.ameli.fr/haute-garonne" target="_blank">
+                                Site ameli - Haute Garonne
+                            </a>
                         </div>
-                        <div class="col-sm-12">Ouvert du lundi au vendredi de 08h00 à 17h00</div>
-                        <div class="col-sm-12">Fermé le samedi et le dimanche</div>
+                        <div class="col-sm-12">
+                            <a class="col-sm-12" href="https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_somtc=true" target="_blank">
+                                Mon compte ameli
+                            </a>
+                        </div>
+                        <div class="col-sm-12">
+                            <a class="col-sm-12" href="https://www.oups.gouv.fr/">
+                                <img src="img/logo_oups.svg" alt="Logo oups.gouv.fr">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="title_footer">Contact</div>
+                    <div id="contact" class="row">
+                        <iframe id="google_maps" class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr"
+                            allowfullscreen=""></iframe>
+                        <div class="col-sm-7 text-left">
+                            <div class="col-sm-12">Caisse Primaire d'Assurance Maladie</div>
+                            <div class="col-sm-12">3, Boulevard du Professeur Léopold Escande</div>
+                            <div class="col-sm-12">Haute-Garonne (31) - 31093 Toulouse</div>
+                            <div class="col-sm-12">
+                                <img src="img/num_tel.png" alt="36 46">
+                            </div>
+                            <div class="col-sm-12">Ouvert du lundi au vendredi de 08h00 à 17h00</div>
+                            <div class="col-sm-12">Fermé le samedi et le dimanche</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="juridique" class="row">
-            <div class="col-sm-3">
-                <a href="documentation-juridique/cgu.html" target="_blank">Conditions Générales d'Utilisation</a>
+            <div id="juridique" class="row">
+                <div class="col-sm-3">
+                    <a href="documentation-juridique/cgu.html" target="_blank">Conditions Générales d'Utilisation</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="documentation-juridique/politiquedp.html" target="_blank">Politique de traitement des données personnelles</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="documentation-juridique/politiquecookies.html" target="_blank">Politique de traitement des cookies</a>
+                </div>
+                <div class="col-sm-3">
+                    <a href="documentation-juridique/mentionslegales.html" target="_blank">Mentions Légales</a>
+                </div>
             </div>
-            <div class="col-sm-3">
-                <a href="documentation-juridique/politiquedp.html" target="_blank">Politique de traitement des données personnelles</a>
-            </div>
-            <div class="col-sm-3">
-                <a href="documentation-juridique/politiquecookies.html" target="_blank">Politique de traitement des cookies</a>
-            </div>
-            <div class="col-sm-3">
-                <a href="documentation-juridique/mentionslegales.html" target="_blank">Mentions Légales</a>
-            </div>
-        </div>
-        <div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM / Image par <a href="https://pixabay.com/fr/users/DarkoStojanovic-638422/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=563427">Darko Stojanovic</a>            de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=563427">Pixabay</a></div>
-    </footer>
-</body>
-
+            <div id="copyright" class="row">© 2020 Copyright - Tous droits réservés : Team BAAAAAM / Image par <a href="https://pixabay.com/fr/users/DarkoStojanovic-638422/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=563427">Darko Stojanovic</a> de <a href="https://pixabay.com/fr/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=563427">Pixabay</a></div>
+        </footer>
+    </body>
 </html>

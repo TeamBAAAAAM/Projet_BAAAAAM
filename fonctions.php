@@ -25,13 +25,17 @@ define("PORT", "3306");         // Nom du port de connexion
 define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la racine
 
 /*------------------------------------------------------------------
- 	VARIABLES GLOBALES POUR GÉNÉRER LE MESSAGE DE DEMANDE DE PIECES
+ 	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
 ------------------------------------------------------------------*/
 
-define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message
+// Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
+// précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
+define("SENDGRID_API_KEY", "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");    // Clé d'API pour SENDGRID
+define("SENDER_EMAIL_ADDRESS", "no-reply-pjpe-cpam@yopmail.com");
+define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
+define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
 define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
 define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");                  // Message du footer
-
 
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
@@ -60,7 +64,16 @@ function connecterBD() {
     return $link;
 }
 
-/* Génère un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
+/* Génère un lien pour le suivi du dossier de référence '$ref' */
+/* => Chaine de caractère */
+function genererLienSuivi($ref) {
+    $host = $_SERVER['HTTP_HOST'];
+    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    
+    return "http://$host$uri/suivi.php?RefD=$ref";
+}
+
+/* Affiche un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function genererMessage($title, $body, $icon, $type) {
     echo "
@@ -222,9 +235,6 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
     if ($codeDossier != NULL) {
         $keys .= "CodeD, "; $values .= $codeDossier . ", ";
     }
-    if ($codeAssure != NULL) {
-        $keys .= "CodeA, "; $values .= $codeAssure . ", ";
-    }
     if ($codeMnemonique != NULL) {
         $keys .= "CodeM, "; $values .= "'" . $codeMnemonique . "', ";
     }
@@ -247,7 +257,7 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
 function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
     $resultats = array();
     foreach ($listeFichiers as $key => $fichier) {
-        $j = 1;
+        $j = 0;
         for ($i = 0; $i < count($fichier['name']); $i++) {
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
@@ -255,22 +265,24 @@ function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
                 $target_dir = "../" . STORAGE_PATH . "/" . $nir . "/" . $ref;
                 $ext = strtolower(pathinfo($file)['extension']);
 
-                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                do {
+                    $j++;
+                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                } while(fichierExiste($link, $cheminJustificatif));
+
                 $codeAssure = chercherAssureAvecNIR($nir, $link)["CodeA"];
                 $codeDossier = chercherDossierAvecREF($ref, $link)["CodeD"];
                 $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
                 $designation = $mnemonique["Designation"] . " No. " . $j;
-                if (!fichierExiste($link, $cheminJustificatif)){
-                    if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                        if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
-                            $resultats[] = array(TRUE, $file, $designation);
-                            $j++;
-                        } else {
-                            $resultats[] = array(FALSE, $file, $designation);
-                        }
+
+                if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
+                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                        $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);
                     }
+                } else {
+                    $resultats[] = array(FALSE, $file, $designation);
                 }
             }
         }
@@ -477,19 +489,101 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
     return mysqli_query($link, $query);
 }
 
-/* Envoie un mail de confirmation d'enregistrement de données à l'adresse '$mail' */
-/* => [Vrai si le message a bien été envoyé, Faux sinon] */
-function envoyerMailConfirmationEnregistrement($mail, $ref) {
-    $subject = "PJPE - Confirmation d'enregistrement";
-    $txt = "Votre référence dossier est le $ref.";
+/* Envoie un mail */
+/* 'SENDER_EMAIL_ADDRESS' : Adresse de l'expéditeur (variable globale tout en haut) */
+/* '$to'                  : Adresse de destination                                  */
+/* '$subject'             : Sujet du mail                                           */
+/* '$content'             : Contentu du mail                                        */
+/* '$type'                : Type de mail                                            */
+/* Valeurs possibles de $type : => 'text/html'  : Message de type HTML (par défaut) */
+/*                              => 'text/plain' : Message standard                  */
+/* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
+function envoyerMail($to, $subject, $content, $type) {
+    // Importation du fichier permettant l'utilisation des focntions SendGrid
+    require 'sendgrid/vendor/autoload.php';
 
-    return mail($mail, $subject, $txt);
+    // Initialisation de l'email
+    $email = new \SendGrid\Mail\Mail(); 
+    $email->setFrom(SENDER_EMAIL_ADDRESS);
+    $email->setSubject($subject);
+    try {
+        $email->addTo($to);
+    } catch (Exception $e) {
+        return false;
+    }
+    
+    if($type == "text/plain") $email->addContent("text/html", $content."<hr><br>".FOOTER_EMAIL);
+    else $email->addContent("text/html", $content);
+
+    //Création de l'objet Sendgrid
+    $sendgrid = new \SendGrid(SENDGRID_API_KEY);
+    try {
+        $response = $sendgrid->send($email);
+        /*print $response->statusCode() . "\n";
+        print_r($response->headers());
+        print $response->body() . "\n";*/
+        return true;
+    } catch (Exception $e) {
+        //echo 'Caught exception: '. $e->getMessage() ."\n";
+        return false;
+    }
+}
+
+/* Envoie un mail de confirmation d'enregistrement de données à l'adresse '$to' */
+/* Pour plus d'informations, consulter la fonction 'envoyerMail()'                */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
+function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
+    $content  = '<!DOCTYPE html>';
+    $content .= '<html lang="fr">';
+    $content .= '   <head>';
+    $content .= '        <meta charset="utf-8">';
+    $content .= '        <meta name="viewport" content="width=device-width, initial-scale=1">';
+    $content .= '        <style>';
+    $content .= '           h3 {margin-bottom: 25px; font-style: italic;}';
+    $content .= '           p {margin-bottom: 10px;}';
+    $content .= '           span.esp {margin-right: 20px;}';
+    $content .= '        </style>';
+    $content .= '    </head>'; 
+    $content .= '    <body>';
+
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure</h3>";
+    $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+    $content .= "nous vous confirmons que vos documents ont bien été réceptionnés ";
+    $content .= "par nos services.</p>";
+
+    $content .= "<p><span class='esp'></span>Il est possible que soyez notifié par mail ";
+    $content .= "en cas d'irrecevabilité d'une de vos pièces justificatives.</p>";
+
+    $content .= "<p><span class='esp'></span>C'est pourquoi, afin d'optimiser le traitement ";
+    $content .= "de votre demande, et donc du délai de versement de vos indemnités, ";
+    $content .= "vous êtes invités à consulter régulièrement votre messagerie ";
+    $content .= "électronique.</p>";
+
+    $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez un lien menant à une page vous permettant ";
+    $content .= "de consulter l'état d'avancement de votre demande :</p>";
+
+    // Génération du lien de suivi
+    $content .= "<span class='esp'></span><a href='".genererLienSuivi($_SESSION["RefD"])."'>".genererLienSuivi($_SESSION["RefD"])."</a><br>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre NIR pour vous authentifier.</strong></p>";
+    
+    $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez les informations relatives à votre ";
+    $content .= "dossier :</p>";
+    $content .= "<span class='esp'></span>Référence de dossier : <strong>".$_SESSION["RefD"]."</strong><br>";
+
+    $content .= "<p><span class='esp'></span>En vous souhaitant bonne réception,</p>";
+
+    $content .= "<p><span class='esp'></span>Bien cordialement,</p>";
+    $content .= "<h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+
+    $content .= '</body></html>';
+
+    return envoyerMail($to, MAIL_CONFIRM_SUBJECT, $content, "text/html");
 }
 
 /* Envoie un mail de sujet '$subject' et de contenu '$txt' à l'adresse '$mail' */
 /* => [Vrai si le message a bien été envoyé, Faux sinon] */
-function envoyerMailDemandePJ($mail, $subject, $txt) {
-    return mail($mail, $subject, $txt);
+function envoyerMailDemandePJ($mail, $refD, $content) {
+    return envoyerMail($mail, MAIL_REQUEST_SUBJECT." [REF. $refD]", $content, "text/html");
 }
 
 /* Extrait les informations d'un message pour les renvoyer sous forme d'une liste */

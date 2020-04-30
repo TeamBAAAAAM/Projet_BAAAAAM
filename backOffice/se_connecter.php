@@ -22,7 +22,7 @@
 		<!-- FEUILLE DE STYLE CSS (BOOTSTRAP 3.4.1 / CSS LOCAL) -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <!--<link rel="stylesheet" href="style.css">-->
-        <link rel="stylesheet" href="styleTech.css">
+        <link rel="stylesheet" href="style.css">
 		
 		<!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -31,33 +31,41 @@
 
         <title>PJPE - Connexion</title>
 	</head>
-	<body>
-        <div id="container" class="container">            
+	<body id="body_sign">
+        <?php
+            // Si la déconnexion s'est effectué avec succès
+            if (empty($_SESSION) && isset($_GET['logout'])) {
+                echo "<div class='container-fluid'>";
+                genererMessage(
+                    "Déconnexion réussi !",
+                    "Vous avez été correctement déconnecter.",
+                    "log-out",
+                    "success"
+                );
+                echo "</div>";
+            }
+        ?>
+        <div id="connexion" class="container container_sign">            
             <form action="accueil.php" method="POST">                
                 <h2><span class="glyphicon glyphicon-log-in"></span> Connectez-vous !</h2>
                 
-                <label>
-                    <strong>
-                        Matricule <span class="champ_obligatoire">(*)</span> :
-                    </strong>
-                </label>
+                
+                <label><strong>Matricule <span class="champ_obligatoire">(*)</span> :</strong></label>
                 <input id="mat" type="text" placeholder="Veuillez renseigner votre matricule" 
-                    name="matricule" onKeyUp="checkFormatMatricule('# ## ##')" value="<?php if (isset($_SESSION["matricule"])) echo $_SESSION["matricule"]; ?>" required>
+                    name="matricule" onKeyUp="checkFormatMatricule('# ## ##')" 
+                    value="<?php if (isset($_SESSION["matricule"])) echo $_SESSION["matricule"]; ?>" required
+                >
 
+                
                 <?php
 		            if (isset($_GET["msg_erreur"])) {
                         if ($_GET["msg_erreur"]== "msg_3") {
-                            echo("
-                                <div class='alert alert-danger'>
-                                    <h5>
-                                        <span class='glyphicon glyphicon-remove'></span>
-                                        <strong>Identification impossible !</strong>
-                                    </h5>
-                                    <p>
-                                        La matricule et/ou le mot de passe sont incorrects !
-                                    </p>
-                                </div>
-                            ");
+                            genererMessage(
+                                "Identification impossible !",
+                                "La matricule et/ou le mot de passe sont incorrects !",
+                                "remove",
+                                "danger"
+                            );
                         }
                     }
                 ?>
@@ -71,15 +79,14 @@
 
                 <input type="submit" value='Accèder aux dossiers'>
                 
-                <div class="champ_obligatoire container">                    
-                    <p>(*) : Champs obligatoires</p>
-                </div>
-
+                <!-- MENTION "CHAMPS OBLIGATOIRES" -->
+                <div class="champ_obligatoire">(*) : Champs obligatoires</div>
+                
+                <!-- LIEN DU BAS -->
                 <div class="inscription">                    
-                    <a id="inscrire" href='inscription.php'> Pas enregistré ? </a>             
-                    <a id="oubli" href=''> Mot de passe oublié ? </a>
+                    <a id="inscrire" href='inscription.php'>Pas enregistré ?</a>             
+                    <a href='#' class="float-right">Mot de passe oublié ?</a>
                 </div>
-
             </form>
         </div>
     </body>
