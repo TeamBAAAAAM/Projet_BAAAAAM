@@ -1,3 +1,15 @@
+/******************************************************************/
+
+/*   SCRIPT JS POUR LA GESTION DES PAGES CÔTÉ ASSURÉ          */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------------------
+ 	FONCTIONS GÉNÉRALES
+------------------------------------------------------------------*/
+
+// Initialisation des variables
 var pj = ["salarie", "interim", "cesu", "pole-emploi", "pole-emploiC", "intermit", "independant", "art-aut"];
 var msg_salarie = "Uniquement si vous ne faîte pas partie des autres cas.";
 var msg_interim = "A titre d'exemple, peuvent ";
@@ -102,7 +114,7 @@ function hideForm() {
 }
 
 // Affiche le formulaire (pour les cas autres que le travailleur indépendant)
-function showForm() {    
+function showForm() {
     $("#etat-civil").show();
     $("#pj").show();
 }
@@ -123,7 +135,7 @@ function click_function(event) {
         $("#" + currentPJ).toggleClass("unselected selected");
 
         // Toggle sur le required
-        for(i = 0 ; i < pj.length ; i++) {
+        for (i = 0; i < pj.length; i++) {
             $("." + pj[i] + " input[type='file']").prop('required', false);
         }
         $("." + currentPJ + " input[type='file']").prop('required', true);
@@ -190,7 +202,7 @@ function aujourdhui() {
 //Fonction qui imprime le contenu d'un élément dont l'id est passé en paramètre
 function imprimerPage() {
     $(".ignore").hide();
-    
+
     var date = dateAujoudhuiEnLettres();
     var heure = heureActuelle();
     var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
@@ -202,7 +214,7 @@ function imprimerPage() {
 
     $("body").append(message);
 
-    document.title='Confirmation d\'enregistrement sur PJPE ['+ date + " à " + heure +']';
+    document.title = 'Confirmation d\'enregistrement sur PJPE [' + date + " à " + heure + ']';
     window.print();
 
     $("#message").remove();
@@ -229,45 +241,45 @@ function enregistrerPage() {
 
 //Vérifie et corrige le format du NIR
 function checkFormatNir(format) {
-	formatNIR = format;
+    formatNIR = format;
 
-	let caret = document.getElementById("nir").selectionStart;
-	var str = $("#nir").val().toUpperCase();
+    let caret = document.getElementById("nir").selectionStart;
+    var str = $("#nir").val().toUpperCase();
 
-	//Suppression des valeurs invalides
-	var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
-	var match = str.match(pattern);
-	if(match != null) {
-		str = match.join("");
-		var deb = str.substr(0, caret);
-		var fin = str.substr(caret);
-		
-		for(i = 0 ; i < caret ; i++) {
-			if(format.charAt(i) ==  " " && str.charAt(i) != " ") {
-				deb = deb.substr(0, i) + " " + deb.substr(i);
-				caret++;
-			}
-		}
-	
-		//Si le curseur est dans la chaine de caractères
-		if(caret < str.length - 1) {
-			for(i = caret ; i < format.length ; i++) {
-				if(format.charAt(i) ==  " " && fin.charAt(i - caret) != " ") {
-					fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
-				}
-				if(format.charAt(i) ==  "#" && fin.charAt(i - caret) == " ") {			
-					fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
-				}
-			}
-		}
-	
-		str = deb + fin;
-		//Si le nombre de caractères courants dépasse celui du nombre autorisés
-		if(str.length > format.length) str = str.substr(0, format.length);
-	
-		$("#nir").val(str);
-		document.getElementById("nir").setSelectionRange(caret, caret);
-	}
+    //Suppression des valeurs invalides
+    var pattern = /[0-9]|(A)|(B)|\s/g; //Prendre en compte le cas de la Corse (2A ou 2B)	
+    var match = str.match(pattern);
+    if (match != null) {
+        str = match.join("");
+        var deb = str.substr(0, caret);
+        var fin = str.substr(caret);
+
+        for (i = 0; i < caret; i++) {
+            if (format.charAt(i) == " " && str.charAt(i) != " ") {
+                deb = deb.substr(0, i) + " " + deb.substr(i);
+                caret++;
+            }
+        }
+
+        //Si le curseur est dans la chaine de caractères
+        if (caret < str.length - 1) {
+            for (i = caret; i < format.length; i++) {
+                if (format.charAt(i) == " " && fin.charAt(i - caret) != " ") {
+                    fin = fin.substr(0, i - caret) + " " + fin.substr(i - caret);
+                }
+                if (format.charAt(i) == "#" && fin.charAt(i - caret) == " ") {
+                    fin = fin.substr(0, i - caret) + fin.substr(i - caret + 1);
+                }
+            }
+        }
+
+        str = deb + fin;
+        //Si le nombre de caractères courants dépasse celui du nombre autorisés
+        if (str.length > format.length) str = str.substr(0, format.length);
+
+        $("#nir").val(str);
+        document.getElementById("nir").setSelectionRange(caret, caret);
+    }
 }
 
 //Vérifie et corrige le format du NIR
@@ -287,7 +299,7 @@ function checkFormatRefD() {
         $("#refD").val(str);
     }
 
-	document.getElementById("refD").setSelectionRange(caret, caret);
+    document.getElementById("refD").setSelectionRange(caret, caret);
 }
 
 //Vérifie si une référence est correcte
@@ -309,38 +321,37 @@ function remplirFormulaire(xhttp) {
 
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
-$(document).ready(function(){
-	showInfo();
-	$("#form_panel").hide(); //Le formulaire est masqué
-	
-	for(i = 0 ; i < pj.length ; i++) {
-		var currentPJ = pj[i];
-		$("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
-        $("#" + currentPJ).click({arg1: currentPJ}, click_function);
-        
-        if(currentPJ == "independant") {
+$(document).ready(function() {
+    showInfo();
+    $("#form_panel").hide(); //Le formulaire est masqué
+
+    for (i = 0; i < pj.length; i++) {
+        var currentPJ = pj[i];
+        $("#" + currentPJ).addClass("unselected"); //Désélection de tous les boutons
+        $("#" + currentPJ).click({ arg1: currentPJ }, click_function);
+
+        if (currentPJ == "independant") {
             // Si on clique sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
                 $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 hideForm(); // Le formulaire se ferme
-                $("#lien_ameli").show();  // Le message vers AMELI s'ouvre
+                $("#lien_ameli").show(); // Le message vers AMELI s'ouvre
             });
-        }
-        else {
+        } else {
             // Si on clique mais pas sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
                 $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 showForm(); // Le formulaire s'ouvre
-                $("#lien_ameli").hide();  // Le message vers AMELI se ferme
+                $("#lien_ameli").hide(); // Le message vers AMELI se ferme
             });
         }
     }
-    
-	$("#checkref").hide();
 
-	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
-	$("#date_arret").attr("max", aujourdhui());
-    $("#date_arret").attr("value", aujourdhui());  
+    $("#checkref").hide();
+
+    //Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
+    $("#date_arret").attr("max", aujourdhui());
+    $("#date_arret").attr("value", aujourdhui());
 
     // Gestion des messages
     $(".alert").hide();
@@ -357,7 +368,7 @@ $(document).ready(function(){
         //Initialisation de l'évènement "clique"
         $("#msg_close").click(function() {
             // On cache le message parent le plus proche
-            $(this).closest(".alert").hide(400, function(){
+            $(this).closest(".alert").hide(400, function() {
                 $(this).remove();
             });
         });
