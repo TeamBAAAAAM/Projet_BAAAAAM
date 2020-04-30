@@ -1,35 +1,55 @@
 <?php
+/******************************************************************/
 
-//Variables de connexion
-define("HOST", "localhost");
-define("USER", "root");
-define("PWD_MYSQL", "");
-define("BD_MYSQL", "bd_cpam");
-define("PORT", "3306");
+/*   FICHIER CONTENANT LES FONCTIONS PHP UTILISÉES POUR LE SITE   */
 
-//Chemin vers l'espace où sont enregistrés les dossiers des dossiers
-//NB : À partir de la racine
-define("STORAGE_PATH", "piecesJustificatives");
+/******************************************************************/
 
-//Message pour l'assuré (généré en JavaScript)
-define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");
-define("DEPOSITE_LINK", GenererLienDepot());
-define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");
+// Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
+// Puis par ordre alphabétique
 
-/* ************************************************ */
-/*              FONCTIONS GENERALES                 */
-/* ************************************************ */
+/*------------------------------------------------------------------
+ 	VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES
+------------------------------------------------------------------*/
 
+define("HOST", "localhost");    // Nom du host
+define("USER", "root");         // Nom d'utilisateur
+define("PWD_MYSQL", "");        // Mot de passe
+define("BD_MYSQL", "bd_cpam");  // Nom de la base de données
+define("PORT", "3306");         // Nom du port de connexion
 
-//  Connexion a la base de donnees
-function connexionMySQL()
-{
-    //$cres = mysqli_connect(SERVER_MYSQL, ID_MYSQL, PWD_MYSQL, BD_MYSQL);
+/*------------------------------------------------------------------
+ 	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
+------------------------------------------------------------------*/
+
+define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la racine
+
+/*------------------------------------------------------------------
+ 	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
+------------------------------------------------------------------*/
+
+// Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
+// précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
+define("SENDGRID_API_KEY", "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");    // Clé d'API pour SENDGRID
+define("SENDER_EMAIL_ADDRESS", "no-reply-pjpe-cpam@yopmail.com");
+define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
+define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
+define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
+define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");                  // Message du footer
+
+/*------------------------------------------------------------------
+ 	FONCTIONS GÉNÉRALES
+------------------------------------------------------------------*/
+
+/* Connecte à la base de données */
+function connecterBD() {
+    // Connexion à la base données avec une lecture encodée en UTF-8
+    // (NB : Renseigner les variables de connexion plus haut)
     $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
     mysqli_query($link, 'SET NAMES utf8');
 
-    /* Vérification de la connexion */
-    if ($link == NULL) {
+    // Vérification de la connexion
+    if ($link == NULL) { // Si la connexion a échoué
         echo "Erreur : Impossible de se connecter à MySQL." . "<br>";
         echo "Errno de débogage : " . mysqli_connect_errno() . "<br>";
         echo "Erreur de débogage : " . mysqli_connect_error() . "<br>";
@@ -40,233 +60,141 @@ function connexionMySQL()
             return null;
         }
     }
+
     return $link;
 }
 
-// Redirection vers une page différente du même dossier
-function RedirigerVers($nomPage) {
+/* Génère un lien pour le suivi du dossier de référence '$ref' */
+/* => Chaine de caractère */
+function genererLienSuivi($ref) {
+    $host = $_SERVER['HTTP_HOST'];
+    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    
+    return "http://$host$uri/suivi.php?RefD=$ref";
+}
+
+/* Affiche un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function genererMessage($title, $body, $icon, $type) {
+    echo "
+        <div class='alert alert-$type'>
+            <h3>
+                <strong class='alert-title'>
+                    <span class='glyphicon glyphicon-$icon'></span>$title
+                </strong>
+            </h3>
+            <p>
+                $body
+            </p>
+        </div>
+    ";
+}
+
+/* Redirige vers la page '$nomPage' */
+function redirigerVers($nomPage) {
     $host = $_SERVER['HTTP_HOST'];
     $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     header("Location: http://$host$uri/$nomPage");
+    
     exit;
 }
 
-// Retourne le lien à la racine du site WEB
-function GenererLienDepot() {
-    $host = $_SERVER['HTTP_HOST'];
-    return "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php";
-}
 
-/* ************************************************ */
-/*                  FRONT OFFICE                    */
-/* ************************************************ */
+/*------------------------------------------------------------------
+ 	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
+------------------------------------------------------------------*/
 
-//Vérifie si la référence d'un dossier est affilié au NIR passé en paramètre
-function NirRefExiste($NirA, $RefD, $link) {
-    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.RefD = '".$RefD."'" ;
+/* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
+/* => [Vrai si le NIR est reconnu, Faux sinon] */
+function assureExiste($nir, $link) {
+    $query = "SELECT * FROM Assure WHERE NirA = '$nir'";
     $result = mysqli_query($link, $query);
-        
+
     return (mysqli_fetch_array($result) != NULL);
 }
 
-// Renvoie un caractère aléatoire compris dans $listeChar
-function CaractereAleatoire() {
-    $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return $listeChar[rand(0, strlen($listeChar) - 1)];
-}
-
-//Genère une référence valide pour un dossier
-function GenererReferenceDossier($nbChar, $link)
-{
-    do {
-        $ref = "";
-        for($i = 0 ; $i < $nbChar ; $i++) {
-            $ref .= CaractereAleatoire();
-        }
-    } while(DossierExiste($ref, $link));
-
-    return $ref;
-}
-
-
-//Vérifie si Ref et Nir correspondant existe dans la base de données
-function NirRefExiste($NirA, $refD, $link) {
-    $query = "SELECT a.* FROM Assure a, Dossier d  WHERE a.NirA = '".$NirA."' AND d.CodeA = a.CodeA AND d.refD = '".$refD."'" ;
-    $result = mysqli_query($link, $query);
-        
-    return (mysqli_fetch_array($result) != NULL);
-}
-
-//Renvoie les informations d'un assuré via son NIR sous la forme d'une liste
-function ChercherAssureAvecNIR($NirA, $link)
-{
-    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
+/* Renvoie les informations de l'assuré ayant le NIR '$nir' sous la forme d'une liste */
+/* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
+function chercherAssureAvecNIR($nir, $link) {
+    $query = "SELECT * FROM Assure WHERE NirA = '$nir'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
-function ChercherDossierAvecREF($RefD, $link)
-{
-    $query = "SELECT * FROM Assure A, Dossier D ";
-    $query .= "WHERE A.CodeA = D.CodeA AND RefD = '" . $RefD . "'";
+/* Renvoie les informations d'un dossier ayant pour référence '$ref' sous la forme d'une liste */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function chercherDossierAvecREF($ref, $link) {
+    $query = "SELECT * FROM Assure A, Dossier D "
+            ."WHERE A.CodeA = D.CodeA AND RefD = '$ref'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier traité ou en cours de traitemnet
-function ChercherDossierTraiteAvecCodeD($CodeD, $link) {
-    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T ";
-    $query .= "WHERE A.CodeA = D.CodeA AND D.CodeD = ".$CodeD." ";
-    $query .= "AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT";
+/* Renvoie les informations correspondant au mnémonique '$mnemonique' */
+/* => [Objet de type array si le mnémonique existe, NULL sinon] */
+function chercherObjetMnemoAvecMnemo($mnemonique, $link) {
+    $query = "SELECT * FROM Listemnemonique "
+            ."WHERE Mnemonique = '$mnemonique'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
 }
 
-//Renvoie les informations d'un dossier via sa référence sous la forme d'une liste
-function ChercherREFAvecCodeD($CodeD, $link)
-{
-    $query = "SELECT RefD FROM Assure A, Dossier D ";
-    $query .= "WHERE A.CodeA = D.CodeA AND CodeD = '" . $CodeD . "'";
+/* Renvoie la référence du dossier ayant pour code '$codeDossier' sous la forme d'une liste */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function chercherREFAvecCodeD($codeDossier, $link) {
+    $query = "SELECT RefD FROM Assure A, Dossier D "
+            ."WHERE A.CodeA = D.CodeA AND CodeD = $codeDossier";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
 }
 
-//Retourne le code correspond au mnémonique entré en paramètre
-function ChercherObjetMnemoAvecMnemo($Mnemonique, $link)
-{
-    $query = "SELECT * FROM Listemnemonique ";
-    $query .= "WHERE Mnemonique = '" . $Mnemonique . "'";
-
-    $result = mysqli_query($link, $query);
-
-    return mysqli_fetch_array($result);
-}
-
-/*      Vérification d'existence dans la BD        */
-
-//Vérifie si un assuré est déjà enregistré
-function AssureExiste($NirA, $link)
-{
-    $query = "SELECT * FROM Assure WHERE NirA = '" . $NirA . "'";
-    $result = mysqli_query($link, $query);
-    return (mysqli_fetch_array($result) != NULL);
-}
-
-//Vérifie si la référence donnée en paramètre n'est pas déjà utilisé
-function DossierExiste($RefD, $link)
-{
-    $query = "SELECT RefD FROM Dossier WHERE RefD = '" . $RefD . "'";
-    $result = mysqli_query($link, $query);
-    return (mysqli_fetch_array($result) != NULL);
-}
-
-// Vérifie si un justificatif est dans la BD
-function FichierExiste($link, $path){
-    $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '" . $path . "'";
-    $result = mysqli_query($link, $query);
-    return (mysqli_fetch_array($result) != NULL);
-}
-
-//Enregistre les données d'un assuré dans la BD
-function EnregistrerAssure($NirA, $NomA, $PrenomA, $TelA, $MailA, $link)
-{
-    $keys = "";
-    $values = "";
-    if ($NirA != NULL) {
-        $keys .= "NirA, ";
-        $values .= "'" . $NirA . "', ";
-    }
-    if ($NomA != NULL) {
-        $keys .= "NomA, ";
-        $values .= "'" . $NomA . "', ";
-    }
-    if ($PrenomA != NULL) {
-        $keys .= "PrenomA, ";
-        $values .= "'" . $PrenomA . "', ";
-    }
-    if ($TelA != NULL) {
-        $TelA = explode(" ", $TelA);
-        $TelA = implode($TelA);
-        $keys .= "TelA, ";
-        $values .= "'" . $TelA . "', ";
-    }
-    if ($MailA != NULL) {
-        $keys .= "MailA, ";
-        $values .= "'" . $MailA . "', ";
-    }
-
-    //Suppression du dernier caractère pour les clés
-    $keys = substr($keys, 0, strlen($keys) - 2);
-    //Suppression du dernier caractère pour les valeurs
-    $values = substr($values, 0, strlen($values) - 2);
-
-    $query = "INSERT INTO assure(" . $keys . ") VALUES (" . $values . ")";
-
-    return mysqli_query($link, $query);
-}
-
-//Enregistre un dossier puis renvoie True si la manoeuvre a réussi
-//False sinon
-function EnregistrerDossier($CodeA, $DateAM, $RefD, $link)
-{
-    $keys = "";
-    $values = "";
-    $keys .= "RefD, ";
-    $values .= "'" . $RefD . "', ";
-    $keys .= "DateAM, ";
-    $values .= "'" . $DateAM . "', ";
-    $keys .= "CodeA, ";
-    $values .= $CodeA . ", ";
-
-    //Suppression du dernier caractère pour les clés
-    $keys = substr($keys, 0, strlen($keys) - 2);
-    //Suppression du dernier caractère pour les valeurs
-    $values = substr($values, 0, strlen($values) - 2);
-
-    $query = "INSERT INTO dossier(" . $keys . ") VALUES (" . $values . ")";
-
-    return mysqli_query($link, $query);
-}
-
-//Créer le dossier d'un assuré dont le nom est son numéro NIR en local
-function CreerDossierNIR($NirA)
-{
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $NirA;
+/* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
+/* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
+function creerRepertoireAM($ref, $nir) {
+    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir . "/" . $ref;
     return mkdir($dirname);
 }
 
-//Créer le dossier de l'arrêt maladie d'un assuré en local
-function CreerDossierAM($RefD, $NirA)
-{
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $NirA . "/" . $RefD;
+/* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (cf. haut de page) */
+/* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
+function creerRepertoireNIR($nir) {
+    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir;
     return mkdir($dirname);
 }
 
-//Fonction qui enregistre les données d'un fichier dans la base de données
-function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link)
-{
-    $keys = "";
-    $values = "";
-    if ($CheminJ != NULL) {
-        $keys .= "CheminJ, ";
-        $values .= "'" . $CheminJ . "', ";
+/* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
+/* => [Vrai si la référence de dossier est reconnue, Faux sinon] */
+function dossierExiste($ref, $link) {
+    $query = "SELECT RefD FROM Dossier WHERE RefD = '$ref'";
+    $result = mysqli_query($link, $query);
+
+    return (mysqli_fetch_array($result) != NULL);
+}
+
+/* Enregistre les données d'un assuré dans la base de données */
+/* => [Vrai si les données de l'assuré ont bien été enregistrées, Faux sinon] */
+function enregistrerAssure($nir, $nom, $prenom, $tel, $mail, $link) {
+    $keys = ""; $values = "";
+    if ($nir != NULL) {
+        $keys .= "NirA, "; $values .= "'$nir', ";
     }
-    if ($CodeD != NULL) {
-        $keys .= "CodeD, ";
-        $values .= $CodeD . ", ";
+    if ($nom != NULL) {
+        $keys .= "NomA, "; $values .= "'$nom', ";
     }
-    if ($CodeA != NULL) {
-        $keys .= "CodeA, ";
-        $values .= $CodeA . ", ";
+    if ($prenom != NULL) {
+        $keys .= "PrenomA, "; $values .= "'$prenom', ";
     }
-    if ($CodeM != NULL) {
-        $keys .= "CodeM, ";
-        $values .= "'" . $CodeM . "', ";
+    if ($tel != NULL) {
+        $tel = explode(" ", $tel); 
+        $tel = implode($tel);
+        $keys .= "TelA, "; $values .= "'$tel', ";
+    }
+    if ($mail != NULL) {
+        $keys .= "MailA, "; $values .= "'$mail', ";
     }
 
     //Suppression du dernier caractère pour les clés
@@ -274,44 +202,87 @@ function EnregistrerFichier($CheminJ, $CodeD, $CodeA, $CodeM, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO justificatif(" . $keys . ") VALUES (" . $values . ")";
+    $query = "INSERT INTO assure($keys) VALUES ($values)";
 
     return mysqli_query($link, $query);
 }
 
-//Enregistre les fichiers contenus dans le dossier d'un assuré
-//Renvoie une liste avec une ligne pour un fichier
-//1er paramètre de type Booléen qui est TRUE si l'enregistrement a réussi, FALSE sinon
-//2ème paramètre de type String qui correspond au nom du fichier téléchargé
-//3ème paramètre correspond au mnémonique complet affilié au fichier
-function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
-{
+/* Enregistre les informations concernant un nouveau dossier */
+/* => [Vrai si les informations du dossier ont bien été enregistrées, Faux sinon] */
+function enregistrerDossier($codeAssure, $dateAM, $ref, $link) {
+    $keys = ""; $values = "";
+    $keys .= "RefD, "; $values .= "'" . $ref . "', ";
+    $keys .= "DateAM, "; $values .= "'" . $dateAM . "', ";
+    $keys .= "CodeA, "; $values .= $codeAssure . ", ";
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO dossier($keys) VALUES ($values)";
+
+    return mysqli_query($link, $query);
+}
+
+/* Enregistre les informations concernant un nouveau fichier */
+/* => [Vrai si les informations du fichier ont bien été enregistrées, Faux sinon] */
+function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $codeMnemonique, $link) {
+    $keys = ""; $values = "";
+    if ($cheminJustificatif != NULL) {
+        $keys .= "CheminJ, "; $values .= "'" . $cheminJustificatif . "', ";
+    }
+    if ($codeDossier != NULL) {
+        $keys .= "CodeD, "; $values .= $codeDossier . ", ";
+    }
+    if ($codeMnemonique != NULL) {
+        $keys .= "CodeM, "; $values .= "'" . $codeMnemonique . "', ";
+    }
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO justificatif($keys) VALUES ($values)";
+
+    return mysqli_query($link, $query);
+}
+
+/* Enregistre les fichiers de '$listeFichiers' à l'emplacement 'STORAGE_PATH/$nirA/$refD' */
+/* => [Liste(A : Booléen, B : Chaîne de caractères, C : Chaîne de caractères)]  */
+/*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
+/*      => B = Nom du fichier téléchargé                                        */
+/*      => C = Mnémonique complet affilié au fichier                            */
+function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
     $resultats = array();
-    foreach ($ListeFichiers as $Key => $Fichier) {
-        $j = 1;
-        for ($i = 0; $i < count($Fichier['name']); $i++) {
-            if ($Fichier['name'][$i] != "") {
-                $file = basename($Fichier['name'][$i]);
+    foreach ($listeFichiers as $key => $fichier) {
+        $j = 0;
+        for ($i = 0; $i < count($fichier['name']); $i++) {
+            if ($fichier['name'][$i] != "") {
+                $file = basename($fichier['name'][$i]);
 
-                $target_dir = "../" . STORAGE_PATH . "/" . $NirA . "/" . $RefD;
-                $ext = pathinfo($file)['extension'];
+                $target_dir = "../" . STORAGE_PATH . "/" . $nir . "/" . $ref;
+                $ext = strtolower(pathinfo($file)['extension']);
 
-                $CheminJ = "$target_dir/$Key" . "_$j.$ext";
-                $CodeA = ChercherAssureAvecNIR($NirA, $link)["CodeA"];
-                $CodeD = ChercherDossierAvecREF($RefD, $link)["CodeD"];
-                $Mnemonique = ChercherObjetMnemoAvecMnemo($Key, $link);
-                $Designation = $Mnemonique["Designation"] . " No. " . $j;
-                if (!FichierExiste($link, $CheminJ)){
-                    if (EnregistrerFichier($CheminJ, $CodeD, $CodeA, $Mnemonique["CodeM"], $link)) {
-                        if (move_uploaded_file($Fichier['tmp_name'][$i], $CheminJ)) {
-                            $resultats[] = array(TRUE, $file, $Designation);
-                            $j++;
-                        } else {
-                            $resultats[] = array(FALSE, $file, $Designation);
-                        }
+                do {
+                    $j++;
+                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                } while(fichierExiste($link, $cheminJustificatif));
+
+                $codeAssure = chercherAssureAvecNIR($nir, $link)["CodeA"];
+                $codeDossier = chercherDossierAvecREF($ref, $link)["CodeD"];
+                $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
+                $designation = $mnemonique["Designation"] . " No. " . $j;
+
+                if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
+                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                        $resultats[] = array(TRUE, $file, $designation);
                     } else {
-                        $resultats[] = array(FALSE, $file, $Designation);
+                        $resultats[] = array(FALSE, $file, $designation);
                     }
+                } else {
+                    $resultats[] = array(FALSE, $file, $designation);
                 }
             }
         }
@@ -319,114 +290,435 @@ function EnregistrerFichiers($ListeFichiers, $RefD, $NirA, $link)
     return $resultats;
 }
 
+/* Vérifie si la référence d'un dossier '$ref' est bien associée à un NIR '$nir' */
+/* => [Vrai s'il y a bien une correspondance entre le NIR '$nirA' et la référence '$redD', Faux sinon] */
+function estAssocie($nir, $ref, $link) {
+    $query = "SELECT a.* "
+            ."FROM Assure a, Dossier d  "
+            ."WHERE a.NirA = '$nir' "
+            ."AND d.CodeA = a.CodeA "
+            ."AND d.RefD = '$ref'" ;
+    $result = mysqli_query($link, $query);
+        
+    return (mysqli_fetch_array($result) != NULL);
+}
 
-/* ************************************************ */
-/*                  BACK OFFICE                     */
-/* ************************************************ */
-
-
-/*          CONNEXION DU TECHNICIEN                 */
-
-//Vérification de l'unicité du matricule 
-function VerificationMat($connexion, $matricule)
-{
-    $requete = "SELECT * FROM technicien WHERE Matricule='$matricule'";
-    $curseur = mysqli_query($connexion, $requete);
-
-    if ($curseur != null) {
-        if (mysqli_num_rows($curseur) == 0) {
-            return "Unique";
-        } else {
-            $ligne = mysqli_fetch_array($curseur);
-            echo "La matricule" . $ligne["Matricule"] . "est déjà attribuée";
+/* Genère une référence unique de taille '$nbChar' d'un dossier */
+/* => [Chaine de caractères de taille '$nbChar'] */
+function genererReferenceDossier($nbChar, $link) {
+    $listeChar = "abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    do {
+        $ref = "";
+        for($i = 0 ; $i < $nbChar ; $i++) {
+            $ref .= $listeChar[rand(0, strlen($listeChar) - 1)]; //Sélection d'un caractère aléatoire
         }
-    }
-    return "Erreur de vérification du Matricule";
+    } while(dossierExiste($ref, $link));
+
+    return $ref;
 }
 
-/*          REQUETES POUR RECAPITULATIF             */
+/* Vérifie si le chemin $chemin exite déjà dans la base de données */
+/* => [Vrai si le chemin est déjà enregistré, Faux sinon] */
+function fichierExiste($link, $chemin){
+    $query = "SELECT CheminJ FROM justificatif WHERE CheminJ = '$chemin'";
+    $result = mysqli_query($link, $query);
 
-// Nombre de dossiers recus à la date courante
-function nbDossiersRecus($link)
-{
-    $query = "SELECT count(*) AS nbDossiersRecus FROM dossier d WHERE DATE(d.DateD) = CURDATE()";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-// Nombre de dossiers restant à traiter au total
-function nbDossiersATraiterTotal($link)
-{
-    $query = "SELECT count(*) AS nbDossiersAtraiterTotal FROM dossier d WHERE d.StatutD = 'À traiter'";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-
-// Nombre de dossiers restant à traiter à la date courante
-function nbDossiersATraiter($link)
-{
-    $query = "SELECT count(*) AS nbDossiersAtraiter FROM dossier d WHERE d.StatutD = 'À traiter' And DATE(d.DateD) = CURDATE()";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-
-// Nombre de dossiers classés sans suite à la date courante
-function nbDossiersClasses($link)
-{
-    $query = "SELECT count(*) AS nbDossiersClasses FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Classé sans suite' And DATE(t.DateTraiterD) = CURDATE()";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-
-// Nombre de dossiers terminés à la date courante
-function nbDossiersTermines($link)
-{
-    $query = "SELECT count(*) AS nbDossiersTermines FROM dossier d, traiter t WHERE d.CodeD = t.CodeD AND d.StatutD = 'Terminé' And DATE(t.DateTraiterD) = CURDATE()";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-/*      FONCTIONS POUR TECHNICIEN    */
-
-// Récupère les informations d'un technicien à partir du matricule
-function DonneesTechnicien($link, $matricule) {
-    $query = "Select CodeT, NomT, PrenomT From technicien t Where t.Matricule = '$matricule'";
-    $result = mysqli_query($link, $query);
-    return mysqli_fetch_array($result);
-}
-
-// Vérifie les identifiants d'un technicien (VRAI si les données correspondent, FAUX sinon)
-function AuthentifierTechnicien($link, $matricule, $mdpT) {
-    $query = "SELECT Matricule, MdpT ";
-    $query .= "FROM Technicien T ";
-    $query .= "WHERE Matricule = '$matricule' ";
-    $query .= "AND MdpT = '$mdpT'";
-    $result = mysqli_query($link, $query);
     return (mysqli_fetch_array($result) != NULL);
 }
 
 
-/*      TRAITEMENT D'UN DOSSIER      */
+/*------------------------------------------------------------------
+ 	FONCTIONS : BACK OFFICE (INTERFACE TECHNICIEN)
+------------------------------------------------------------------*/
 
-// Changement du statut d'un dossier
-function ChangerStatutDossier($link, $codeDossier, $statut)
-{
+/* Vérifie que le technicien de matricule '$matricule' possède bien le mot de passe '$mdpt' */
+/* => [Vrai si le technicien est bien authentifié, Faux sinon] */
+function authentifierTechnicien($link, $matricule, $mdpT) {
+    $query = "SELECT Matricule, MdpT "
+            ."FROM Technicien T "
+            ."WHERE Matricule = '$matricule' "
+            ."AND MdpT = '$mdpT'";
+    $result = mysqli_query($link, $query);
+
+    return (mysqli_fetch_array($result) != NULL);
+}
+
+/* Change le statut du dossier de code '$codeDossier' en '$statut' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
+function changerStatutDossier($link, $codeDossier, $statut) {
     $query = "UPDATE dossier SET StatutD = '$statut' WHERE CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);
+
     return $result;
 }
 
-//Traite un dossier en indiquant dans la BD, le nom du technicien
-//Et modifie le statut d'un dossier
-function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
-{
-    $keys = "";
-    $values = "";
-    if ($CodeT != NULL) {
-        $keys .= "CodeT, ";
-        $values .= $CodeT . ", ";
+/* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeDossier' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
+    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T "
+            ."WHERE A.CodeA = D.CodeA AND D.CodeD = $codeDossier "
+            ."AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT "
+            ."AND Tr.DateTraiterD = (SELECT MAX(DateTraiterD) "
+                                    ."FROM Traiter "
+                                    ."WHERE CodeD = $codeDossier)";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie la classe CSS correspondante pour chaque bouton du fichier traiter.php           */
+/* => Effectue seulement un affichage (pas de valeur de retour)                             */
+/* => Active ou désactive un bouton permettant de modifier le statut d'un dossier           */
+/* => $sessionValue correspond au statut du dossier en cours ($_SESSION['statut'])          */
+/* => $buttonValue est soit 'En cours', soit 'Classé sans suite' ou bien 'Terminé'          */
+/* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
+/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
+/* => le statut du dossier courant                                                          */
+function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
+    switch($sessionValue) {
+        case "En cours":
+            if($codeT_dossier == $codeT_courant) {
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn btn-default";
+                        break;
+                    case "Terminé":
+                        echo "btn btn-default";
+                        break;
+                }
+            }
+            else { // désactiver les boutons si en cours de traitement par un autre technicien
+                switch($buttonValue) {
+                    case "En cours":
+                        echo "btn btn-primary disabled";
+                        break;
+                    case "Classé sans suite":
+                        echo "btn btn-default disabled";
+                        break;
+                    case "Terminé":
+                        echo "btn btn-default disabled";
+                        break;
+                }
+            }
+            break;
+        case "Classé sans suite":
+            switch ($buttonValue) {
+                case "En cours":
+                    echo "btn btn-default disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-danger disabled";
+                    break;
+                case "Terminé":
+                    echo "btn btn-default disabled";
+                    break;
+            }
+            break;
+        case "Terminé":
+            switch ($buttonValue) {
+                case "En cours":
+                    echo "btn btn-default disabled";
+                    break;
+                case "Classé sans suite":
+                    echo "btn btn-default disabled";
+                    break;
+                case "Terminé":
+                    echo "btn btn-success disabled";
+                    break;
+            }
+            break;
     }
-    if ($CodeD != NULL) {
-        $keys .= "CodeD, ";
-        $values .= $CodeD . ", ";
+}
+
+/* Renvoie les informations du technicien ayant le matricule '$matricule' sous la forme d'une liste */
+/* => [Objet de type array si le technicien est déjà enregistré, NULL sinon] */
+function donneesTechnicien($link, $matricule) {
+    $query = "SELECT CodeT, NomT, PrenomT "
+            ."FROM technicien t "
+            ."WHERE t.Matricule = '$matricule'";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie la liste complète des dossiers contenus dans la BD */
+/* => [Objet de type array si le technicien a des dossiers dans sa corbeille, NULL sinon] */
+function dossiersCorbeilleGenerale($link) {
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD "
+            ."FROM dossier d, assure a "
+            ."WHERE d.CodeA = a.CodeA "
+            ."ORDER BY d.DateD";
+    $result = mysqli_query($link, $query);
+    
+    return $result;
+}
+
+/* Renvoie la liste des dossiers en cours de traitement par le technicien de code '$codeTechnicien' */
+/* => [Objet de type array si le technicien a des dossiers dans sa corbeille, NULL sinon] */
+function dossiersCorbeilleTechnicien($link, $codeTechnicien) {
+    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD "
+            ."FROM dossier d, assure a, technicien t, traiter tr "
+            ."WHERE d.CodeA = a.CodeA "
+            ."AND d.CodeD = tr.CodeD "
+            ."AND t.CodeT = tr.CodeT "
+            ."AND t.CodeT = '$codeTechnicien' "
+            ."AND d.StatutD = 'En cours' ";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Enregistre le contenu d'un mail envoyé à l'assuré de code '$codeAssure' par le technicien de code '$codeTechnicien'*/
+/* => [Vrai si l'enregistrement a bien été effectué, Faux sinon] */
+function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link) {
+    $keys = ""; $values = "";
+    if($codeAssure != NULL) {$keys .= "CodeA, "; $values .= $codeAssure.", ";}
+    if($codeTechnicien != NULL) {$keys .= "CodeT, "; $values .= $codeTechnicien.", ";}
+    if($contenu != NULL) {$keys .= "Contenu, "; $values .= "'$contenu', ";}
+
+    //Suppression du dernier caractère pour les clés
+    $keys = substr($keys, 0, strlen($keys) - 2);
+    //Suppression du dernier caractère pour les valeurs
+    $values = substr($values, 0, strlen($values) - 2);
+
+    $query = "INSERT INTO message($keys) VALUES ($values)";
+
+    return mysqli_query($link, $query);
+}
+
+/* Envoie un mail */
+/* 'SENDER_EMAIL_ADDRESS' : Adresse de l'expéditeur (variable globale tout en haut) */
+/* '$to'                  : Adresse de destination                                  */
+/* '$subject'             : Sujet du mail                                           */
+/* '$content'             : Contentu du mail                                        */
+/* '$type'                : Type de mail                                            */
+/* Valeurs possibles de $type : => 'text/html'  : Message de type HTML (par défaut) */
+/*                              => 'text/plain' : Message standard                  */
+/* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
+function envoyerMail($to, $subject, $content, $type) {
+    // Importation du fichier permettant l'utilisation des focntions SendGrid
+    require 'sendgrid/vendor/autoload.php';
+
+    // Initialisation de l'email
+    $email = new \SendGrid\Mail\Mail(); 
+    $email->setFrom(SENDER_EMAIL_ADDRESS);
+    $email->setSubject($subject);
+    try {
+        $email->addTo($to);
+    } catch (Exception $e) {
+        return false;
+    }
+    
+    if($type == "text/plain") $email->addContent("text/html", $content."<hr><br>".FOOTER_EMAIL);
+    else $email->addContent("text/html", $content);
+
+    //Création de l'objet Sendgrid
+    $sendgrid = new \SendGrid(SENDGRID_API_KEY);
+    try {
+        $response = $sendgrid->send($email);
+        /*print $response->statusCode() . "\n";
+        print_r($response->headers());
+        print $response->body() . "\n";*/
+        return true;
+    } catch (Exception $e) {
+        //echo 'Caught exception: '. $e->getMessage() ."\n";
+        return false;
+    }
+}
+
+/* Envoie un mail de confirmation d'enregistrement de données à l'adresse '$to' */
+/* Pour plus d'informations, consulter la fonction 'envoyerMail()'                */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
+function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
+    $content  = '<!DOCTYPE html>';
+    $content .= '<html lang="fr">';
+    $content .= '   <head>';
+    $content .= '        <meta charset="utf-8">';
+    $content .= '        <meta name="viewport" content="width=device-width, initial-scale=1">';
+    $content .= '        <style>';
+    $content .= '           h3 {margin-bottom: 25px; font-style: italic;}';
+    $content .= '           p {margin-bottom: 10px;}';
+    $content .= '           span.esp {margin-right: 20px;}';
+    $content .= '        </style>';
+    $content .= '    </head>'; 
+    $content .= '    <body>';
+
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure</h3>";
+    $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+    $content .= "nous vous confirmons que vos documents ont bien été réceptionnés ";
+    $content .= "par nos services.</p>";
+
+    $content .= "<p><span class='esp'></span>Il est possible que soyez notifié par mail ";
+    $content .= "en cas d'irrecevabilité d'une de vos pièces justificatives.</p>";
+
+    $content .= "<p><span class='esp'></span>C'est pourquoi, afin d'optimiser le traitement ";
+    $content .= "de votre demande, et donc du délai de versement de vos indemnités, ";
+    $content .= "vous êtes invités à consulter régulièrement votre messagerie ";
+    $content .= "électronique.</p>";
+
+    $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez un lien menant à une page vous permettant ";
+    $content .= "de consulter l'état d'avancement de votre demande :</p>";
+
+    // Génération du lien de suivi
+    $content .= "<span class='esp'></span><a href='".genererLienSuivi($_SESSION["RefD"])."'>".genererLienSuivi($_SESSION["RefD"])."</a><br>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre NIR pour vous authentifier.</strong></p>";
+    
+    $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez les informations relatives à votre ";
+    $content .= "dossier :</p>";
+    $content .= "<span class='esp'></span>Référence de dossier : <strong>".$_SESSION["RefD"]."</strong><br>";
+
+    $content .= "<p><span class='esp'></span>En vous souhaitant bonne réception,</p>";
+
+    $content .= "<p><span class='esp'></span>Bien cordialement,</p>";
+    $content .= "<h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+
+    $content .= '</body></html>';
+
+    return envoyerMail($to, MAIL_CONFIRM_SUBJECT, $content, "text/html");
+}
+
+/* Envoie un mail de sujet '$subject' et de contenu '$txt' à l'adresse '$mail' */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
+function envoyerMailDemandePJ($mail, $refD, $content) {
+    return envoyerMail($mail, MAIL_REQUEST_SUBJECT." [REF. $refD]", $content, "text/html");
+}
+
+/* Extrait les informations d'un message pour les renvoyer sous forme d'une liste */
+/* => [Objet de type array contenant l'adresse email de l'assuré, l'objet et le contenu du message] */
+/* => [ainsi que la référence du dossier]                                                           */
+/* => Ne fonctionne que sur les messages générés automatiquement                                     */
+function extraireMessage($contenu) {
+    //Position de l'adresse email
+    $deb = strpos($contenu, "À : ") + strlen("À : ");
+    $fin = strpos($contenu, "Objet : ");
+    $mail = substr($contenu, $deb, $fin - $deb);
+
+    //Position de la référence du dossier
+    $deb = strpos($contenu, "?RefD=") + strlen("?RefD=");
+    $fin = $deb + 8; // 8 = Nb char référence
+    $ref = substr($contenu, $deb, $fin - $deb);
+
+    //Position de l'objet
+    $deb = strpos($contenu, "Objet : ") + strlen("Objet : ");
+    $fin = strpos($contenu, "Message : ");
+    $objet = substr($contenu, $deb, $fin - $deb);
+
+    //Position du contenu du message
+    $deb = strpos($contenu, "Message : ") + strlen("Message : ");
+    $fin = strlen($contenu);
+    $texte = explode("\n", substr($contenu, $deb, $fin - $deb));
+    $texte = implode("<br>",$texte);
+
+    return [$mail, $objet, $texte, $ref];
+}
+
+/* Retire le dossier de code '$codeDossier' de la liste des dossiers traités */
+/* => [Vrai si le retrait a bien été effectué, Faux sinon] */
+function libererDossier($link, $codeDossier) {
+    $query = "DELETE FROM Traiter WHERE CodeD = $codeDossier";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Renvoie tous les messages envoyés à l'assuré de code '$codeA' */
+/* => [Objet de type array contenant l'adresse email de l'assuré, l'objet et le contenu du message] */
+// Liste des messages adressés à un assuré
+function listeMessages($codeAssure, $link) {
+    $query = "SELECT DateEnvoiM, Contenu, T.Matricule "
+            ."FROM Message M, Assure A, Technicien T "
+            ."WHERE A.CodeA = M.CodeA "
+            ."AND A.CodeA = $codeAssure "
+            ."AND T.CodeT = M.CodeT "
+            ."ORDER BY DateEnvoiM DESC";
+ 
+    return mysqli_query($link, $query);
+}
+
+/* Renvoie le nombre de dossiers restant à traiter au cours de la journée */
+/* => [Entier nul ou posiitf] */
+function nbDossiersATraiter($link) {
+    $query = "SELECT COUNT(*) AS nbDossiersAtraiter "
+            ."FROM dossier d "
+            ."WHERE d.StatutD = 'À traiter' "
+            ."AND DATE(d.DateD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie le nombre total de dossiers restant à traiter */
+/* => [Entier nul ou posiitf] */
+function nbDossiersATraiterTotal($link) {
+    $query = "SELECT COUNT(*) AS nbDossiersAtraiterTotal "
+            ."FROM dossier d "
+            ."WHERE d.StatutD = 'À traiter'";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie le nombre de dossiers classés sans suite au cours de la journée */
+/* => [Entier nul ou posiitf] */
+function nbDossiersClasses($link) {
+    $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersClasses "
+            ."FROM dossier d, traiter t "
+            ."WHERE d.CodeD = t.CodeD "
+            ."AND d.StatutD = 'Classé sans suite' "
+            ."And DATE(t.DateTraiterD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie le nombre de dossiers reçus au cours de la journée */
+/* => [Entier nul ou posiitf] */
+function nbDossiersRecus($link) {
+    $query = "SELECT COUNT(*) AS nbDossiersRecus "
+            ."FROM dossier d "
+            ."WHERE DATE(d.DateD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie le nombre de dossiers classés comme 'Terminé' au cours de la journée */
+/* => [Entier nul ou posiitf] */
+function nbDossiersTermines($link) {
+    $query = "SELECT COUNT(DISTINCT d.CodeD) AS nbDossiersTermines "
+            ."FROM dossier d, traiter t "
+            ."WHERE d.CodeD = t.CodeD "
+            ."AND d.StatutD = 'Terminé' "
+            ."AND DATE(t.DateTraiterD) = CURDATE()";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererJustificatifs($link, $codeDossier) {
+    $query = "SELECT CheminJ, Mnemonique "
+            ."FROM justificatif j, listemnemonique l "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeD = '$codeDossier'";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Affilie le dossier de code '$codeDossier' au technicien de code '$codeTechnicien' et change son statut en '$statut' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
+function traiterDossier($codeTechnicien, $codeDossier, $statut, $link) {
+    $keys = ""; $values = "";
+    if ($codeTechnicien != NULL) {
+        $keys .= "CodeT, "; $values .= $codeTechnicien . ", ";
+    }
+    if ($codeDossier != NULL) {
+        $keys .= "CodeD, "; $values .= $codeDossier . ", ";
     }
 
     //Suppression du dernier caractère pour les clés
@@ -434,10 +726,10 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
     //Suppression du dernier caractère pour les valeurs
     $values = substr($values, 0, strlen($values) - 2);
 
-    $query = "INSERT INTO traiter(".$keys.") VALUES (".$values.")";
+    $query = "INSERT INTO traiter($keys) VALUES ($values)";
 
     if(mysqli_query($link, $query)) {
-        if(!ChangerStatutDossier($link, $CodeD, $StatutD)){
+        if(!changerStatutDossier($link, $codeDossier, $statut)){
             echo "<div class='alert alert-danger'><strong>Alerte !".
             "</strong> Erreur dans le changement du statut du dossier !</div>";
             return False;
@@ -452,189 +744,21 @@ function TraiterDossier($CodeT, $CodeD, $StatutD, $link)
     }
 }
 
-// Récupération des fichiers d'un dossier
-function RecupererPJ($link, $codeDossier)
-{
-    $query = "SELECT CheminJ, Mnemonique FROM justificatif j, listemnemonique l "
-        . "WHERE j.CodeM = l.CodeM AND j.CodeD = '$codeDossier'";
-    $result = mysqli_query($link, $query);
-    return $result;
-}
+/* Vérifie l'unicité du matricule '$matricule' */
+/* => ["Unique" si c'est vrai, ... ???] */
+function verifierMatricule($link, $matricule) {
+    $query = "SELECT * FROM technicien WHERE Matricule='$matricule'";
+    $curseur = mysqli_query($link, $query);
 
-//Active ou désactive un bouton permettant de modifier le statut d'un dossier
-//Appelée dans la page 'traiter.php'
-//$sessionValue = $_SESSION['statut'] (statut actuel)
-//$buttonValue = ('En cours', 'Classé sans suite', 'Terminé')
-//$codeT_dossier est le code du technicien qui est actuellement connecté
-//Selon si le dossier est dans sa corbeille ou pas, il pourra ou ne pourra pas modifier
-//Le statut du dossier courant
-function ClassBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
-    switch($sessionValue) {
-        case "En cours":
-            if($codeT_dossier == $codeT_courant) {
-                switch($buttonValue) {
-                    case "En cours":
-                        echo "btn btn-primary disabled";
-                        break;
-                    case "Classé sans suite":
-                        echo "btn btn-primary";
-                        break;
-                    case "Terminé":
-                        echo "btn btn-primary";
-                        break;
-                }
-            }
-            else { // désactiver les boutons si en cours de traitement par un autre technicien
-                switch($buttonValue) {
-                    case "En cours":
-                        echo "btn btn-primary disabled";
-                        break;
-                    case "Classé sans suite":
-                        echo "btn disabled";
-                        break;
-                    case "Terminé":
-                        echo "btn disabled";
-                        break;
-                }
-            }
-            break;
-        case "Classé sans suite":
-            switch ($buttonValue) {
-                case "En cours":
-                    echo "btn disabled";
-                    break;
-                case "Classé sans suite":
-                    echo "btn btn-danger disabled";
-                    break;
-                case "Terminé":
-                    echo "btn disabled";
-                    break;
-            }
-            break;
-        case "Terminé":
-            switch ($buttonValue) {
-                case "En cours":
-                    echo "btn disabled";
-                    break;
-                case "Classé sans suite":
-                    echo "btn disabled";
-                    break;
-                case "Terminé":
-                    echo "btn btn-success disabled";
-                    break;
-            }
-            break;
+    if ($curseur != null) {
+        if (mysqli_num_rows($curseur) == 0) {
+            return "Unique";
+        } else {
+            $ligne = mysqli_fetch_array($curseur);
+            echo "Le matricule" . $ligne["Matricule"] . "est déjà attribué";
+        }
     }
-}
-
-/*          CORBEILLE GENERALE         */
-
-// Liste de tous les dossiers (ceux à traiter sont affichés par défaut)
-function DossiersCorbeilleGenerale($link)
-{
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA ORDER BY d.DateD";
-    $result = mysqli_query($link, $query);
-    return $result;
-}
-
-
-/*      CORBEILLE D'UN TECHNICIEN      */
-
-// Liste des dossiers en cours de traitement par le technicien connecté
-function DossiersCorbeilleTechnicien($link, $codeT) {
-    //$query = 'SELECT d.DateD, d.RefD, a.NirA  FROM traiter t, dossier d, assure a WHERE t.CodeD=d.CodeD and d.CodeA=a.CodeA';
-
-    $query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD, t.Matricule, tr.DateTraiterD ";
-    $query .= "FROM dossier d, assure a, technicien t, traiter tr ";
-    $query .= "WHERE d.CodeA = a.CodeA ";
-    $query .= "AND d.CodeD = tr.CodeD ";
-    $query .= "AND t.CodeT = tr.CodeT ";
-    $query .= "AND t.CodeT = '$codeT' ";
-    $query .= "AND d.StatutD = 'En cours' ";
-
-    //$query = "SELECT d.CodeD, d.DateD, d.RefD, a.NirA, d.StatutD  FROM dossier d, assure a WHERE d.CodeA = a.CodeA AND d.StatutD = 'En cours' $dossiers";
-
-    $result = mysqli_query($link, $query);
-    return $result;
-}
-
-// Envoie un mail de confirmation d'enregistrement
-function EnvoyerMailConfirmationEnregistrement($mailA, $refD)
-{
-    $subject = "PJPE - Confirmation d'enregistrement";
-    $txt = "Votre référence dossier est le $refD.";
-
-    return mail($mailA, $subject, $txt);
-}
-
-// Envoie un mail de demande de PJs à l'assuré
-function EnvoyerMailDemandePJs($mailA, $subject, $txt) {
-    return mail($mailA, $subject, $txt);
-}
-
-// Enregistre le mail envoyé à un assuré
-function EnregistrerMessageAssure($CodeA, $CodeT, $Contenu, $link) {
-    $keys = ""; $values = "";
-    if($CodeA != NULL) {$keys .= "CodeA, "; $values .= $CodeA.", ";}
-    if($CodeT != NULL) {$keys .= "CodeT, "; $values .= $CodeT.", ";}
-    if($Contenu != NULL) {$keys .= "Contenu, "; $values .= "'".$Contenu."', ";}
-
-    //Suppression du dernier caractère pour les clés
-    $keys = substr($keys, 0, strlen($keys) - 2);
-    //Suppression du dernier caractère pour les valeurs
-    $values = substr($values, 0, strlen($values) - 2);
-
-    $query = "INSERT INTO message(".$keys.") VALUES (".$values.")";
-
-    return mysqli_query($link, $query);
-}
-
-// Liste des messages adressés à un assuré
-function ListeMessages($CodeA, $link) {
-    $query = "SELECT DateEnvoiM, Contenu, T.Matricule ";
-    $query .= "FROM Message M, Assure A, Technicien T ";
-    $query .= "WHERE A.CodeA = M.CodeA ";
-    $query .= "AND A.CodeA = $CodeA ";
-    $query .= "AND T.CodeT = M.CodeT ";
-    $query .= "ORDER BY DateEnvoiM DESC";
- 
-    return mysqli_query($link, $query);
-}
-
-//Extrait l'adresse d'envoi, le sujet et le contenu d'un message envoyé à un assuré
-function ExtraireMessage($Contenu) {
-    //Position de l'adresse email
-    $deb = strpos($Contenu, "À : ") + strlen("À : ");
-    $fin = strpos($Contenu, "Objet : ");
-    $mail = substr($Contenu, $deb, $fin - $deb);
-
-    //Position de la référence du dossier
-    $deb = strpos($Contenu, "?RefD=") + strlen("?RefD=");
-    $fin = $deb + 8; // 8 = Nb char référence
-    $refD = substr($Contenu, $deb, $fin - $deb);
-
-    //Position de l'objet
-    $deb = strpos($Contenu, "Objet : ") + strlen("Objet : ");
-    $fin = strpos($Contenu, "Message : ");
-    $objet = substr($Contenu, $deb, $fin - $deb);
-
-    //Position du contenu du message
-    $deb = strpos($Contenu, "Message : ") + strlen("Message : ");
-    $fin = strlen($Contenu);
-    $texte = explode("\n", substr($Contenu, $deb, $fin - $deb));
-    $texte = implode("<br>",$texte);
-
-    return [$mail, $objet, $texte, $refD];
-}
-
-// Renvoie la date de format aaaa-mm-jj hh:MM:ss en jj / mm / aaaa hh:MM:ss
-function dateFR($date) {
-    $annee = substr($date, 0, 4);
-    $mois = substr($date, 5, 2);
-    $jour = substr($date, 8, 2);
-    $heure = substr($date, 11);
-
-    return "$jour / $mois / $annee $heure";
+    return "Erreur de vérification du Matricule";
 }
 
 ?>

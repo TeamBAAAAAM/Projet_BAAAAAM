@@ -1,135 +1,306 @@
+/******************************************************************/
+
+/*             FEUILLE DE STYLE DE LA PAGE D'ACCUEIL              */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------
+ 	CORPS DE LA PAGE
+-------------------------------------------------------*/
+
 body {
-	background: url(img/background.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	min-width: 545px;
-	font-family: "Calibri";
+    font-family: "Calibri";
+    background: url(img/background.jpg) no-repeat no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
 }
+
+/*------------------------------------------------------
+ 	ENTÊTE DE LA PAGE
+-------------------------------------------------------*/
 
 .header {
-	padding: 10px 32px;
-	border: none;
-	border-radius: 0px;
-	background-color: #339966;
-	color: white;
-	box-shadow: 1px 1px 10px grey;
-}
-
-.welcome {
-	background-color: white;
-	color: #339966;
+    padding: 10px 32px;
+    color: #396;
+    background-color: white;
+    box-shadow: 1px 1px 10px grey;
 }
 
 .header img {
-	margin-left: 15px;
-	height: 50px;
+    height: 50px;
+    margin-left: 15px;
 }
 
 .header .dropdown {
-	margin-left: 0px;
+    margin-left: 0;
 }
 
 .header .dropdown > button {
-	color: #339966;
-	padding-left: 20px;
-	padding-right: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #396;
 }
 
 .navbar-header > button {
-	height: 50px;
-	background-color: white;
+    height: 50px;
+    background-color: white;
 }
 
-#send_button a {
-	text-decoration: none;
-	color: rgb(13, 236, 114);
-	background-color: white;
-	box-shadow: 1px 1px 10px rgb(22, 15, 29);
-	border: 3px solid #2e242433;
-	border-radius: 15px;
-	transition: background-color 1s, box-shadow 1s;
-	margin-top: 200px;
-	font-size: 34px;
-	padding: 15px 25px;
-}
+/*------------------------------------------------------
+ 	PIED DE LA PAGE
+-------------------------------------------------------*/
 
-#send_button a:hover {
-	box-shadow: 1px 1px 10px rgb(59, 41, 78);
-	background-color: rgb(13, 236, 114);
-	color: white;
-}
-
-/*note*/
-.note {
-	font-style: italic;
-	font-size: 0.75em;
-	color: rgb(0, 224, 150);
-}
-
-/*footer*/
 footer {
-	margin-top: 220px;
-	background-color: #1c233191;
-	color: white;
-	padding: 0px 50px;
+    margin-top: 220px;
+    padding: 0 50px;
+    color: white;
+    background-color: rgba(28, 35, 49, 0.568);
 }
 
 footer div.title_footer {
-	padding-top: 30px;
-	padding-bottom: 10px;
-	margin-bottom: 15px;
-	font-size: 18px;
-	font-weight: bold;
-	border-bottom: 1px solid #21d192;
-	text-transform: uppercase;
+    margin-bottom: 15px;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #21d192;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 footer iframe.col-sm-5 {
-	padding-left: 30px;
-	padding-right: 0px;
-	border: none;
+    padding-right: 0;
+    padding-left: 30px;
+    border: none;
 }
 
 #juridique {
-	margin-top: 15px;
-	padding: 10px 0px;
-	background-color: #181f2bc7;
+    margin-top: 15px;
+    padding: 10px 0;
+    background-color: rgba(24, 31, 43, 0.78);
 }
 
 footer a {
-	text-decoration: none;	
-	color: #21d192;
+    text-decoration: none;
+    color: #21d192;
 }
+
 footer a:hover {
-	text-decoration: none;	
-	color: lightgrey;
+    text-decoration: none;
+    color: lightgrey;
 }
 
 footer #links a {
-	margin-bottom: 10px;
-}
-
-#copyright {
-	padding: 20px 0px;
-	background-color: #161c27;
+    margin-bottom: 10px;
 }
 
 footer div.list-group a {
-	border: none;
-	background-color: #1c2331;
-	color: #21d192;
+    border: none;
+    color: #21d192;
+    background-color: #1c2331;
+}
+
+#copyright {
+    padding: 20px 0;
+    background-color: #161c27;
 }
 
 a[href='https://www.oups.gouv.fr/'] > img {
-	width: 180px;
+    width: 180px;
 }
 
 img[src="img/num_tel.png"] {
-	height: 50px;
+    height: 50px;
 }
 
-@media (max-width: 770px) {
-	#contact > *{
-		text-align: center;
-	}
+#google_maps {
+    border: 0;
+}
+
+/*------------------------------------------------------
+ 	BOUTONS DE LA PAGE
+-------------------------------------------------------*/
+
+a.send_button {
+    margin-top: 15px;
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
+    transition: background-color 1s,box-shadow 1s;
+}
+
+#first_button {
+    color: rgb(71,184,122);
+}
+
+#first_button:hover {
+    color: white;
+    background-color: rgb(71,184,122);
+    box-shadow: none;
+}
+
+#second_button {
+    color: rgb(7,69,110);
+}
+
+#second_button:hover {
+    color: white;
+    background-color: rgb(7,69,110);
+    box-shadow: none;
+}
+
+#third_button {
+    color: rgb(110,7,7);
+}
+
+#third_button:hover {
+    color: white;
+    background-color: rgb(110,7,7);
+    box-shadow: none;
+}
+
+.glyphicon {
+    margin-right: 20px;
+}
+
+/*------------------------------------------------------
+	MESSAGE DE LA PAGE (SURVOL DES BOUTONS)
+-------------------------------------------------------*/
+
+.msg {
+    display: none;
+    position: absolute;
+    width: 500px;
+    margin-top: 15px;
+    padding: 15px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 30px;
+    box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
+    transition: background-color 1s,box-shadow 1s;
+}
+
+#msg_1 {
+    border-bottom-left-radius: 0;
+    color: white;
+    background-color: rgba(1, 85, 37, 0.9);
+}
+
+#msg_2 {
+    color: white;
+    background-color: rgba(3, 30, 48, 0.9);
+}
+
+#msg_3 {
+    border-top-left-radius: 0;
+    color: white;
+    background-color: rgba(48, 3, 3, 0.9);
+}
+
+.msg > h3 {
+    padding-bottom: 10px;
+    border-bottom: 1px solid white;
+}
+
+/*------------------------------------------------------
+	GESTION DU RESPONSIVE
+-------------------------------------------------------*/
+
+@media(max-width:410px) {
+    a.send_button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 4px 10px;
+        font-size: 15px;
+    }
+
+    footer {
+        margin-top: 20px;
+    }
+}
+
+@media(max-width:576px) and (min-width:410px) {
+    #contact > * {
+        text-align: center;
+    }
+
+    a.send_button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 8px 15px;
+        font-size: 20px;
+    }
+
+    footer {
+        margin-top: 40px;
+    }
+
+    .msg {
+        width: 350px;
+        margin-top: 15px;
+    }
+
+    .msg > h3 {
+        font-size: 20px;
+    }
+
+    .msg > h4 {
+        font-size: 15px;
+    }
+}
+
+@media(max-width:768px) and (min-width:576px) {
+    a.send_button {
+        margin-top: 10px;
+        font-size: 26px;
+    }
+
+    #button_container {
+        text-align: center;
+    }
+
+    footer {
+        margin-top: 40px;
+    }
+
+    .msg {
+        width: 350px;
+        margin-top: 15px;
+    }
+
+    .msg > h3 {
+        font-size: 20px;
+    }
+
+    .msg > h4 {
+        font-size: 15px;
+    }
+}
+
+@media(max-width:768px) {
+    .msg {
+        z-index: 9999999;
+    }
+
+    #msg_1 {
+        border-bottom-left-radius: 30px;
+    }
+
+    #msg_2 {
+        border-top-left-radius: 30px;
+    }
+
+    #msg_3 {
+        border-top-left-radius: 30px;
+    }
+}
+
+@media(min-width:768px) {
+    #button_container {
+        margin-top: 150px;
+    }
 }

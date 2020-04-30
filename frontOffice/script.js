@@ -56,12 +56,13 @@ function showInfo() {
 }
 
 //Scroll vers le div d'identifiants "id"
-function goToByScroll(id, duration) {
+function goToByScroll(id, duration, margin_top) {
     // Remove "link" from the ID
     id = id.replace("link", "");
+
     // Scroll
     $('html,body').animate({
-        scrollTop: $("#" + id).offset().top
+        scrollTop: $("#" + id).offset().top + margin_top
     }, duration);
 }
 
@@ -69,16 +70,10 @@ function goToByScroll(id, duration) {
 function refreshForm() {
     //Si les éléments de l'état civil n'est pas affiché
     if ($("#form_panel > div.container:first-child").is(":visible") == false) {
-        setStatusToTheLeft(); //On place le menu des boutons du haut à gauche
         $("#form_panel").hide(); //On affiche le formulaire
         $("#form_panel").show(500); //On affiche le formulaire
     }
-    goToByScroll('form_panel', 1000); //On scroll sur le formulaire
-}
-
-//Place les boutons de "statuts sociaux" sur la gauche
-function setStatusToTheLeft() {
-    $("#status").css("display: float");
+    goToByScroll('form_panel', 1000, 50); //On scroll sur le formulaire
 }
 
 //Désactivation de l'évènement clique pour un objet dont le
@@ -195,7 +190,9 @@ function aujourdhui() {
 //Fonction qui imprime le contenu d'un élément dont l'id est passé en paramètre
 function imprimerPage() {
     $(".ignore").hide();
-
+    
+    var date = dateAujoudhuiEnLettres();
+    var heure = heureActuelle();
     var infoImpression = "Effectuée le " + dateAujoudhuiEnLettres() + " à " + heureActuelle() + ".";
 
     var message = '<div id="message" class="alert alert-warning">' +
@@ -204,6 +201,8 @@ function imprimerPage() {
         '</div>';
 
     $("body").append(message);
+
+    document.title='Confirmation d\'enregistrement sur PJPE ['+ date + " à " + heure +']';
     window.print();
 
     $("#message").remove();
@@ -322,6 +321,7 @@ $(document).ready(function(){
         if(currentPJ == "independant") {
             // Si on clique sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
+                $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 hideForm(); // Le formulaire se ferme
                 $("#lien_ameli").show();  // Le message vers AMELI s'ouvre
             });
@@ -329,14 +329,43 @@ $(document).ready(function(){
         else {
             // Si on clique mais pas sur la case du travailleur indépendant
             $("#" + currentPJ).click(function() {
+                $(this).toggleClass("unselected selected"); // On met la classe active sur le bouton
                 showForm(); // Le formulaire s'ouvre
                 $("#lien_ameli").hide();  // Le message vers AMELI se ferme
             });
         }
-	}
+    }
+    
 	$("#checkref").hide();
 
 	//Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
 	$("#date_arret").attr("max", aujourdhui());
-    $("#date_arret").attr("value", aujourdhui());
+    $("#date_arret").attr("value", aujourdhui());  
+
+    // Gestion des messages
+    $(".alert").hide();
+    $(".alert").show(1500);
+
+    // Affichage d'un bouton de suppression lors du survol
+    $(".alert").hover(function() {
+        //Création du bouton de suppression
+        var elt = document.createElement("span");
+        elt.id = "msg_close";
+        elt.className = "glyphicon glyphicon-remove";
+        $(this).find(".alert-title").append(elt);
+
+        //Initialisation de l'évènement "clique"
+        $("#msg_close").click(function() {
+            // On cache le message parent le plus proche
+            $(this).closest(".alert").hide(400, function(){
+                $(this).remove();
+            });
+        });
+    }, function() {
+        // Sinon on le supprime
+        $("#msg_close").remove();
+    });
+
+    // Désactivation de tous les boutons de classe disabled
+    $(".disabled").attr("disabled", true);
 });

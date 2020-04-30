@@ -1,5 +1,22 @@
+
+/******************************************************************/
+
+/*   SCRIPT JS POUR LA GESTION DES PAGES CÔTÉ TECHNICIEN          */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------------------
+ 	FONCTIONS GÉNÉRALES
+------------------------------------------------------------------*/
+
+/* Connecte à la base de données */
+var format = ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "pdf"];
+
 $(document).ready(function(){
-    $("#panel-pjs li").click(clickOnPjsLi($(this)));
+    $("#panel-pjs li").click(function(){
+        clickOnPjsLi($(this))
+    });
     
     //Initialisation des écouteurs pour la recherche
     $("#recherche").on("keyup", function() {TrierTableau()});
@@ -7,12 +24,38 @@ $(document).ready(function(){
     $("#date_debut").change(function() {TrierTableau()});
     $("#date_fin").change(function() {TrierTableau()});
     $("#mois_nir").change(function() {TrierTableau()});
+    $("#nb_page").change(function() {TrierTableau()});
 
+    // Gestion des messages
     $(".alert").hide();
     $(".alert").show(1500);
+
+    // Affichage d'un bouton de suppression lors du survol
+    $(".alert").hover(function() {
+        //Création du bouton de suppression
+        var elt = document.createElement("span");
+        elt.id = "msg_close";
+        elt.className = "glyphicon glyphicon-remove";
+        $(this).find(".alert-title").append(elt);
+
+        //Initialisation de l'évènement "clique"
+        $("#msg_close").click(function() {
+            // On cache le message parent le plus proche
+            $(this).closest(".alert").hide(400, function(){
+                $(this).remove();
+            });
+        });
+    }, function() {
+        // Sinon on le supprime
+        $("#msg_close").remove();
+    });
+
+    // Désactivation de tous les boutons de classe disabled
+    $(".disabled").attr("disabled", true);
 });
 
-//Vérifie et corrige le format du NIR
+/* Vérifie et corrige la valeur du champ de saisi du matricule en fonction du format 'format' */
+/* => Ne renvoie rien. NB : l'id du input text doit être 'mat' et le format de la formt '#### ####'*/
 function checkFormatMatricule(format) {
 	formatNIR = format;
 
@@ -57,14 +100,45 @@ function checkFormatMatricule(format) {
 
 //Fonction qui gère modifie le lien vers l'aperçu
 function changePathViewer(path) {
-    $("#apercu").attr("src", path);
+    var tagName = "", type ="";
+    var typeFile = path.substr((path.lastIndexOf('.') + 1));
+    var i = jQuery.inArray(typeFile, format);
+    
+    if(i != -1) {
+        if(format[i] == "pdf") {
+            tagName = "embed";
+            type = "application/pdf";
+            path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
+        }
+        else {
+            tagName = "img";
+            type = "img/" + typeFile;
+            var alt = "img-" + typeFile;
+        }
+    }
+    else {
+        tagName = "embed";
+        type = "application/" + typeFile;
+        path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
+    }
+
+    var newElement = '<' + tagName + ' id="apercu" type="' + type + '"';
+
+    if(tagName == "img") {
+        newElement += ' alt="' + alt + '"';
+    }
+
+    newElement += '>' + $('#apercu').html() + '</' + tagName + '>';
+
+    $('#apercu').replaceWith(newElement);
+    $("#apercu").attr("src", path);    
 }
 
 //Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
 //lors d'un clique
 function clickOnPjsLi(node) {
-    $("panel-pjs li").removeClass("onclick-pjs-li");
-    node.addClass("onclick-pjs-li");
+    $("#panel-pjs li").removeClass("pj-selected");
+    $(node).addClass("pj-selected");
 }
 
 function DateToNumber(date) {
@@ -78,6 +152,7 @@ function DateToNumber(date) {
 function TrierTableau() {
     TrierListe($("#recherche").val(), $("#date_debut").val(),
         $("#date_fin").val(), $("#statut").val(), $("#mois_nir").val());
+    GenererPagination();
 }
 
 function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
@@ -91,27 +166,32 @@ function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
         var statutCourant = colonnes[3].innerHTML;
         var moisNirCourant = NaissanceAssure(colonnes[2].innerHTML)[0];
 
-        lignes[i].style.display = '';
-
+        lignes[i].style = "";
+        lignes[i].className = "valide";
+        
         if(dateDebut != "" && dateFin != "") {
             if(!(dateDebut <= dateCourante && dateCourante <= dateFin)) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
         else if(dateDebut != "") {
             if(!(dateDebut <= dateCourante)) {  
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
         else if(dateFin != "") {
-            if(!(dateFin >= dateCourante)) {  
+            if(!(dateFin >= dateCourante)) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
 
         if(statut != "" && statut != "Tous") {            
-            if(!(statut == statutCourant)) {
+            if(statut != statutCourant) {
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
         }
 
@@ -123,15 +203,22 @@ function TrierListe(texte, dateDebut, dateFin, statut, moisNir) {
                 || colonnes[2].innerHTML.toLowerCase().includes(texte.toLowerCase())
                 || colonnes[3].innerHTML.toLowerCase().includes(texte.toLowerCase()))) {
                     lignes[i].style.display = 'none';
+                    lignes[i].className = "";
             }
         }
 
         if(moisNir != "") {
             if(moisNir != moisNirCourant) {  
                 lignes[i].style.display = 'none';
+                lignes[i].className = "";
             }
-        }
+        } 
+
+        console.log(i + " : " + lignes[i].style.display);
+        console.log(i + " : " + lignes[i].className);
     }
+
+    CliquePageBouton(1);
 }
 
 // Extraction du mois et de l'année de naissance d'un assuré à partir du NIR
@@ -170,4 +257,58 @@ function EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ) 
     if(FOOTER_EMAIL != "") message +="\n\n<hr>" + FOOTER_EMAIL;
 
     return message;
+}
+
+//Génère automatiquement la pagination selon le nombre de ligne afficher
+function GenererPagination() {
+    nbLignesParPage = $("#nb_page").val();
+    nbLignesTableau = $("#data-list tr.valide").length;
+
+    nbPage = Math.ceil(nbLignesTableau / nbLignesParPage);
+    html = "";
+
+    for(i = 1 ; i <= nbPage ; i++) {
+        html += '<li';
+        if(i == 1) html += ' class="active" '
+        html += '><a id="page' + i + '" role="button" onClick="CliquePageBouton(' + i + ')">' + i + '</a></li>';
+    }
+
+    $(".pagination").html(html);
+}
+
+//Gère l'évènement lors du clique sur une page
+function CliquePageBouton(numPage) {
+    // Changement du bouton cliqué en classe "active"
+    $("ul.pagination li").removeClass("active");
+    $("ul.pagination li:nth-child(" + numPage + ")").addClass("active");
+
+    nbLignesTableau = $("#data-list tr.valide").length;
+    nbLignesParPage = $("#nb_page").val();
+
+    nbPage = Math.ceil(nbLignesTableau / nbLignesParPage);
+    fin = numPage * nbLignesParPage - 1;
+    
+    /*if(debut + nbLignesParPage > nbLignesTableau) fin = nbLignesTableau;
+    else fin = debut + nbLignesParPage;*/
+
+    debut = fin - nbLignesParPage + 1;
+
+    for(i = 0 ; i < nbLignesTableau ; i++) {
+        element = $("#data-list tr.valide:eq(" + i + ")");
+        if(i >= debut && i <= fin) {
+            element.show();
+        }
+        else {
+            element.hide();
+        }
+    }
+}
+
+/* Ouvre une boîte de dialogue pour vérifier l'annulation de saisi d'un formulaire */
+/* => Mettre en valeur de l'attribut 'onClick' avec pour paramètre 'event' */
+function confirmationAnnulation(event) {
+    event.preventDefault();     // Pour empêcher d'être redirigeé malgré une indication négative
+    if(confirm("Êtes-vous bien sûr de vouloir annuler votre saisie ?")) {
+        window.location = event.target.href; // Redirection vers le lien de l'attribut 'href'
+    }
 }

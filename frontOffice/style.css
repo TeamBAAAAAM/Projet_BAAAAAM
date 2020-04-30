@@ -1,8 +1,22 @@
+/******************************************************************/
+
+/*             FEUILLE DE STYLE DES PAGES CÔTÉ ASSURÉ             */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------
+ 	CORPS DE LA PAGE
+-------------------------------------------------------*/
+
 body {
 	font-family: "Calibri";
 }
 
-/* Header */
+/*------------------------------------------------------
+ 	ENTÊTE DE LA PAGE
+-------------------------------------------------------*/
+
 .header {
 	padding: 10px 32px;
 	border: none;
@@ -17,33 +31,19 @@ body {
 	height: 50px;
 }
 
-.header .dropdown {
-	margin-left: 0px;
-}
-
-.header .dropdown > button {
-	color: #339966;
-	padding-left: 20px;
-	padding-right: 20px;
-}
-
 .navbar-header > button {
 	height: 50px;
 	background-color: white;
 }
 
-#header_btns {
-	margin-top: 10px;
+/*------------------------------------------------------
+ 	BOUTONS DES CATÉGORIES
+-------------------------------------------------------*/
+
+#status {
+	margin-bottom: 20px;
 }
 
-#header_btns button {
-	margin-left: 5px;
-	height: 50px;
-	font-size: 20px;
-	transition: background-color 0.5s;
-}
-
-/* Components */
 div.btn-status {
 	display: flex;
 	justify-content: center;
@@ -51,9 +51,12 @@ div.btn-status {
 	text-decoration: none;
 	border-radius: 20px;
 	font-family: Calibri;
-	transition: background-color 0.25s, color 0.75s ease-out;
 	padding-bottom: 10px;
 	border: 1px solid white;
+}
+
+div.btn-status:hover {
+	transition: background-color 0.25s, color 0.75s ease-out;
 }
 
 #btn-modal {
@@ -62,6 +65,9 @@ div.btn-status {
 	color: white;
 	font-weight: bold;
 	margin-top: 34px;
+	font-size: 20px;
+	padding-left: 16px; 
+	padding-right: 16px; 
 	border-radius: 100px;
 }
 #btn-modal:hover {
@@ -69,31 +75,18 @@ div.btn-status {
 }
 
 .unselected {
-	background-color: #0072ff54;
+	background-color: rgb(0, 199, 235);
 	color: white;
 }
 
 .unselected:hover {
-	background-color: #0072ffb8;
+	background-color: rgb(0, 114, 255);
 	color: white;
 	cursor: pointer;
 }
 
 .selected {
-	background-color: #0072ffb8;
-	color: white;
-}
-
-#form_panel {
-	margin-top: 40px;
-	border-radius: 25px;
-}
-
-#form_panel > .panel-heading {
-	border-radius: 25px 25px 0px 0px;
-	padding-left: 40px;
-	background-color: #0072ffb8;
-	font-size: 2em;
+	background-color: rgb(0, 114, 255);
 	color: white;
 }
 
@@ -108,8 +101,25 @@ div.btn-status {
 	margin-top : 15px;
 }
 
+/*------------------------------------------------------
+	FORMULAIRE
+-------------------------------------------------------*/
+
+#form_panel {
+	margin-top: 50px;
+	border-radius: 25px;
+}
+
+#form_panel > .panel-heading {
+	border-radius: 25px 25px 0px 0px;
+	padding-left: 40px;
+	background-color: rgb(0, 114, 255);
+	font-size: 2em;
+	color: white;
+}
+
 .modal-content {
-	background-color: rgba(0, 0, 0, 0.90);
+	background-color: rgba(0, 16, 29, 0.88);
 	color: white;
 }
 .head_modal_title {
@@ -140,6 +150,28 @@ li.list-group-item {
 	font-size: larger;
 }
 
+/* Bar de progression du suivi */
+.bar-icons {
+	background: none;
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 64px;
+}
+.bar-icons.danger {color: #a94442;}
+.bar-icons.success {color: #3c763d;}
+.bar-icons.info {color: #31708f;}
+.bar-icons.warning {color: #8a6d3b;}
+
+.bar-icons .icon.disabled {
+	background-color: #1e1a25;
+	color: transparent;
+	text-shadow: 2px 2px 3px rgba(255,255,255,0.75);
+	-webkit-background-clip: text;
+	   -moz-background-clip: text;
+			background-clip: text;
+}
+
 /*note*/
 .note {
 	font-style: italic;
@@ -150,7 +182,7 @@ li.list-group-item {
 /*footer*/
 footer {
 	margin-top: 95px;
-	background-color: #1c233191;
+	background-color: rgba(28, 35, 49, 0.568);
 	color: white;
 	padding: 0px 50px;
 }
@@ -174,7 +206,7 @@ footer iframe.col-sm-5 {
 #juridique {
 	margin-top: 15px;
 	padding: 10px 0px;
-	background-color: #181f2bc7;
+	background-color: rgba(24, 31, 43, 0.78);
 }
 
 footer a {
@@ -219,31 +251,64 @@ img[src="../img/num_tel.png"] {
 	height: 50px;
 }
 
-div.alert {
-	margin: 30px 150px;
-	margin-bottom: 0px;
+.champ_obligatoire{
+	font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    color: #03057B;
 }
 
-@media (max-width: 770px) {
-	#contact > *{
+/* Message */
+div.alert {
+	margin: 30px 150px;
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+div.alert > h3 {
+	margin-top: 0px;
+}
+
+/* Bouton de fermeture de message */
+#msg_close {
+	float: right;
+	font-size: 24px;
+}
+#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
+#msg_close + h3 {margin-top: 0px;}
+
+/* Gestion du responsive */
+@media (max-width: 576px) {
+	div.btn-status {
+		height: 60px;
+	}
+	div.btn-status > h2 {
+		font-size: 20px;
+	}
+	#contact > * {
 		text-align: center;
 	}
 }
-
-@media only screen and (min-width : 768px) {
+@media only screen and (min-width: 576px) and (max-width : 768px) {
 	div.btn-status {
-		height: 240px;
+		height: 80px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
+	}
+	#contact > * {
+		text-align: center;
+	}
+}
+@media (min-width: 768px) and (max-width : 992px) {
+	div.btn-status {
+		height: 250px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
 	}
 }
 @media only screen and (min-width : 992px) {
 	div.btn-status {
-		height: 210px;
-	}
-}
-
-@media (max-width: 768px) {
-	div.btn-status {
-		border: 2px solid white;
-		border-radius: 0px;
+		height: 250px;
 	}
 }
