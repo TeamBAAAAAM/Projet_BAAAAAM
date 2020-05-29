@@ -1,6 +1,8 @@
 # Projet_BAAAAAM
 Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
 
+le readme a été relu par Brice !!
+
 Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 <h3>Configuration minimale</h3>
 <p>SGBD : MySQL (version 5.7.56 ou ultérieure)</p>
