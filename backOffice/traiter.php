@@ -220,6 +220,7 @@
 									<h5><?php echo "Assuré : $prenomAssure $nomAssure";?></h5>
 									<h5>En arrêt de travail depuis le : <?php echo date("d/m/Y", $dateArretMaladie);?></h5>
 									<h5>
+										<!-- Affichage des coordonnées si renseignées -->
 										<?php
 											if($telephoneAssure != "") echo "Tel : $telephoneAssure";
 											else echo "N/A";
@@ -262,6 +263,7 @@
 					</div>
 					<div class="modal-body">
 						<?php
+							// Affichage de la liste des mails envoyés à l'assuré
 							$message = mysqli_fetch_array($messagesAssure);
 							$i = 1;
 
@@ -316,6 +318,7 @@
 						<h4>Envoyer un mail à l'assuré</h4>
 						<div class="container" style="padding-bottom: 10px">
 							Type de demande : 
+							<!-- Màj du contenu du mail en fonction de la valeur du checkbox -->
 							<input id="cb1" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces manquantes
 							<input id="cb2" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces illisibles
 							<input id="cb3" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces invalides

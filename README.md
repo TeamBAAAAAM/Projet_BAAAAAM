@@ -24,15 +24,15 @@ Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 <p>Pour initialiser SendGrid, il faut effectuer les étapes suivantes :</p>
   <ol>
     <li>Créer tout d'abord un compte sur <a href="https://signup.sendgrid.com/">SendGrid</a> ;</li>
-    <li>Dans le menu de gauche, allez sur "Email API" > "Integration Guide"</a> ;</li>
-    <li>Dans la zone "Integrate using our Web API or SMTP Relay", choissisez l'option Web API en cliquant sur "Choose" ;</li>
-    <li>Puis sélectionner "PHP" comme langage ;</li>
+    <li>Dans le menu de gauche, aller sur "Email API" > "Integration Guide"</a> ;</li>
+    <li>Dans la zone "Integrate using our Web API or SMTP Relay", choisir l'option Web API en cliquant sur "Choose" ;</li>
+    <li>Puis sélectionner "PHP" comme langage puis valider;</li>
     <li>Dans le champ "My First API Key Name", entrer un nom quelconque puis cliquer sur "Create a Key" ;</li>
-    <li>Copiez la clé qui vient d'être créée (de la forme "SG.g5TUG ... QVC21Qogc-4PB1uUA") ;</li>
-    <li>Allez dans le fichier "fonctions.php" visible à la racine du dossier et collez la clé comme valeur de "SENDGRID_API_KEY" (ligne 33 ou plus)) ;</li>
-    <li>Copiez la clé qui vient d'être créée (de la forme "SG.g5TUG ... QVC21Qogc-4PB1uUA") ;</li>
-    <li>Tout en bas, cliquez la case à cocher "I've integrated the code above" puis sur le bouton "Next: Verify integration" ;</li>
-    <li>Dans le menu de gauche, allez sur "Sender Authentification", puis cliquez sur "Verify a Single Sender" et renseignez les champs en précisant une adresse d'expéditeur valide (validation par la suite) puis validez votre mail ;</li>
+    <li>Copier la clé qui vient d'être créée (de la forme "SG.g5TUG ... QVC21Qogc-4PB1uUA") ;</li>
+    <li>Aller dans le fichier "fonctions.php" visible à la racine du dossier et coller la clé comme valeur de "SENDGRID_API_KEY" (ligne 33 ou plus)) ;</li>
+    <li>Copier la clé qui vient d'être créée (de la forme "SG.g5TUG ... QVC21Qogc-4PB1uUA") ;</li>
+    <li>Tout en bas, cliquer la case à cocher "I've integrated the code above" puis sur le bouton "Next: Verify integration" ;</li>
+    <li>Dans le menu de gauche, aller sur "Sender Authentification", puis cliquer sur "Verify a Single Sender" et renseigner les champs en précisant une adresse d'expéditeur valide (validation par la suite) puis valider votre mail ;</li>
     <li>Une fois validée, affecter votre adresse mail, dans le fichier "fonctions.php", à la variable "SENDER_EMAIL_ADDRESS" (ligne 34 ou plus) ; </li>
     <li>Enfin, insérer le fichier <a href="https://curl.haxx.se/ca/cacert.pem">cacert.pem</a> à l'emplacement suivant :<br>
       "[Disque_Admin]:\wamp64\bin\php\php[Version_PHP]\extras\ssl" (exemple sur WampServer, à adapter selon le logiciel) ;
