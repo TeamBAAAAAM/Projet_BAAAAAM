@@ -61,7 +61,7 @@
                                 echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement de l'assuré !</div>";
                             } else {
                                 //Création du dossier d'un assuré dont le nom est son NIR (en local)
-                                if(!creerRepertoireNIR($_POST["nir"])) { // Message d'échec
+                                if(!creerRepertoireNIR($ftp_stream, $_POST["nir"])) { // Message d'échec
                                     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de la création du dossier du NIR de l'assuré' !</div>";
                                 } else { // Message de réussite
                                     $_SESSION["MessageAssure"] = "
@@ -126,7 +126,7 @@
                                 echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement du dossier dans la base de données !</div>";
                             } else {
                                 //Création du dossier de l'arrêt maladie dont le nom est sa référence (en local)
-                                if(!creerRepertoireAM($_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
+                                if(!creerRepertoireAM($ftp_stream, $_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
                                     echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec lors de la création du dossier !</div>";
                                 } else {
                                     // Récupération des données du dossier dans la BD
