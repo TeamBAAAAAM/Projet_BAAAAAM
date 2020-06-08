@@ -154,16 +154,16 @@ function chercherREFAvecCodeD($codeDossier, $link) {
 
 /* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireAM($ref, $nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir . "/" . $ref;
-    return mkdir($dirname);
+function creerRepertoireAM($ftp_stream, $ref, $nir) {
+    $dirname = STORAGE_PATH. "/$nir/$ref";
+    return ftp_mkdir($ftp_stream, $dirname);
 }
 
 /* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireNIR($nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir;
-    return mkdir($dirname);
+function creerRepertoireNIR($ftp_stream, $nir) {
+    $dirname = STORAGE_PATH. "/$nir";
+    return ftp_mkdir($ftp_stream, $dirname);
 }
 
 /* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
