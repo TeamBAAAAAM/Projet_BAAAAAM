@@ -3,6 +3,8 @@
     require_once("../fonctions.php");    
     //Connexion à la BD
     $link = connecterBD();
+    //Connexion au serveur FTP
+    $ftp_stream = connecterServeurFTP();
 ?>
 
 <!DOCTYPE html>
@@ -315,6 +317,8 @@
 </html>
 
 <?php    
+    //Fermeture de la connexion au serveur FTP
+    ftp_close($ftp_stream);
     //Fermeture de la connexion à la BD
     mysqli_close($link);
 ?>
