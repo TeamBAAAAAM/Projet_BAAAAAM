@@ -279,15 +279,16 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
 /*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
 /*      => B = Nom du fichier téléchargé                                        */
 /*      => C = Mnémonique complet affilié au fichier                            */
-function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
+function enregistrerFichiers($ftp_stream, $listeFichiers, $ref, $nir, $link) {
     $resultats = array();
+    
     foreach ($listeFichiers as $key => $fichier) {
         $j = 0;
         for ($i = 0; $i < count($fichier['name']); $i++) {
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir = "../" . STORAGE_PATH . "/" . $nir . "/" . $ref;
+                $target_dir = STORAGE_PATH . "/$nir/$ref";
                 $ext = strtolower(pathinfo($file)['extension']);
 
                 do {
@@ -301,7 +302,7 @@ function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
                 if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_ASCII)) {
                         $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);

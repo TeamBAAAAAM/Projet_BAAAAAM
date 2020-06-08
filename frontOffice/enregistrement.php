@@ -183,7 +183,7 @@
                         
                         // Enregistrement des PJ
                         if(!isset($_SESSION["MessageFichiers"])) {
-                            $resultats = enregistrerFichiers($_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
+                            $resultats = enregistrerFichiers($ftp_stream, $_FILES, $_SESSION["RefD"], $dossier["NirA"], $link);                        
                             if($resultats != null) { // Message de réussite
                                 $_SESSION["MessageFichiers"] = "
                                 <ul class='list-group'>
