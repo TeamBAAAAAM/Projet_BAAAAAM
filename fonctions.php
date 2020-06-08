@@ -9,6 +9,14 @@
 // Puis par ordre alphabétique
 
 /*------------------------------------------------------------------
+ 	VARIABLES GLOBALES DE CONNEXION AU SERVEUR FTP
+------------------------------------------------------------------*/
+
+define("FTP_HOST", "localhost");        // Nom du host
+define("FTP_USER", "ftp_server");       // Nom d'utilisateur
+define("FTP_PWD", "mylocalftpserver");  // Mot de passe
+
+/*------------------------------------------------------------------
  	VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES
 ------------------------------------------------------------------*/
 
@@ -40,6 +48,23 @@ define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");             
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
+
+/* Connecte au serveur FTP */
+function connecterServeurFTP() {    
+    // Mise en place d'une connexion basique
+    $ftp_stream = ftp_connect(FTP_HOST) or die("Erreur : Impossible de se connecter à ".FTP_HOST." !<br>"); 
+
+    //Tentative d'identification
+    if(ftp_login($ftp_stream, FTP_USER, FTP_PWD)) {
+        //echo "Connecté en tant que ".FTP_USER."@".FTP_HOST." ...<br>";
+        return $ftp_stream;
+    }
+    else {            
+        echo "Erreur lors de l'identification !<br>";
+        echo "Connexion impossible en tant que ".FTP_USER." ...<br>";
+        return NULL;
+    }
+}
 
 /* Connecte à la base de données */
 function connecterBD() {
