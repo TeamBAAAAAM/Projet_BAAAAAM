@@ -179,16 +179,16 @@ function chercherREFAvecCodeD($codeDossier, $link) {
 
 /* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireAM($ref, $nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir . "/" . $ref;
-    return mkdir($dirname);
+function creerRepertoireAM($ftp_stream, $ref, $nir) {
+    $dirname = STORAGE_PATH. "/$nir/$ref";
+    return ftp_mkdir($ftp_stream, $dirname);
 }
 
 /* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireNIR($nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir;
-    return mkdir($dirname);
+function creerRepertoireNIR($ftp_stream, $nir) {
+    $dirname = STORAGE_PATH. "/$nir";
+    return ftp_mkdir($ftp_stream, $dirname);
 }
 
 /* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
@@ -279,15 +279,16 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
 /*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
 /*      => B = Nom du fichier téléchargé                                        */
 /*      => C = Mnémonique complet affilié au fichier                            */
-function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
+function enregistrerFichiers($ftp_stream, $listeFichiers, $ref, $nir, $link) {
     $resultats = array();
+    
     foreach ($listeFichiers as $key => $fichier) {
         $j = 0;
         for ($i = 0; $i < count($fichier['name']); $i++) {
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir = "../" . STORAGE_PATH . "/" . $nir . "/" . $ref;
+                $target_dir = STORAGE_PATH . "/$nir/$ref";
                 $ext = strtolower(pathinfo($file)['extension']);
 
                 do {
@@ -301,7 +302,7 @@ function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
                 if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_ASCII)) {
                         $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);
