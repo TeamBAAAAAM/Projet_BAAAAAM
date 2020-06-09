@@ -227,7 +227,7 @@
 
                                 // Envoi d'un mail de confirmation
                                 if(envoyerMailConfirmationEnregistrement($assure['PrenomA'], $assure['NomA'], $assure['MailA'])) {
-                                    $title = "Mail de confirmation d'enregitrement";
+                                    $title = "Mail de confirmation d'enregistrement";
                                     $body = "Un mail a été envoyé à l'adresse mail ".$assure['MailA'].".";
                                     genererMessage($title, $body, "ok", "success");
                                 }               
