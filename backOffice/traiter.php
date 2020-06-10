@@ -4,8 +4,6 @@
 	
     // Connexion à la BD
 	$link = connecterBD();
-	// Connexion au serveur FTP
-	$ftp_server = connecterServeurFTP();
 
 	// Récupération des données du technicien connecté
 	if(isset($_SESSION["matricule"])){
@@ -394,7 +392,3 @@
 		</div>
 	</body>
 </html>
-<?php 
-	//Fermeture de la connexion au serveur FTP
-	ftp_close($ftp_stream);
-?>
