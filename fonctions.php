@@ -302,7 +302,7 @@ function enregistrerFichiers($ftp_stream, $listeFichiers, $ref, $nir, $link) {
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
                 if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_ASCII)) {
+                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_BINARY)) {
                         $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);
