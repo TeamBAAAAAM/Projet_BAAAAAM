@@ -10,7 +10,7 @@
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
 
-/* Connecte à la base de données */
+/* Formats autorisés */
 var format = ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "pdf"];
 
 $(document).ready(function(){
@@ -99,39 +99,8 @@ function checkFormatMatricule(format) {
 }
 
 //Fonction qui gère modifie le lien vers l'aperçu
-function changePathViewer(path) {
-    var tagName = "", type ="";
-    var typeFile = path.substr((path.lastIndexOf('.') + 1));
-    var i = jQuery.inArray(typeFile, format);
-    
-    if(i != -1) {
-        if(format[i] == "pdf") {
-            tagName = "embed";
-            type = "application/pdf";
-            path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
-        }
-        else {
-            tagName = "img";
-            type = "img/" + typeFile;
-            var alt = "img-" + typeFile;
-        }
-    }
-    else {
-        tagName = "embed";
-        type = "application/" + typeFile;
-        path += "#toolbar=0&navpanes=0&scrollbar=0"; //Retrait da la barre d'outil
-    }
-
-    var newElement = '<' + tagName + ' id="apercu" type="' + type + '"';
-
-    if(tagName == "img") {
-        newElement += ' alt="' + alt + '"';
-    }
-
-    newElement += '>' + $('#apercu').html() + '</' + tagName + '>';
-
-    $('#apercu').replaceWith(newElement);
-    $("#apercu").attr("src", path);    
+function updateViewer(path) {
+    $("#apercu").attr("src", path);
 }
 
 //Fonction qui gère l'affichage d'un item de la liste des pièces justificatives

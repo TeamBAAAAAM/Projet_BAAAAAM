@@ -4,8 +4,6 @@
 	
     // Connexion à la BD
 	$link = connecterBD();
-	// Connexion au serveur FTP
-	$ftp_server = connecterServeurFTP();
 
 	// Récupération des données du technicien connecté
 	if(isset($_SESSION["matricule"])){
@@ -363,13 +361,13 @@
 							for ($i = 0; $i < $rows; $i++){
 								// Récupération du chemin de chaque fichier
 								$justificatif = mysqli_fetch_array($result);
-								$cheminFichier = $justificatif["CheminJ"];
+								$cheminFichier = "apercu.php?filepath=".$justificatif["CheminJ"];
 								$nomFichier = strrchr($cheminFichier, '/');
 								$nomFichier = substr($nomFichier, 1);
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
 								echo("
-								<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>
+								<li class='list-group-item' onClick='updateViewer(\"$cheminFichier\")'>
 									<h5>
 										<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
 										$nomFichier
@@ -386,7 +384,7 @@
 							<h4><span class="glyphicon glyphicon-picture"></span>Aperçu</h4>
 						</div>
 						<div class="panel-body">
-							<embed id="apercu" class="container-fluid">
+							<iframe id="apercu" class="container-fluid">
 						</div>
 					</div>
 				</div>
@@ -394,7 +392,3 @@
 		</div>
 	</body>
 </html>
-<?php 
-	//Fermeture de la connexion au serveur FTP
-	ftp_close($ftp_stream);
-?>
