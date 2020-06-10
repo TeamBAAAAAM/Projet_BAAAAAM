@@ -15,6 +15,7 @@
 define("FTP_HOST", "localhost");        // Nom du host
 define("FTP_USER", "ftp_server");       // Nom d'utilisateur
 define("FTP_PWD", "mylocalftpserver");  // Mot de passe
+define("FTP_PORT", "21");               // Numéro du port de connexion
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES
@@ -24,7 +25,7 @@ define("HOST", "localhost");    // Nom du host
 define("USER", "root");         // Nom d'utilisateur
 define("PWD_MYSQL", "");        // Mot de passe
 define("BD_MYSQL", "bd_cpam");  // Nom de la base de données
-define("PORT", "3306");         // Nom du port de connexion
+define("PORT", "3306");         // Numéro du port de connexion
 
 /*------------------------------------------------------------------
  	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
@@ -57,6 +58,10 @@ function connecterServeurFTP() {
     //Tentative d'identification
     if(ftp_login($ftp_stream, FTP_USER, FTP_PWD)) {
         //echo "Connecté en tant que ".FTP_USER."@".FTP_HOST." ...<br>";
+    
+        // Activation du mode passif
+        ftp_pasv($ftp_stream, true);
+
         return $ftp_stream;
     }
     else {            
