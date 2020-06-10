@@ -1,10 +1,8 @@
 <?php
     session_start();
-    require_once("../fonctions.php");   
-     
-    // Connexion à la BD
+    require_once("../fonctions.php");    
+    //Connexion à la BD
     $link = connecterBD();
-    
     //Connexion au serveur FTP
     $ftp_stream = connecterServeurFTP();
 ?>
