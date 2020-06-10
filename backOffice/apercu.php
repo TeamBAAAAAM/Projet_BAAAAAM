@@ -12,7 +12,7 @@
     // Activation du mode passif
     ftp_pasv($ftp_stream, true);
 
-    // Formats autorisés
+    // Formats autorisés (image) (penser à prendre en compte le format PDF)
     $format_image = ["jpg", "jpeg", "png", "bmp", "tif", "tiff"];
     $cheminFichier = urldecode($_GET["filepath"]);
 
@@ -23,10 +23,10 @@
     if(in_array($extension, $format_image)) {
         if($extension == "jpg") $type = "image/jpeg";
         else if($extension == "tif") $type = "image/tiff";
-        else $type = "image/" + $extension;
+        else $type = "image/".$extension;
     }
     else if ($extension == "pdf") {
-        $type = "application/" + $extension;
+        $type = "application/".$extension;
     }
 
     $size = ftp_size($ftp_stream, $cheminFichier);
@@ -41,5 +41,11 @@
     $file = file_get_contents($link);
 
     echo $file;
+    //echo $link."<br>";
+    //echo $type."<br>";
+    //echo $size."<br>";
+    
+    //Fermeture de la connexion au serveur FTP
+    ftp_close($ftp_stream);
 ?>
 
