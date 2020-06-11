@@ -182,6 +182,18 @@ function chercherREFAvecCodeD($codeDossier, $link) {
     return mysqli_fetch_array($result);
 }
 
+/* Renvoie le nombre de justificatifs d'un dossier ayant le mnémonique $mnemo */
+/* => [Entier positif] */
+function compterPJDansDossierAvecMnemo($codeAssure, $codeDossier, $codeMnemonique, $link) {   
+    $query = "SELECT COUNT(*) AS NombreJustificatif "
+            ."FROM Assure A, Dossier D, Justificatif J, ListeMnemonique M "
+            ."WHERE A.CodeA = D.CodeA AND D.CodeD = J.CodeD AND M.CodeM = J.CodeM "
+            ."AND A.CodeA = $codeAssure AND D.CodeD = $codeDossier AND J.CodeM = $codeMnemonique";
+    $result = mysqli_query($link, $query);
+    
+    return mysqli_fetch_array($result)["NombreJustificatif"];
+}
+
 /* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
 function creerRepertoireAM($ftp_stream, $ref, $nir) {
@@ -284,25 +296,25 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeMnemonique, 
 /*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
 /*      => B = Nom du fichier téléchargé                                        */
 /*      => C = Mnémonique complet affilié au fichier                            */
-function enregistrerFichiers($ftp_stream, $listeFichiers, $ref, $nir, $link) {
+function enregistrerFichiers($ftp_stream, $listeFichiers, 
+    $codeAssure, $nir, $codeDossier, $ref, $link) {
     $resultats = array();
-    
+
     foreach ($listeFichiers as $key => $fichier) {
-        $j = 0;
+        $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
+
+        $j = compterPJDansDossierAvecMnemo(
+            $codeAssure, $codeDossier, $mnemonique["CodeM"], $link
+        ) + 1;
+
         for ($i = 0; $i < count($fichier['name']); $i++) {
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
                 $target_dir = STORAGE_PATH . "/$nir/$ref";
                 $ext = strtolower(pathinfo($file)['extension']);
+                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
 
-                do {
-                    $j++;
-                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
-                } while(fichierExiste($link, $cheminJustificatif));
-
-                $codeDossier = chercherDossierAvecREF($ref, $link)["CodeD"];
-                $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
                 if (enregistrerFichier($cheminJustificatif, $codeDossier, $mnemonique["CodeM"], $link)) {
@@ -314,6 +326,7 @@ function enregistrerFichiers($ftp_stream, $listeFichiers, $ref, $nir, $link) {
                 } else {
                     $resultats[] = array(FALSE, $file, $designation);
                 }
+                $j++;
             }
         }
     }
