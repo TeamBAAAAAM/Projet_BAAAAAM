@@ -367,7 +367,7 @@
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
 								echo("
-								<li class='list-group-item' onClick='updateViewer(\"$cheminFichier\")'>
+								<li class='list-group-item' onClick='updateViewer(\"$cheminFichier\");'>
 									<h5>
 										<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
 										$nomFichier

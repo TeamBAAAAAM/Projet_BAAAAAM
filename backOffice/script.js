@@ -32,13 +32,13 @@ $(document).ready(function(){
 
     // Affichage d'un bouton de suppression lors du survol
     $(".alert").hover(function() {
-        //Création du bouton de suppression
+        // Création du bouton de suppression
         var elt = document.createElement("span");
         elt.id = "msg_close";
         elt.className = "glyphicon glyphicon-remove";
         $(this).find(".alert-title").append(elt);
 
-        //Initialisation de l'évènement "clique"
+        // Initialisation de l'évènement "clique"
         $("#msg_close").click(function() {
             // On cache le message parent le plus proche
             $(this).closest(".alert").hide(400, function(){
