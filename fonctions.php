@@ -605,7 +605,7 @@ function envoyerMail($to, $subject, $content, $type) {
 
     // Initialisation de l'email
     $email = new \SendGrid\Mail\Mail(); 
-    $email->setFrom(SENDER_EMAIL_ADDRESS);
+    $email->setFrom(getenv("SENDER_EMAIL_ADDRESS"));
     $email->setSubject($subject);
     try {
         $email->addTo($to);
@@ -617,7 +617,7 @@ function envoyerMail($to, $subject, $content, $type) {
     else $email->addContent("text/html", $content);
 
     //Création de l'objet Sendgrid
-    $sendgrid = new \SendGrid(SENDGRID_API_KEY);
+    $sendgrid = new \SendGrid(getenv("SENDGRID_API_KEY"));
     try {
         $response = $sendgrid->send($email);
         /*print $response->statusCode() . "\n";
