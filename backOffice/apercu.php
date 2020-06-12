@@ -37,7 +37,7 @@
     header("Content-Disposition: inline");
     
     // Affichage du fichier dans le navagateur
-    $link = "ftp://".FTP_USER.":".FTP_PWD."@".FTP_HOST.":21/".$cheminFichier;
+    $link = cheminVersServeurFTP().$cheminFichier;
     $file = file_get_contents($link);
 
     echo $file;
@@ -47,5 +47,11 @@
     
     //Fermeture de la connexion au serveur FTP
     ftp_close($ftp_stream);
+
+    echo(
+        "<style>
+            body * {height: 100%;}
+        </style>"
+    );
 ?>
 
