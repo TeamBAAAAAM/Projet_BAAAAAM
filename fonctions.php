@@ -365,7 +365,7 @@ function fichierExiste($link, $chemin){
 /* => [Vrai si le technicien est bien authentifié, Faux sinon] */
 function authentifierTechnicien($link, $matricule, $mdpT) {
     $query = "SELECT Matricule, MdpT "
-            ."FROM Technicien T "
+            ."FROM technicien "
             ."WHERE Matricule = '$matricule' "
             ."AND MdpT = '$mdpT'";
     $result = mysqli_query($link, $query);
