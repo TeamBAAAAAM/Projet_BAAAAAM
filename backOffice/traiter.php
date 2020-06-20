@@ -384,7 +384,7 @@
 							<h4><span class="glyphicon glyphicon-picture"></span>Aperçu</h4>
 						</div>
 						<div class="panel-body">
-							<iframe id="apercu" class="container-fluid">
+							<iframe id="apercu" class="container-fluid" onload="gestionTailleApercu()">
 						</div>
 					</div>
 				</div>
