@@ -1,17 +1,18 @@
 <?php 
 	session_start();
-    require("../fonctions.php");
+	require("../fonctions.php");
+	
     // Connexion à la BD
     $link = connecterBD();
 	
-	// Récupération des données du technicien
+	// Récupération des données du technicien s'il est connecté
 	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else {
-		redirigerVers("se_connecter.php");
+	} else { // Redirection sinon
+		demandeDeConnexion();
 	}
 ?>
 <!DOCTYPE html>

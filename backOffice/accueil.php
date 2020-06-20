@@ -1,8 +1,7 @@
 <?php
 	session_start();
 	require("../fonctions.php");
-
-	// Pour que le format de la date soit au format français
+	// Format des dates en français
 	setlocale(LC_TIME, "fr_FR");
 
 	// Connexion à la BD
@@ -95,83 +94,62 @@
 			</div>
 		</nav>
 
-		<div class="container">
-			<div class="row container-accueil">
-				<div class="col-sm-6 ">
-					<table class="table table-striped">
-						<thead class="table-header-title">
-							<tr>
-								<th><span class="glyphicon glyphicon-calendar"></span> Aujourd'hui <?php echo ("<small>" . strftime("(%a %d-%m-%Y)") . "</small>") ?></th>
-								<th>
-									<h4></h4>
-								</th>
-							</tr>
-						</thead>
-						<tbody id="data-list" class="table-item-title">
-							<tr>
-								<td><span class="glyphicon glyphicon-download"></span> Dossiers reçus </td>
-								<td>
-									<?php
-										// Affichage du nombre de dossiers reçus dans la journée
-										$result = nbDossiersRecus($link);
-										echo $result["nbDossiersRecus"];
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><span class="glyphicon glyphicon-pencil"></span> Dossiers à traiter</td>
-								<td>
-									<?php
-										// Affichage du nombre de dossiers restant à traiter dans la journée
-										$result = nbDossiersATraiter($link);
-										echo $result["nbDossiersAtraiter"];
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><span class="glyphicon glyphicon-alert"></span> Dossiers classés sans suite</td>
-								<td>
-									<?php
-										// Affichage du nombre de dossiers classés sans suite dans la journée
-										$result = nbDossiersClasses($link);
-										echo $result["nbDossiersClasses"];
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><span class="glyphicon glyphicon-ok"></span> Dossiers terminés</td>
-								<td>
-									<?php
-										// Affichage du nombre de dossiers terminés dans la journée
-										$result = nbDossiersTermines($link);
-										echo $result["nbDossiersTermines"];
-									?>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+	<div class="container">
+		<div class="row container-accueil">
+			<div class="col-sm-6 ">
+				<table class="table table-striped police">
+					<thead class="titre">
+						<tr class="titre">
+							<th><span class="glyphicon glyphicon-calendar"></span> Aujourd'hui <?php echo ("<small>" . strftime("(%a %d-%m-%Y)") . "</small>") ?></th>
+							<th>
+								<h4></h4>
+							</th>
+						</tr>
+					</thead>
+					<tbody id="data-list">
+						<tr>
+							<td><span class="glyphicon glyphicon-download"></span> Dossiers reçus </td>
+							<td>
+								<?php echo nbDossiersRecus($link)["nbDossiersRecus"]; ?>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="glyphicon glyphicon-pencil"></span> Dossiers à traiter</td>
+							<td>
+								<?php echo nbDossiersATraiter($link)["nbDossiersAtraiter"]; ?>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="glyphicon glyphicon-alert"></span> Dossiers classés sans suite</td>
+							<td>
+								<?php echo nbDossiersClasses($link)["nbDossiersClasses"]; ?>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="glyphicon glyphicon-ok"></span> Dossiers terminés</td>
+							<td>
+								<?php echo nbDossiersTermines($link)["nbDossiersTermines"]; ?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
-				<div class="col-sm-6">
-					<table class="table table-striped">
-						<thead class="table-header-title">
-							<tr>
-								<th><span class="glyphicon glyphicon-edit"></span> Nombre total de dossiers à traiter</th>
-							</tr>
-						</thead>
-						<tbody id="data-list" class="table-item-title">
-							<tr>
-								<td class="text-center">
-									<?php
-										// Affichage du nombre total de dossier à traiter
-										$result = nbDossiersATraiterTotal($link);
-										echo $result["nbDossiersAtraiterTotal"];
-									?>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<div class="col-sm-6">
+				<table class="table table-striped police">
+					<thead>
+						<tr class="titre">
+							<th><span class="glyphicon glyphicon-edit"></span> Nombre total de dossiers à traiter</th>
+						</tr>
+					</thead>
+					<tbody id="data-list">
+						<tr>
+							<td class="text-center">
+								<?php echo nbDossiersATraiterTotal($link)["nbDossiersAtraiterTotal"]; ?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</body>

@@ -4,25 +4,15 @@
 /*   FICHIER CONTENANT LES FONCTIONS PHP UTILISÉES POUR LE SITE   */
 
 /******************************************************************/
-
 // Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
 // Puis par ordre alphabétique
 
 /*------------------------------------------------------------------
- 	VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES
+ 	IMPORTATION DES VARIABLES D'ENVIRONNEMENT DU FICHIER '.env'
 ------------------------------------------------------------------*/
-
-define("HOST", "localhost");    // Nom du host
-define("USER", "root");         // Nom d'utilisateur
-define("PWD_MYSQL", "");        // Mot de passe
-define("BD_MYSQL", "bd_cpam");  // Nom de la base de données
-define("PORT", "3306");         // Nom du port de connexion
-
-/*------------------------------------------------------------------
- 	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
-------------------------------------------------------------------*/
-
-define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la racine
+// Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
+chargerVarEnv(__DIR__."/.env", ["SMTP", "smtp_user", "smtp_pwd", "smtp_port", "sendmail_from"]);
+//echo(ini_get("SMTP"));
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
@@ -30,8 +20,6 @@ define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la ra
 
 // Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
 // précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
-define("SENDGRID_API_KEY", "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");    // Clé d'API pour SENDGRID
-define("SENDER_EMAIL_ADDRESS", "no-reply-pjpe-cpam@yopmail.com");
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
 define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
 define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
@@ -40,12 +28,111 @@ define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");             
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
+/* Renvoie les lignes du fichier '$filename' de format ENV dans une liste */
+function chargerFichierEnv($filename) {
+    $res = [];
+    
+    try {
+        // Caractère indiquant un commentaire
+        $CHAR_COMMENT = "#";
+        // Délimiteur de ligne
+        $CHAR_DELIMITER = ";";
+        // Les caractères à ne pas tenir compte (par exemple : '"')
+        $CHAR_ESCAPE = array("'", "\"", ";", " ", "\n", "\r", "\t");
+
+        // Chargement du fichier
+        $fichier = fopen($filename, 'rb');
+        
+        $res = [];
+        // Tant qu'on est pas à la dernière ligne du fichier
+        while(!feof($fichier)){
+            // Chargement de la ligne suivante
+            $ligne = fgets($fichier);
+            
+            // Si la ligne n'est pas vide
+            if($ligne != "") {
+                /* GESTION DES COMMENTAIRES */
+                $pos_comment = strpos($ligne, $CHAR_COMMENT); // Position d'un éventuel commentaire
+
+                // S'il y a bien un commentaire
+                if($pos_comment !== False || $ligne[0] == $CHAR_COMMENT) {
+                    $ligne = substr($ligne, 0, $pos_comment); // Suppression du commentaire
+                }
+                
+                $ligne = str_replace($CHAR_ESCAPE, "", $ligne); // Supresseion des caractères inutiles
+
+                if($ligne != "") {
+                    $res[] = $ligne;
+                }
+            }
+        }
+        fclose($fichier);
+    } catch (Exception $e) {}
+
+    return $res;
+}
+
+/* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
+/* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
+function chargerVarEnv($nomDeFichier, $listeVariablesIni) {
+    $lignes = chargerFichierEnv($nomDeFichier);
+
+    foreach ($lignes as $ligne) {
+        // Insertion des valeurs dans le tableau getenv()
+        putenv($ligne);
+
+        $arg = explode("=", $ligne);
+        if(in_array($arg[0], $listeVariablesIni)) {
+            ini_set($arg[0], $arg[1]);
+        }
+    }
+}
+
+/* Renvoie le chemin permettant d'accéder au serveur FTP */
+function cheminVersServeurFTP() {
+    $chemin = "ftp://".getenv("FTP_USER").":";
+    $chemin .= getenv("FTP_PWD")."@";
+    $chemin .= getenv("FTP_HOST").":";
+    $chemin .= getenv("FTP_PORT")."/";
+
+    return $chemin;
+}
+
+/* Connecte au serveur FTP */
+function connecterServeurFTP() {    
+    // Mise en place d'une connexion basique
+    $ftp_stream = ftp_connect(
+        getenv("FTP_HOST")) or 
+        die("Erreur : Impossible de se connecter à ".getenv("FTP_HOST")." !<br>"); 
+
+    //Tentative d'identification
+    if(ftp_login($ftp_stream, getenv("FTP_USER"), getenv("FTP_PWD"))) {
+        //echo "Connecté en tant que ".getent("FTP_USER")."@".FTP_HOST." ...<br>";
+    
+        // Activation du mode passif
+        ftp_pasv($ftp_stream, true);
+
+        return $ftp_stream;
+    }
+    else {            
+        echo "Erreur lors de l'identification !<br>";
+        echo "Connexion impossible en tant que ".getenv("FTP_USER")." ...<br>";
+        return NULL;
+    }
+}
 
 /* Connecte à la base de données */
 function connecterBD() {
     // Connexion à la base données avec une lecture encodée en UTF-8
     // (NB : Renseigner les variables de connexion plus haut)
-    $link = mysqli_connect(HOST, USER, PWD_MYSQL, BD_MYSQL, PORT);
+    $link = mysqli_connect(
+        getenv('MYSQL_HOST'),
+        getenv('MYSQL_USER'),
+        getenv('MYSQL_PWD'),
+        getenv('MYSQL_BD'),
+        getenv('MYSQL_PORT')
+    );
+
     mysqli_query($link, 'SET NAMES utf8');
 
     // Vérification de la connexion
@@ -55,7 +142,7 @@ function connecterBD() {
         echo "Erreur de débogage : " . mysqli_connect_error() . "<br>";
         exit;
     } else {
-        if (mysqli_select_db($link, BD_MYSQL) == null) {
+        if (mysqli_select_db($link, getenv('MYSQL_BD')) == null) {
             echo ("<p> Vérifier que la base de données est bien sur MariaDB </p>");
             return null;
         }
@@ -99,6 +186,18 @@ function redirigerVers($nomPage) {
     exit;
 }
 
+/* Redirige vers la page de connexion technicien pour qu'il s'identifie */
+function demandeDeConnexion() {
+    $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']),'https') 
+    === FALSE ? 'http' : 'https';
+    $host     = $_SERVER['HTTP_HOST'];
+    $script   = $_SERVER['SCRIPT_NAME'];
+    $params   = $_SERVER['QUERY_STRING'];
+    $host = $_SERVER['HTTP_HOST'];
+    $url = $protocol . '://' . $host . $script . '?' . $params;
+    
+    redirigerVers("se_connecter.php?redirect=$url");
+}
 
 /*------------------------------------------------------------------
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
@@ -152,18 +251,30 @@ function chercherREFAvecCodeD($codeDossier, $link) {
     return mysqli_fetch_array($result);
 }
 
-/* Crée le répertoire ayant pour nom '$ref' à l'emplacement 'STORAGE_PATH/$nirA' (cf. haut de page) */
-/* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireAM($ref, $nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir . "/" . $ref;
-    return mkdir($dirname);
+/* Renvoie le nombre de justificatifs d'un dossier ayant le mnémonique $mnemo */
+/* => [Entier positif] */
+function compterPJDansDossierAvecMnemo($codeAssure, $codeDossier, $codeMnemonique, $link) {   
+    $query = "SELECT COUNT(*) AS NombreJustificatif "
+            ."FROM Assure A, Dossier D, Justificatif J, ListeMnemonique M "
+            ."WHERE A.CodeA = D.CodeA AND D.CodeD = J.CodeD AND M.CodeM = J.CodeM "
+            ."AND A.CodeA = $codeAssure AND D.CodeD = $codeDossier AND J.CodeM = $codeMnemonique";
+    $result = mysqli_query($link, $query);
+    
+    return mysqli_fetch_array($result)["NombreJustificatif"];
 }
 
-/* Crée un répertoire ayant pour nom '$nir' à l'emplacement 'STORAGE_PATH' (cf. haut de page) */
+/* Crée le répertoire ayant pour nom '$ref' à l'emplacement ' getenv("STORAGE_PATH")/$nirA' (cf. haut de page) */
 /* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
-function creerRepertoireNIR($nir) {
-    $dirname = dirname("../" . STORAGE_PATH) . "/" . basename("../" . STORAGE_PATH) . "/" . $nir;
-    return mkdir($dirname);
+function creerRepertoireAM($ftp_stream, $ref, $nir) {
+    $dirname =  getenv("STORAGE_PATH"). "/$nir/$ref";
+    return ftp_mkdir($ftp_stream, $dirname);
+}
+
+/* Crée un répertoire ayant pour nom '$nir' à l'emplacement ' getenv("STORAGE_PATH")' (cf. haut de page) */
+/* => [Vrai si le répertoire de l'assuré a bien été créé, Faux sinon] */
+function creerRepertoireNIR($ftp_stream, $nir) {
+    $dirname =  getenv("STORAGE_PATH"). "/$nir";
+    return ftp_mkdir($ftp_stream, $dirname);
 }
 
 /* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
@@ -227,7 +338,7 @@ function enregistrerDossier($codeAssure, $dateAM, $ref, $link) {
 
 /* Enregistre les informations concernant un nouveau fichier */
 /* => [Vrai si les informations du fichier ont bien été enregistrées, Faux sinon] */
-function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $codeMnemonique, $link) {
+function enregistrerFichier($cheminJustificatif, $codeDossier, $codeMnemonique, $link) {
     $keys = ""; $values = "";
     if ($cheminJustificatif != NULL) {
         $keys .= "CheminJ, "; $values .= "'" . $cheminJustificatif . "', ";
@@ -249,34 +360,34 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
     return mysqli_query($link, $query);
 }
 
-/* Enregistre les fichiers de '$listeFichiers' à l'emplacement 'STORAGE_PATH/$nirA/$refD' */
+/* Enregistre les fichiers de '$listeFichiers' à l'emplacement ' getenv("STORAGE_PATH")/$nirA/$refD' */
 /* => [Liste(A : Booléen, B : Chaîne de caractères, C : Chaîne de caractères)]  */
 /*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
 /*      => B = Nom du fichier téléchargé                                        */
 /*      => C = Mnémonique complet affilié au fichier                            */
-function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
+function enregistrerFichiers($ftp_stream, $listeFichiers, 
+    $codeAssure, $nir, $codeDossier, $ref, $link) {
     $resultats = array();
+
     foreach ($listeFichiers as $key => $fichier) {
-        $j = 0;
+        $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
+
+        $j = compterPJDansDossierAvecMnemo(
+            $codeAssure, $codeDossier, $mnemonique["CodeM"], $link
+        ) + 1;
+
         for ($i = 0; $i < count($fichier['name']); $i++) {
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir = "../" . STORAGE_PATH . "/" . $nir . "/" . $ref;
+                $target_dir =  getenv("STORAGE_PATH") . "/$nir/$ref";
                 $ext = strtolower(pathinfo($file)['extension']);
+                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
 
-                do {
-                    $j++;
-                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
-                } while(fichierExiste($link, $cheminJustificatif));
-
-                $codeAssure = chercherAssureAvecNIR($nir, $link)["CodeA"];
-                $codeDossier = chercherDossierAvecREF($ref, $link)["CodeD"];
-                $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
-                if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                if (enregistrerFichier($cheminJustificatif, $codeDossier, $mnemonique["CodeM"], $link)) {
+                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_BINARY)) {
                         $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);
@@ -284,6 +395,7 @@ function enregistrerFichiers($listeFichiers, $ref, $nir, $link) {
                 } else {
                     $resultats[] = array(FALSE, $file, $designation);
                 }
+                $j++;
             }
         }
     }
@@ -335,7 +447,7 @@ function fichierExiste($link, $chemin){
 /* => [Vrai si le technicien est bien authentifié, Faux sinon] */
 function authentifierTechnicien($link, $matricule, $mdpT) {
     $query = "SELECT Matricule, MdpT "
-            ."FROM Technicien T "
+            ."FROM technicien "
             ."WHERE Matricule = '$matricule' "
             ."AND MdpT = '$mdpT'";
     $result = mysqli_query($link, $query);
@@ -504,7 +616,7 @@ function envoyerMail($to, $subject, $content, $type) {
 
     // Initialisation de l'email
     $email = new \SendGrid\Mail\Mail(); 
-    $email->setFrom(SENDER_EMAIL_ADDRESS);
+    $email->setFrom(getenv("SENDER_EMAIL_ADDRESS"));
     $email->setSubject($subject);
     try {
         $email->addTo($to);
@@ -516,7 +628,7 @@ function envoyerMail($to, $subject, $content, $type) {
     else $email->addContent("text/html", $content);
 
     //Création de l'objet Sendgrid
-    $sendgrid = new \SendGrid(SENDGRID_API_KEY);
+    $sendgrid = new \SendGrid(getenv("SENDGRID_API_KEY"));
     try {
         $response = $sendgrid->send($email);
         /*print $response->statusCode() . "\n";

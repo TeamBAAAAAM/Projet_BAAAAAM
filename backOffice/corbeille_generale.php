@@ -5,14 +5,14 @@
     // Connexion à la BD
     $link = connecterBD();
 	
-	// Récupération des données du technicien
-	if(isset($_SESSION["matricule"])){ // Si le technicien est bien connecté
+	// Récupération des données du technicien pour affichage s'il est connecté
+	if(isset($_SESSION["matricule"])){
 		$matricule = $_SESSION["matricule"];
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else { // Sinon, il est redirigé vers la page de connexion
-		redirigerVers("se_connecter.php");
+	} else { // Redirection sinon	
+		demandeDeConnexion();
 	}
 ?>
 <!DOCTYPE html>
@@ -169,15 +169,14 @@
 						if($donnees['StatutD'] == "À traiter")  {
 							$class =  "btn btn-success";
 							$icon = "glyphicon-plus";
-							$variables = "codeD=".$donnees['CodeD']."&statut=En cours";
-						}
-						else {
+							$variables = "codeD=".$donnees['CodeD']."&statut=En cours"; // Le statut passera automatiquement à "En cours"
+						} else { // S'il n'est pas "A traiter", le dossier est consultable
 							$class =  "btn btn-primary";
 							$icon = "glyphicon-search";
 							$variables = "codeD=".$donnees['CodeD'];
-						}
-						
-						// Afficha du bouton (lien) vers la page permettant le traitement d'un dossier
+						}						
+						// Passage du code et/ou du statut du dossier par la méthode GET
+						// pour gérer l'affichage sur traiter.php
 						echo("<a href='traiter.php?$variables' class='$class' role='button'>
 							<span class='glyphicon $icon'></span>
 						</a>");
