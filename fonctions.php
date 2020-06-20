@@ -30,8 +30,14 @@ define("PORT", "3306");         // Numéro du port de connexion
 /*------------------------------------------------------------------
  	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES
 ------------------------------------------------------------------*/
+<<<<<<< Updated upstream
 
 define("STORAGE_PATH", "piecesJustificatives");     // N.B. : À partir de la racine
+=======
+// Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
+chargerVarEnv(__DIR__."/.env", ["SMTP", "smtp_user", "smtp_pwd", "smtp_port", "sendmail_from"]);
+//echo(ini_get("SMTP"));
+>>>>>>> Stashed changes
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
@@ -50,6 +56,79 @@ define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");             
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
 
+<<<<<<< Updated upstream
+=======
+/* Renvoie les lignes du fichier '$filename' de format ENV dans une liste */
+function chargerFichierEnv($filename) {
+    $res = [];
+    
+    try {
+        // Caractère indiquant un commentaire
+        $CHAR_COMMENT = "#";
+        // Délimiteur de ligne
+        $CHAR_DELIMITER = ";";
+        // Les caractères à ne pas tenir compte (par exemple : '"')
+        $CHAR_ESCAPE = array("'", "\"", ";", " ", "\n", "\r", "\t");
+
+        // Chargement du fichier
+        $fichier = fopen($filename, 'rb');
+        
+        $res = [];
+        // Tant qu'on est pas à la dernière ligne du fichier
+        while(!feof($fichier)){
+            // Chargement de la ligne suivante
+            $ligne = fgets($fichier);
+            
+            // Si la ligne n'est pas vide
+            if($ligne != "") {
+                /* GESTION DES COMMENTAIRES */
+                $pos_comment = strpos($ligne, $CHAR_COMMENT); // Position d'un éventuel commentaire
+
+                // S'il y a bien un commentaire
+                if($pos_comment !== False || $ligne[0] == $CHAR_COMMENT) {
+                    $ligne = substr($ligne, 0, $pos_comment); // Suppression du commentaire
+                }
+                
+                $ligne = str_replace($CHAR_ESCAPE, "", $ligne); // Supresseion des caractères inutiles
+
+                if($ligne != "") {
+                    $res[] = $ligne;
+                }
+            }
+        }
+        fclose($fichier);
+    } catch (Exception $e) {}
+
+    return $res;
+}
+
+/* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
+/* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
+function chargerVarEnv($nomDeFichier, $listeVariablesIni) {
+    $lignes = chargerFichierEnv($nomDeFichier);
+
+    foreach ($lignes as $ligne) {
+        // Insertion des valeurs dans le tableau getenv()
+        putenv($ligne);
+
+        $arg = explode("=", $ligne);
+        if(in_array($arg[0], $listeVariablesIni)) {
+            ini_set($arg[0], $arg[1]);
+        }
+    }
+}
+
+/* Renvoie le chemin permettant d'accéder au serveur FTP */
+function cheminVersServeurFTP() {
+    $chemin = "ftp://".getenv("FTP_USER").":";
+    $chemin .= getenv("FTP_PWD")."@";
+    $chemin .= getenv("FTP_HOST").":";
+    $chemin .= getenv("FTP_PORT")."/";
+
+    return $chemin;
+}
+
+>>>>>>> Stashed changes
 /* Connecte au serveur FTP */
 function connecterServeurFTP() {    
     // Mise en place d'une connexion basique
@@ -129,6 +208,18 @@ function redirigerVers($nomPage) {
     exit;
 }
 
+/* Redirige vers la page de connexion technicien pour qu'il s'identifie */
+function demandeDeConnexion() {
+    $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']),'https') 
+    === FALSE ? 'http' : 'https';
+    $host     = $_SERVER['HTTP_HOST'];
+    $script   = $_SERVER['SCRIPT_NAME'];
+    $params   = $_SERVER['QUERY_STRING'];
+    $host = $_SERVER['HTTP_HOST'];
+    $url = $protocol . '://' . $host . $script . '?' . $params;
+    
+    redirigerVers("se_connecter.php?redirect=$url");
+}
 
 /*------------------------------------------------------------------
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
