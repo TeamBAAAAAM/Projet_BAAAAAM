@@ -11,7 +11,8 @@
  	IMPORTATION DES VARIABLES D'ENVIRONNEMENT DU FICHIER '.env'
 ------------------------------------------------------------------*/
 // Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
-chargerVarEnv(__DIR__."/.env");
+chargerVarEnv(__DIR__."/.env", ["SMTP", "smtp_user", "smtp_pwd", "smtp_port", "sendmail_from"]);
+//echo(ini_get("SMTP"));
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
@@ -27,7 +28,6 @@ define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");             
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
-
 /* Renvoie les lignes du fichier '$filename' de format ENV dans une liste */
 function chargerFichierEnv($filename) {
     $res = [];
@@ -73,19 +73,18 @@ function chargerFichierEnv($filename) {
 }
 
 /* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
-function chargerVarEnv($nomDeFichier) {
-    //require("load_env.php");
+/* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
+function chargerVarEnv($nomDeFichier, $listeVariablesIni) {
     $lignes = chargerFichierEnv($nomDeFichier);
 
     foreach ($lignes as $ligne) {
         // Insertion des valeurs dans le tableau getenv()
         putenv($ligne);
 
-        /* if(putenv($ligne)) {
-            echo "Ajout de la ligne $ligne réussi !<br>";
-            echo "'".getenv(explode("=", $ligne)[0])."'<br>";
+        $arg = explode("=", $ligne);
+        if(in_array($arg[0], $listeVariablesIni)) {
+            ini_set($arg[0], $arg[1]);
         }
-        else echo "Ajout de la ligne $ligne échoué !<br>";*/
     }
 }
 
@@ -187,6 +186,18 @@ function redirigerVers($nomPage) {
     exit;
 }
 
+/* Redirige vers la page de connexion technicien pour qu'il s'identifie */
+function demandeDeConnexion() {
+    $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']),'https') 
+    === FALSE ? 'http' : 'https';
+    $host     = $_SERVER['HTTP_HOST'];
+    $script   = $_SERVER['SCRIPT_NAME'];
+    $params   = $_SERVER['QUERY_STRING'];
+    $host = $_SERVER['HTTP_HOST'];
+    $url = $protocol . '://' . $host . $script . '?' . $params;
+    
+    redirigerVers("se_connecter.php?redirect=$url");
+}
 
 /*------------------------------------------------------------------
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
