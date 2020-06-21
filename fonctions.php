@@ -625,12 +625,12 @@ function envoyerMail($to, $subject, $content, $type) {
 
     try {
         //Server settings
-        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                    // Enable verbose debug output
         $mail->isSMTP();                                            // Send using SMTP
         $mail->Host       = getenv("SMTP_HOST");                    // Set the SMTP server to send through
         $mail->SMTPAuth   = True;                                   // Enable SMTP authentication
-        $mail->Username   = getenv("SMTP_USERNAME");                // SMTP username
-        $mail->Password   = getenv("SMTP_PASSWORD");                // SMTP password
+        $mail->Username   = getenv("SMTP_USER");                    // SMTP username
+        $mail->Password   = getenv("SMTP_PWD");                     // SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
         $mail->Port       = getenv("SMTP_PORT");                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
