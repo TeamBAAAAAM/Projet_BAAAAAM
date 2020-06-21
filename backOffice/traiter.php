@@ -153,16 +153,16 @@
 							$messagesAssure = listeMessages($codeAssure, $link);
 						} else {						
 							GenererMessage (
-								"Erreur lors de l\'enregistrement !",
-								"Votre message n\'a pas pu être enregistré !",
+								"Erreur lors de l'enregistrement !",
+								"Votre message n'a pas pu être enregistré !",
 								"remove",
 								"danger"
 							);
 						}
 					} else {				
 						GenererMessage (
-							"Erreur lors de l\'envoi !",
-							"Votre message n\'a pas pu être envoyé !",
+							"Erreur lors de l'envoi !",
+							"Votre message n'a pas pu être envoyé !",
 							"remove",
 							"danger"
 						);
@@ -270,7 +270,7 @@
 							if($message == null) {
 								genererMessage(
 									"Aucune correspondance !",
-									"Aucun message enregistré n\'est affilié à cet assuré.",
+									"Aucun message enregistré n'est affilié à cet assuré.",
 									"floppy-disk",
 									"warning"
 								);
