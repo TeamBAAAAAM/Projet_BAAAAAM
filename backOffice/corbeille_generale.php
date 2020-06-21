@@ -11,8 +11,8 @@
 		$codeT = $_SESSION["codeT"];
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
-	} else { // Redirection sinon	
-		demandeDeConnexion();
+	} else { // Redirection sinon
+		redirigerVers("se_connecter.php");
 	}
 ?>
 <!DOCTYPE html>

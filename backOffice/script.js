@@ -32,13 +32,13 @@ $(document).ready(function(){
 
     // Affichage d'un bouton de suppression lors du survol
     $(".alert").hover(function() {
-        // Création du bouton de suppression
+        //Création du bouton de suppression
         var elt = document.createElement("span");
         elt.id = "msg_close";
         elt.className = "glyphicon glyphicon-remove";
         $(this).find(".alert-title").append(elt);
 
-        // Initialisation de l'évènement "clique"
+        //Initialisation de l'évènement "clique"
         $("#msg_close").click(function() {
             // On cache le message parent le plus proche
             $(this).closest(".alert").hide(400, function(){
@@ -100,7 +100,7 @@ function checkFormatMatricule(format) {
 
 //Fonction qui gère modifie le lien vers l'aperçu
 function updateViewer(path) {
-    $("iframe#apercu").attr("src", path);
+    $("#apercu").attr("src", path);
 }
 
 //Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
@@ -280,13 +280,4 @@ function confirmationAnnulation(event) {
     if(confirm("Êtes-vous bien sûr de vouloir annuler votre saisie ?")) {
         window.location = event.target.href; // Redirection vers le lien de l'attribut 'href'
     }
-}
-
-/* Gère la taille du contenu de la zone d'aperçu (script de traitement de fichier) */
-function gestionTailleApercu () {
-    try { // Pour retirer l'erreur du au chargment d'un document
-        var iframe = document.getElementById("apercu");
-        var elt = iframe.contentWindow.document.getElementsByTagName("body")[0];
-        elt.firstChild.style.width = "100%";
-    } catch (error) {} // Pas d'erreur à afficher
 }

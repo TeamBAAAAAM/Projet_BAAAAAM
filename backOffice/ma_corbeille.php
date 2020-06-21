@@ -12,7 +12,7 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else { // Redirection sinon
-		demandeDeConnexion();
+		redirigerVers("se_connecter.php");
 	}
 ?>
 <!DOCTYPE html>

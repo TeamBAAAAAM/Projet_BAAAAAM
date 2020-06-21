@@ -139,12 +139,10 @@ body {
     height: 45px;
     margin-right: 10px;
 }
-#panel-apercu .panel-body,
-#panel-pjs .panel-body {
-    padding: 0;
-}
 
-#panel-pjs .panel-body {
+#panel-pjs .panel-body,
+#panel-apercu .panel-body {
+    padding: 0;
     overflow-y: scroll;
 }
 
