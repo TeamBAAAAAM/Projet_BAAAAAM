@@ -8,11 +8,17 @@
 // Puis par ordre alphabétique
 
 /*------------------------------------------------------------------
+ 	IMPORTATION DES CLASSES PHPMailer
+------------------------------------------------------------------*/
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+/*------------------------------------------------------------------
  	IMPORTATION DES VARIABLES D'ENVIRONNEMENT DU FICHIER '.env'
 ------------------------------------------------------------------*/
 // Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
-chargerVarEnv(__DIR__."/.env", ["SMTP", "smtp_user", "smtp_pwd", "smtp_port", "sendmail_from"]);
-//echo(ini_get("SMTP"));
+chargerVarEnv(__DIR__."/.env");
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
@@ -38,7 +44,7 @@ function chargerFichierEnv($filename) {
         // Délimiteur de ligne
         $CHAR_DELIMITER = ";";
         // Les caractères à ne pas tenir compte (par exemple : '"')
-        $CHAR_ESCAPE = array("'", "\"", ";", " ", "\n", "\r", "\t");
+        $CHAR_ESCAPE = array("'", "\"", ";", "\n", "\r", "\t");
 
         // Chargement du fichier
         $fichier = fopen($filename, 'rb');
@@ -62,7 +68,12 @@ function chargerFichierEnv($filename) {
                 $ligne = str_replace($CHAR_ESCAPE, "", $ligne); // Supresseion des caractères inutiles
 
                 if($ligne != "") {
-                    $res[] = $ligne;
+                    try {
+                        $arg = explode("=", $ligne);
+                        $arg[0] = trim($arg[0]); //Supression des espaces avant et après de la clé
+                        $arg[1] = trim($arg[1]); //Supression des espaces avant et après de la valeur
+                        $res[] = implode("=", $arg);
+                    } catch (Exception $e) {}
                 }
             }
         }
@@ -74,17 +85,12 @@ function chargerFichierEnv($filename) {
 
 /* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
 /* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
-function chargerVarEnv($nomDeFichier, $listeVariablesIni) {
+function chargerVarEnv($nomDeFichier) {
     $lignes = chargerFichierEnv($nomDeFichier);
 
     foreach ($lignes as $ligne) {
         // Insertion des valeurs dans le tableau getenv()
         putenv($ligne);
-
-        $arg = explode("=", $ligne);
-        if(in_array($arg[0], $listeVariablesIni)) {
-            ini_set($arg[0], $arg[1]);
-        }
     }
 }
 
@@ -611,33 +617,53 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
 /*                              => 'text/plain' : Message standard                  */
 /* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
 function envoyerMail($to, $subject, $content, $type) {
-    // Importation du fichier permettant l'utilisation des focntions SendGrid
-    require 'sendgrid/vendor/autoload.php';
+    // Load Composer's autoloader
+    require 'vendor/autoload.php';
 
-    // Initialisation de l'email
-    $email = new \SendGrid\Mail\Mail(); 
-    $email->setFrom(getenv("SENDER_EMAIL_ADDRESS"));
-    $email->setSubject($subject);
-    try {
-        $email->addTo($to);
-    } catch (Exception $e) {
-        return false;
-    }
-    
-    if($type == "text/plain") $email->addContent("text/html", $content."<hr><br>".FOOTER_EMAIL);
-    else $email->addContent("text/html", $content);
+    // Instantiation and passing `true` enables exceptions
+    $mail = new PHPMailer(true);
 
-    //Création de l'objet Sendgrid
-    $sendgrid = new \SendGrid(getenv("SENDGRID_API_KEY"));
     try {
-        $response = $sendgrid->send($email);
-        /*print $response->statusCode() . "\n";
-        print_r($response->headers());
-        print $response->body() . "\n";*/
-        return true;
+        //Server settings
+        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+        $mail->isSMTP();                                            // Send using SMTP
+        $mail->Host       = getenv("smtp_host");                    // Set the SMTP server to send through
+        $mail->SMTPAuth   = True;                                   // Enable SMTP authentication
+        $mail->Username   = getenv("smtp_username");                // SMTP username
+        $mail->Password   = getenv("smtp_password");                // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+        $mail->Port       = getenv("smtp_port");                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+        //Recipients
+        $mail->setFrom(getenv("sendmail_from"), getenv("sendmail_name"));
+        $mail->addAddress($to);                                 // Add a recipient
+        //$mail->addAddress('ellen@example.com', 'name');       // Add a recipient with name
+        //$mail->addReplyTo('info@example.com', 'Information');
+        //$mail->addCC('cc@example.com');
+        //$mail->addBCC('bcc@example.com');
+
+        // Attachments
+        //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+
+        // Content
+        if($type == "text/html") {        
+            $mail->isHTML(True);                                // $Content in HTML
+        }
+        else {
+            $mail->isHTML(False);                               // $Content not in HTML
+        }
+
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = $subject;
+        $mail->Body    = $content;
+        $mail->AltBody = $content;
+
+        $mail->send();
+        
+        return True;
     } catch (Exception $e) {
-        //echo 'Caught exception: '. $e->getMessage() ."\n";
-        return false;
+        return False;
     }
 }
 
