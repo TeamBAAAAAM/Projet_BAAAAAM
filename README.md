@@ -69,7 +69,7 @@ STORAGE_PATH=_____________________________# N.B. : À partir de la racine [STORA
 SMTP_HOST=________________________________# Nom du host [SMTP_HOST]<br>
 SMTP_PORT=________________________________# Numéro du port [SMTP_PORT]<br>
 SMTP_USER=________________________________# Nom d'utilisateur [SMTP_USER]<br>
-SMTP_PwD=_________________________________# Mot de passe [SMTP_PWD]<br>
+SMTP_PWD=_________________________________# Mot de passe [SMTP_PWD]<br>
 SENDMAIL_FROM=____________________________# Adresse mail de l'expéditeur [SENDMAIL_FROM]<br>
 SENDMAIL_NAME=____________________________# Nom de l'expéditeur [SENDMAIL_NAME]<br>
 </p>
