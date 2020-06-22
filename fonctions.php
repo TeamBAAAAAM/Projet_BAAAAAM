@@ -344,7 +344,7 @@ function enregistrerDossier($codeAssure, $dateAM, $ref, $link) {
 
 /* Enregistre les informations concernant un nouveau fichier */
 /* => [Vrai si les informations du fichier ont bien été enregistrées, Faux sinon] */
-function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $codeMnemonique, $link) {
+function enregistrerFichier($cheminJustificatif, $codeDossier, $codeMnemonique, $link) {
     $keys = ""; $values = "";
     if ($cheminJustificatif != NULL) {
         $keys .= "CheminJ, "; $values .= "'" . $cheminJustificatif . "', ";
@@ -371,7 +371,6 @@ function enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $cod
 /*      => A = Vrai si l'enregistrement a réussi, Faux sinon                    */
 /*      => B = Nom du fichier téléchargé                                        */
 /*      => C = Mnémonique complet affilié au fichier                            */
-
 function enregistrerFichiers($ftp_stream, $listeFichiers, 
     $codeAssure, $nir, $codeDossier, $ref, $link) {
     $resultats = array();
@@ -393,8 +392,8 @@ function enregistrerFichiers($ftp_stream, $listeFichiers,
 
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
-                if (enregistrerFichier($cheminJustificatif, $codeDossier, $codeAssure, $mnemonique["CodeM"], $link)) {
-                    if (move_uploaded_file($fichier['tmp_name'][$i], $cheminJustificatif)) {
+                if (enregistrerFichier($cheminJustificatif, $codeDossier, $mnemonique["CodeM"], $link)) {
+                    if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_BINARY)) {
                         $resultats[] = array(TRUE, $file, $designation);
                     } else {
                         $resultats[] = array(FALSE, $file, $designation);
