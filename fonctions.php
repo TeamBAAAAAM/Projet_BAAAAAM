@@ -579,7 +579,9 @@ function classBoutonTraiterDossier($sessionValue, $buttonValue, $codeT_dossier, 
 /* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
 /* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
 /* => le statut du dossier courant                                                          */
-function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
+function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant, $statutDossier) {
+    if($statutDossier == "Terminé" || $statutDossier == "Classé sans suite") $text = "disabled";
+    else $text = "";
     switch($sessionValue) {
         case NULL:
             if($codeT_dossier == $codeT_courant) {
@@ -587,9 +589,9 @@ function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $code
                     case NULL:
                         return "btn btn-warning disabled";
                     case "Valide":
-                        return "btn btn-default";
+                        return "btn btn-default $text";
                     case "Invalide":
-                        return "btn btn-default";
+                        return "btn btn-default $text";
                 }
             }
             else { // désactiver les boutons si en cours de traitement par un autre technicien
@@ -607,7 +609,7 @@ function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $code
             if($codeT_dossier == $codeT_courant) {
                 switch ($buttonValue) {
                     case NULL:
-                        return "btn btn-default";
+                        return "btn btn-default $text";
                     case "Valide":
                         return "btn btn-success disabled";
                     case "Invalide":
@@ -629,7 +631,7 @@ function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $code
             if($codeT_dossier == $codeT_courant) {
                 switch ($buttonValue) {
                     case NULL:
-                        return "btn btn-default";
+                        return "btn btn-default $text";
                     case "Valide":
                         return "btn btn-default disabled";
                     case "Invalide":
