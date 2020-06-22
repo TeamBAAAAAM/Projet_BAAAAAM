@@ -470,6 +470,24 @@ function changerStatutDossier($link, $codeDossier, $statut) {
     return $result;
 }
 
+/* Change le statut d'un justificatif de code '$codeJustificatif' en '$statut' */
+/* et affecte ou retirer le code d'un technicien de code '$codeTechnicien' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
+function changerStatutPJ($link, $codeJustificatif, $statut, $codeTechnicien) {
+    $query = "UPDATE justificatif ";
+    if($statut == "NULL") $query .= "SET StatutJ = NULL, ";
+    else $query .= "SET StatutJ = '$statut', ";
+    if($codeTechnicien == Null) $query .= "CodeT = NULL ";
+    else $query .= "CodeT = $codeTechnicien ";
+    $query .= "WHERE CodeJ = $codeJustificatif";
+
+    echo $query;
+    
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
 /* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeDossier' */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
@@ -484,7 +502,8 @@ function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
     return mysqli_fetch_array($result);
 }
 
-/* Renvoie la classe CSS correspondante pour chaque bouton du fichier traiter.php           */
+/* Affiche la classe CSS correspondante pour chaque bouton de traitement de dossier du      */
+/* du fichier traiter.php                                                                   */
 /* => Effectue seulement un affichage (pas de valeur de retour)                             */
 /* => Active ou désactive un bouton permettant de modifier le statut d'un dossier           */
 /* => $sessionValue correspond au statut du dossier en cours ($_SESSION['statut'])          */
@@ -492,7 +511,7 @@ function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
 /* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
 /* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
 /* => le statut du dossier courant                                                          */
-function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
+function classBoutonTraiterDossier($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
             if($codeT_dossier == $codeT_courant) {
@@ -546,6 +565,85 @@ function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
                 case "Terminé":
                     echo "btn btn-success disabled";
                     break;
+            }
+            break;
+    }
+}
+
+/* Renvoie la classe CSS correspondante pour chaque bouton de traitement de PJ du           */
+/* du fichier traiter.php                                                                   */
+/* => Active ou désactive un bouton permettant de modifier le statut d'une PJ               */
+/* => $sessionValue correspond au statut du PJ courant                                      */
+/* => $buttonValue est soit "NULL", soit 'Valide' ou bien 'Invalide'                        */
+/* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
+/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
+/* => le statut du dossier courant                                                          */
+function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
+    switch($sessionValue) {
+        case NULL:
+            if($codeT_dossier == $codeT_courant) {
+                switch($buttonValue) {
+                    case NULL:
+                        return "btn btn-warning disabled";
+                    case "Valide":
+                        return "btn btn-default";
+                    case "Invalide":
+                        return "btn btn-default";
+                }
+            }
+            else { // désactiver les boutons si en cours de traitement par un autre technicien
+                switch($buttonValue) {
+                    case NULL:
+                        return "btn btn-warning disabled";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            break;
+        case "Valide":
+            if($codeT_dossier == $codeT_courant) {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default";
+                    case "Valide":
+                        return "btn btn-success disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            else {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default disabled";
+                    case "Valide":
+                        return "btn btn-success disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            break;
+        case "Invalide":
+            if($codeT_dossier == $codeT_courant) {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-danger disabled";
+                }
+            }
+            else {                
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default disabled";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-danger disabled";
+                }
             }
             break;
     }
@@ -839,9 +937,16 @@ function nbDossiersTermines($link) {
 /* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function recupererJustificatifs($link, $codeDossier) {
-    $query = "SELECT CheminJ, Mnemonique "
+    $query = "SELECT CodeJ, CheminJ, Mnemonique, StatutJ, CodeT AS Matricule "
             ."FROM justificatif j, listemnemonique l "
             ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeT IS NULL "
+            ."AND j.CodeD = '$codeDossier'"
+            ." UNION "
+            ."SELECT CodeJ, CheminJ, Mnemonique, StatutJ, Matricule "
+            ."FROM justificatif j, listemnemonique l, technicien t "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeT = t.CodeT "
             ."AND j.CodeD = '$codeDossier'";
     $result = mysqli_query($link, $query);
 
