@@ -195,37 +195,6 @@ function NaissanceAssure($nir){
     return Array($mois, $annee);
 }
 
-// Mise à jour du message pré-rempli pour demander des pièces à un assuré
-function MAJMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, CodeJ) {
-    var Raisons = [$("#cb1").prop("checked"), $("#cb2").prop("checked"), $("#cb3").prop("checked")];
-    $("#mail_text").val(EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ));
-}
-
-// Génère et renvoie un message pré-rempli pour demander des pièces à un assuré
-function EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ) {
-    var message = "Bonjour,\n\n"
-    message += "\tNous souhaiterions vous informer que lors de votre ";
-    message += "dernier dépôt, certaines pièces justificatives affiliées au dossier ";
-    message += "de référence " + RefD + " semblent ";
-    if(!Raisons[0] && !Raisons[1] && !Raisons[2]) {message += "[Mettre les erreurs relevées ici] ";}
-    if(Raisons[0] && (Raisons[1] || Raisons[2])) message += "manquantes et ";
-    else if(Raisons[0]) message += "manquantes";
-    if(Raisons[1] && Raisons[2]) message += "illisibles et ";
-    else if(Raisons[1]) message += "illisibles";
-    if(Raisons[2]) message += "invalides";
-    message += ".\n\nMerci de vous rendre à l'adresse suivante afin de déposer les documents demandés :\n\n\t";
-    message += "<a href='" + DEPOSITE_LINK + "?RefD=" + RefD + "' target='_blank'>";
-    message += DEPOSITE_LINK + "?RefD=" + RefD + "</a>";
-    for(i = 0 ; i < CodeJ ; i++) {
-        message += "&CodeJ_" + i + "=" + CodeJ[i];
-    }
-    message += "\n\n\tBien cordialement,\n\n";
-    message += "La CPAM de la Haute-Garonne";
-    if(FOOTER_EMAIL != "") message +="\n\n<hr>" + FOOTER_EMAIL;
-
-    return message;
-}
-
 //Génère automatiquement la pagination selon le nombre de ligne afficher
 function GenererPagination() {
     nbLignesParPage = $("#nb_page").val();
@@ -315,7 +284,9 @@ function clickListePJS() {
     for(i in event_elt_pjs) {
         $(event_elt_pjs[i]).click(function() {            
             var parentNode = $(this).parent().parent();
-            $("#panel-pjs li").removeClass("pj-selected");
+            var namefile = $(parentNode).find(".text").text();
+            $("#panel-pjs li").removeClass("pj-selected");            
+            $("#panel-apercu").find("#nom-fichier-apercu").text(namefile);
             $(parentNode).removeClass("pj-hovering");
             $(parentNode).addClass("pj-selected");
         });

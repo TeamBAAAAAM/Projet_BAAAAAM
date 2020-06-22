@@ -164,6 +164,20 @@ body {
     align-items: center;
 }
 
+#panel-pjs .panel-heading h4.row,
+#panel-apercu .panel-heading h4.row {
+    background-color: lightgrey;
+    color: black;
+    font-size: 20px;
+    margin-bottom: 0px;
+    padding: 5px 0px;
+}
+
+#panel-pjs .panel-heading h4.row .glyphicon,
+#panel-apercu .panel-heading h4.row .glyphicon{
+    margin: 0px;
+}
+
 #panel-pjs div.button {
     padding: 0px;
     margin: 0px 2px;

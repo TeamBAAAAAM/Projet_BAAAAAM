@@ -28,8 +28,10 @@ chargerVarEnv(__DIR__."/.env");
 // précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
 define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
+define("MAIL_CONFIRM_TREATMENT", "PJPE - Confirmation de traitement");             // Objet du message de confirmation de traitement
 define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
-define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");                  // Message du footer
+define("FOOTER_EMAIL", 
+    "Ceci est un message automatique. Merci de ne pas y répondre.");               // Message du footer
 
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
@@ -161,9 +163,8 @@ function connecterBD() {
 /* => Chaine de caractère */
 function genererLienSuivi($ref) {
     $host = $_SERVER['HTTP_HOST'];
-    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     
-    return "http://$host$uri/suivi.php?RefD=$ref";
+    return "http://$host/frontOffice/suivi.php?RefD=$ref";
 }
 
 /* Affiche un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
@@ -687,6 +688,49 @@ function dossiersCorbeilleTechnicien($link, $codeTechnicien) {
     return $result;
 }
 
+/* Génère et renvoie un message pré-rempli pour demander des pièces à un assuré */
+/* Séparation nécessaire pour l'insertion des commentaires du technicien */
+/* et empêcher la modification des données principales */
+/* => [Objet de type array de 2 éléments : (0 : partie du haut, 1 : partie du bas) ] */
+function GenererMessageAssure($nomAssure, $prenomAssure, $refDossier) {
+    $haut  = "<!DOCTYPE html>";
+    $haut .= "<html lang='fr'>";
+    $haut .= "   <head>";
+    $haut .= "        <meta charset='utf-8'>";
+    $haut .= "        <meta name='viewport' content='width=device-width, initial-scale=1'>";
+    $haut .= "        <style>";
+    $haut .= "           h3 {margin-bottom: 25px; font-style: italic;}";
+    $haut .= "           p {margin-bottom: 10px;}";
+    $haut .= "           span.esp {margin-right: 20px;}";
+    $haut .= "        </style>";
+    $haut .= "    </head>"; 
+    $haut .= "    <body>";
+
+    $haut .= "    <h3>Bonjour $prenomAssure $nomAssure,</h3>";
+
+    $haut .= "    <p>";
+    $haut .= "      <span class='esp'></span>Nous souhaiterions vous informer que lors de votre ";
+    $haut .= "      dernier dépôt, certaines pièces justificatives affiliées au dossier ";
+    $haut .= "      de référence ".$refDossier." semblent invalides et/ou manquantes.";
+    $haut .= "    </p>";
+    $haut .= "    <p id='comment'>";
+
+    /****** LE COMMENTAIRE DU TECHNICIEN SERA PLACÉ ICI ******/
+
+    $bas = "      </p>";
+    $bas .= "     <p><span class='esp'></span><em>Merci de cliquer sur le lien suivant afin de déposer les documents demandés :</em><br>";
+    $bas .= "     <span class='esp'></span><a href='".DEPOSITE_LINK."?RefD=$refDossier' target='_blank'>".DEPOSITE_LINK."?RefD=$refDossier</a></p>";
+    $bas .= "     <p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
+  
+    $bas .= "     <p><span class='esp'></span>Bien cordialement,</p>";
+    $bas .= "     <h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+    if(FOOTER_EMAIL != "") $bas .="<hr><em>".FOOTER_EMAIL."</em>";
+
+    $bas .= '</body></html>';
+
+    return [$haut, $bas];
+}
+
 /* Enregistre le contenu d'un mail envoyé à l'assuré de code '$codeAssure' par le technicien de code '$codeTechnicien'*/
 /* => [Vrai si l'enregistrement a bien été effectué, Faux sinon] */
 function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link) {
@@ -782,7 +826,7 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
     $content .= '    </head>'; 
     $content .= '    <body>';
 
-    $content .= "<h3>Bonjour $prenomAssure $nomAssure</h3>";
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure,</h3>";
     $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
     $content .= "nous vous confirmons que vos documents ont bien été réceptionnés ";
     $content .= "par nos services.</p>";
@@ -800,7 +844,7 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
 
     // Génération du lien de suivi
     $content .= "<span class='esp'></span><a href='".genererLienSuivi($_SESSION["RefD"])."'>".genererLienSuivi($_SESSION["RefD"])."</a><br>";
-    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre NIR pour vous authentifier.</strong></p>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
     
     $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez les informations relatives à votre ";
     $content .= "dossier :</p>";
@@ -814,6 +858,54 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
     $content .= '</body></html>';
 
     return envoyerMail($to, MAIL_CONFIRM_SUBJECT, $content, "text/html");
+}
+
+/* Envoie un mail de confirmation d'enregistrement de données à l'adresse '$to' */
+/* Pour plus d'informations, consulter la fonction 'envoyerMail()'                */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
+function envoyerMailConfirmationTraitement($prenomAssure, $nomAssure, $refDossier, $to, $statut) {
+    $content  = '<!DOCTYPE html>';
+    $content .= '<html lang="fr">';
+    $content .= '   <head>';
+    $content .= '        <meta charset="utf-8">';
+    $content .= '        <meta name="viewport" content="width=device-width, initial-scale=1">';
+    $content .= '        <style>';
+    $content .= '           h3 {margin-bottom: 25px; font-style: italic;}';
+    $content .= '           p {margin-bottom: 10px;}';
+    $content .= '           span.esp {margin-right: 20px;}';
+    $content .= '        </style>';
+    $content .= '    </head>'; 
+    $content .= '    <body>';
+
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure,</h3>";
+
+    if($statut == "Classé sans suite") {
+        $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+        $content .= "nous vous informons que le traitrement de votre dossier de référence ";
+        $content .= "$refDossier ne nous permet pas de donner un suite favorable. ";
+        $content .= "Les justificatifs que vous nous avez fournis ne permettent pas ";
+        $content .= "d'aboutir au versement de vos indemnités journalières.</p>";
+    }
+    else {
+        $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+        $content .= "nous vous avons le plaisir de vous informer que votre dossier de référence $refDossier ";
+        $content .= "est complet et a été traité par nos services. Vous recevrez vos indemnités journalières ";
+        $content .= "dans les prochains jours.</p>";
+    }
+
+    $content .= "<p><span class='esp'></span>Il vous est toujours possible ";
+    $content .= "de consulter le suivi du traitement de votre dossier via le lien ci-dessous :</p>";
+
+    // Génération du lien de suivi
+    $content .= "<span class='esp'></span><a href='".genererLienSuivi($refDossier)."'>".genererLienSuivi($refDossier)."</a><br>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
+    
+    $content .= "<p><span class='esp'></span>Bien cordialement,</p>";
+    $content .= "<h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+
+    $content .= '</body></html>';
+
+    return envoyerMail($to, MAIL_CONFIRM_TREATMENT, $content, "text/html");
 }
 
 /* Envoie un mail de sujet '$subject' et de contenu '$txt' à l'adresse '$mail' */
@@ -951,6 +1043,30 @@ function recupererJustificatifs($link, $codeDossier) {
     $result = mysqli_query($link, $query);
 
     return $result;
+}
+
+/* Renvoie le nombre de justificatifs correspondant au statut $statutJ */
+/* => [Entier nul ou posiitf] */
+function nbPJsSelonStatut($link, $statutJ, $codeDossier) {
+    $query = "SELECT COUNT(*) AS num "
+            ."FROM justificatif "
+            ."WHERE CodeD = $codeDossier ";
+    if ($statutJ == "NULL") $query .= "AND StatutJ IS NULL";
+    else $query .= "AND StatutJ = '$statutJ'";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result)['num'];
+}
+
+/* Renvoie le nombre de justificatifs correspondant au statut $statutJ */
+/* => [Entier nul ou posiitf] */
+function nbPJsAvecCodeDossier($link, $codeDossier) {
+    $query = "SELECT COUNT(*) AS num "
+            ."FROM justificatif "
+            ."WHERE CodeD = $codeDossier";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result)['num'];
 }
 
 /* Affilie le dossier de code '$codeDossier' au technicien de code '$codeTechnicien' et change son statut en '$statut' */
