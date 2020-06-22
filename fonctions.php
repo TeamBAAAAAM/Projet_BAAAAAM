@@ -209,6 +209,15 @@ function demandeDeConnexion() {
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
 ------------------------------------------------------------------*/
 
+/* Renvoie les catégories d'assuré actives */
+/* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
+function categoriesActives($link) {
+    $query = "SELECT CodeC, NomC, DesignationC FROM categorie WHERE StatutC = 'Actif'";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
 /* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
 /* => [Vrai si le NIR est reconnu, Faux sinon] */
 function assureExiste($nir, $link) {
