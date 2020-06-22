@@ -148,24 +148,55 @@ body {
     overflow-y: scroll;
 }
 
-#panel-pjs li {
+#panel-pjs li.pj-selected h5 {
+    cursor: default;
+}
+
+#panel-pjs a.btn {
+    padding: 0px;
+    padding-top: 4px;
+    border-radius: 20px;
+    height: 26px;
     box-shadow: 1px 1px 3px black;
     cursor: pointer;
+    font-size: 15px;
+    font-weight: none;
+    align-items: center;
 }
 
-#panel-pjs li h5 {
-    margin: 0;
+#panel-pjs div.button {
+    padding: 0px;
+    margin: 0px 2px;
 }
 
-#panel-pjs li:hover {
+#panel-pjs li div.row {
+    height: 100%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
+}
+
+#panel-pjs li div.row div.text{
+    overflow-wrap: anywhere;
+}
+
+.matricule {
+    width: 100%;
+    text-align: right;
+    font-style: italic;
+    font-size: 12px;
+}
+
+.pj-hovering {
     background-color: lightgray;
     box-shadow: 1px 1px 3px black inset;
+    cursor: zoom-in;
 }
 
 .pj-selected {
     color: white;
     background-color: gray;
-    box-shadow: 1px 1px 10px black;
 }
 
 /*------------------------------------------------------
