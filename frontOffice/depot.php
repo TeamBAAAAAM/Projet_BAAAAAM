@@ -80,7 +80,7 @@
         redirigerVers('depot.php?'.$msg); // Passage des varaibles par la méthode GET
     }
 
-    if(isset($_SESSION["Assure"])) {
+    if(isset($_SESSION["Assure"]) && isset($_SESSION["RefD"])) {
         $NirAssure = $_SESSION["Assure"]["NirA"];
         $ReferenceDossier = $_SESSION["RefD"];
         $NomAssure = $_SESSION["Assure"]["NomA"];

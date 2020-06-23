@@ -10,6 +10,13 @@
         session_destroy();
         $_SESSION = array();
     }
+
+    $formPage = "accueil.php"; //La page ciblée lors de l'envoie du formulaire en temps normal
+
+    //Si l'utilisateur a été redirigé vers la page de connexion
+    if(isset($_GET["redirect"])) {
+        $formPage = $_GET["redirect"];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +44,7 @@
             if (empty($_SESSION) && isset($_GET['logout'])) {
                 echo "<div class='container-fluid'>";
                 genererMessage(
-                    "Déconnexion réussi !",
+                    "Déconnexion réussie !",
                     "Vous avez été correctement déconnecter.",
                     "log-out",
                     "success"
@@ -46,7 +53,7 @@
             }
         ?>
         <div id="connexion" class="container container_sign">            
-            <form action="accueil.php" method="POST">                
+            <form action="<?php echo $formPage;?>" method="POST">                
                 <h2><span class="glyphicon glyphicon-log-in"></span> Connectez-vous !</h2>
                 
                 
