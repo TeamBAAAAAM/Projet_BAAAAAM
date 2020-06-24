@@ -769,7 +769,7 @@ function listeCategorie($link) {
 }
 /* Retourne les catégories actives */
 function categorieActif($link) {
-    $query = "SELECT NomC, DesignationC "
+    $query = "SELECT * "
             ."FROM categorie c "
             ."WHERE c.StatutC = 'Actif'";
 
@@ -786,7 +786,7 @@ function categorieInactif($link) {
 }
 /* Retourne la liste des mnémoniques */
 function listeMnemonique($link) {
-    $query = "SELECT Mnemonique  "
+    $query = "SELECT *  "
             ."FROM listemnemonique ";
             
     return mysqli_query($link, $query);  
