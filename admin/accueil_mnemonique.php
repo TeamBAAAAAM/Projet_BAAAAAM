@@ -84,11 +84,11 @@ and open the template in the editor.
                                                                            
 					for ($i = 0; $i < $rows ; $i++){
 						$donnees = mysqli_fetch_array($result);
-                                                
+                                              
 						echo ("<tr>
 									<td>".$donnees['Mnemonique']."</td>
 									<td>".$donnees['Designation']."</td>
-                                                                        <td><a href='modifier_mnemonique.php'?id=".$donnees['CodeM']."><i class='glyphicon glyphicon-pencil'></i></a></td>
+                                                                        <td><a href='modifier_mnemonique.php?id=".$donnees['CodeM']."'><i class='glyphicon glyphicon-pencil'></i></a></td>
                                                                         
 						     </tr>");
 					}

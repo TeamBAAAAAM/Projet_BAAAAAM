@@ -88,13 +88,13 @@ and open the template in the editor.
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Mnémonique</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value=<?php echo $mnemonique['Mnemonique'] ?> name="mnemonique" required>
+                        <input type="text" class="form-control" value="<?php echo $mnemonique['Mnemonique'] ?>" name="mnemonique" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Désignation</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value=<?php echo $mnemonique['Designation'] ?> name="designationM" required>
+                        <input type="text" class="form-control" value="<?php echo $mnemonique['Designation'] ?> "name="designationM" required>
                     </div>
                 </div>
                 

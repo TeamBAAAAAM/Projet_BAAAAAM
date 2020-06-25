@@ -1,4 +1,5 @@
 <?php
+session_start();
 require("../fonctions.php");
 // Format des dates en français
 setlocale(LC_TIME, "fr_FR");
@@ -41,7 +42,7 @@ and open the template in the editor.
         
         <?php
                 $query_categorie = "SELECT * FROM categorie WHERE CodeC=".$_GET['id'];
-                $categorie = null;
+                //$categorie = null;
 
                 $result = mysqli_query($link, $query_categorie);
 
@@ -51,6 +52,11 @@ and open the template in the editor.
                         $categorie = mysqli_fetch_array($result);
                     }
                 }
+                
+                $_SESSION['modif'] = true;
+                $_SESSION['id'] = $categorie['CodeC']
+                
+                
         ?>
     
         <?php
@@ -117,19 +123,19 @@ and open the template in the editor.
            <h1>Modification Catégorie : <?php echo $categorie['NomC'] ?> </h1>
             <form method="Post" action="enregistrer_categorie.php">
                 <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Nom catégorie</label>
+                    <label for="" class="col-sm-2 col-form-label">Nom catégorie</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value=<?php echo $categorie['NomC'] ?> name="nomC" required>
+                        <input type="text" class="form-control" value="<?php echo $categorie['NomC'] ?>" name="nomC" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Désignation catégorie</label>
+                    <label for="" class="col-sm-2 col-form-label">Désignation catégorie</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value=<?php echo $categorie['DesignationC'] ?> name="designationC" required>
+                        <input type="text" class="form-control" value="<?php echo $categorie['DesignationC'] ?>" name="designationC" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Choisir mnémonique</label>
+                    <label for="" class="col-sm-2 col-form-label">Choisir mnémonique</label>
                     <div class='form-check'>
                     <?php
                     $result = listeMnemonique($link);
@@ -141,23 +147,20 @@ and open the template in the editor.
                     echo '<table>';
                     for ($i = 0; $i < $rows; $i++) {
                         $donnees = mysqli_fetch_array($result);
-                        echo ( "<tr><td> <input class='form-check-input' type='checkbox' value='' name='mnemonique'>
-                               <label class='form-check-label' for=''>" . $donnees['Mnemonique'] . " </label></td><td><input type='text' class='form-control' style='display:none' name='label[]' id='". $donnees['CodeM']."' class='form-control'/></td></tr>");
-                    }  
+                        echo ( "<td> <input class='form-check-input' type='checkbox' value='". $donnees['CodeM']."' name='mnemonique[]' >
+  <label class='form-check-label' for=''>" . $donnees['Mnemonique'] . " </label></td><td><input type='text' class='form-control' style='display:none' name='label[]' id='". $donnees['CodeM']."' class='form-control'/></td></tr>");
+                    } 
                     echo '</table>';
                     
                     ?>
                     </div>
          </div>
          
-    </div>
+    
                 <div class="col-sm-4">   <button type="submit" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-lock"></span>Valider</button>
-                
-                
-              
-    </form>
-           
-   </div>
+                </div>
+</form>
+</div>
     </body>
    <script>
     $(function(){
