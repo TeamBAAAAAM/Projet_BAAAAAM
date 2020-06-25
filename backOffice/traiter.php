@@ -153,16 +153,16 @@
 							$messagesAssure = listeMessages($codeAssure, $link);
 						} else {						
 							GenererMessage (
-								"Erreur lors de l\'enregistrement !",
-								"Votre message n\'a pas pu être enregistré !",
+								"Erreur lors de l'enregistrement !",
+								"Votre message n'a pas pu être enregistré !",
 								"remove",
 								"danger"
 							);
 						}
 					} else {				
 						GenererMessage (
-							"Erreur lors de l\'envoi !",
-							"Votre message n\'a pas pu être envoyé !",
+							"Erreur lors de l'envoi !",
+							"Votre message n'a pas pu être envoyé !",
 							"remove",
 							"danger"
 						);
@@ -270,7 +270,7 @@
 							if($message == null) {
 								genererMessage(
 									"Aucune correspondance !",
-									"Aucun message enregistré n\'est affilié à cet assuré.",
+									"Aucun message enregistré n'est affilié à cet assuré.",
 									"floppy-disk",
 									"warning"
 								);
@@ -361,13 +361,13 @@
 							for ($i = 0; $i < $rows; $i++){
 								// Récupération du chemin de chaque fichier
 								$justificatif = mysqli_fetch_array($result);
-								$cheminFichier = $justificatif["CheminJ"];
+								$cheminFichier = "apercu.php?filepath=".$justificatif["CheminJ"];
 								$nomFichier = strrchr($cheminFichier, '/');
 								$nomFichier = substr($nomFichier, 1);
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
 								echo("
-								<li class='list-group-item' onClick='changePathViewer(\"$cheminFichier\")'>
+								<li class='list-group-item' onClick='updateViewer(\"$cheminFichier\");'>
 									<h5>
 										<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
 										$nomFichier
@@ -384,7 +384,7 @@
 							<h4><span class="glyphicon glyphicon-picture"></span>Aperçu</h4>
 						</div>
 						<div class="panel-body">
-							<embed id="apercu" class="container-fluid">
+							<iframe id="apercu" class="container-fluid" onload="gestionTailleApercu()">
 						</div>
 					</div>
 				</div>
