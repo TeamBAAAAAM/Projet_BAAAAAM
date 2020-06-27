@@ -846,7 +846,7 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
 
     // Génération du lien de suivi
     $content .= "<span class='esp'></span><a href='".genererLienSuivi($_SESSION["RefD"])."'>".genererLienSuivi($_SESSION["RefD"])."</a><br>";
-    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale (NIR) pour vous authentifier.</strong></p>";
     
     $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez les informations relatives à votre ";
     $content .= "dossier :</p>";
@@ -883,14 +883,14 @@ function envoyerMailConfirmationTraitement($prenomAssure, $nomAssure, $refDossie
 
     if($statut == "Classé sans suite") {
         $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
-        $content .= "nous vous informons que le traitrement de votre dossier de référence ";
-        $content .= "$refDossier ne nous permet pas de donner un suite favorable. ";
-        $content .= "Les justificatifs que vous nous avez fournis ne permettent pas ";
+        $content .= "nous vous informons que le traitement de votre dossier (Référence : ";
+        $content .= "$refDossier) ne nous permet pas de donner une suite favorable. ";
+        $content .= "Les justificatifs que vous avez fournis ne permettent pas ";
         $content .= "d'aboutir au versement de vos indemnités journalières.</p>";
     }
     else {
         $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
-        $content .= "nous vous avons le plaisir de vous informer que votre dossier de référence $refDossier ";
+        $content .= "nous vous avons le plaisir de vous informer que votre dossier (Référence : $refDossier) ";
         $content .= "est complet et a été traité par nos services. Vous recevrez vos indemnités journalières ";
         $content .= "dans les prochains jours.</p>";
     }
@@ -900,7 +900,7 @@ function envoyerMailConfirmationTraitement($prenomAssure, $nomAssure, $refDossie
 
     // Génération du lien de suivi
     $content .= "<span class='esp'></span><a href='".genererLienSuivi($refDossier)."'>".genererLienSuivi($refDossier)."</a><br>";
-    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale (NIR) pour vous authentifier.</strong></p>";
     
     $content .= "<p><span class='esp'></span>Bien cordialement,</p>";
     $content .= "<h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
