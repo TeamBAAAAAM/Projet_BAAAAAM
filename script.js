@@ -101,8 +101,5 @@ $(document).ready(function(){
             // Sinon, il est caché
             $("#msg_3").fadeOut(100);
         }
-    });       
-    
-    
+    }); 
 });
-
