@@ -426,7 +426,8 @@
 													$justificatif["StatutJ"],
 													"Valide",
 													$codeT_dossier,
-													$codeT
+													$codeT,
+													$statutDossier
 												)
 												."' role='button' title='Valider ce fichier'>
 												<span class='glyphicon glyphicon-ok'></span>
@@ -438,7 +439,8 @@
 													$justificatif["StatutJ"],
 													"Invalide",
 													$codeT_dossier,
-													$codeT
+													$codeT,
+													$statutDossier
 												)
 												."' role='button' title='Invalider ce fichier'>
 												<span class='glyphicon glyphicon-remove'></span>
@@ -450,7 +452,8 @@
 													$justificatif["StatutJ"],
 													Null,
 													$codeT_dossier,
-													$codeT
+													$codeT,
+													$statutDossier
 												)
 												."' role='button' title='Retirer le statut de ce fichier'>
 												<span class='glyphicon glyphicon-erase'></span>
