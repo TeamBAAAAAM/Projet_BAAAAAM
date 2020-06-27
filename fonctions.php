@@ -445,6 +445,122 @@ function fichierExiste($link, $chemin){
     return (mysqli_fetch_array($result) != NULL);
 }
 
+/* Supprime physiquement le fichier de chemin '$cheminJustificatif' */
+/* => [True si le fichier a été supprimer, False Sinon  */
+function supprimerFichierPhysique($ftp_stream, $cheminJustificatif) {
+    if (ftp_delete($ftp_stream, $cheminJustificatif)) return True ;
+    else return False;
+}
+
+/* Supprime le fichier de chemin '$cheminJustificatif' de la BD*/
+/* => [True si le fichier a été supprimer, False Sinon  */
+function supprimerFichierBD($codeJ, $link) {
+    $query = "DELETE FROM justificatif "
+            ."WHERE CodeJ = $codeJ";
+
+    return mysqli_query($link, $query);
+}
+
+/* Met à jour la ligne de données du justificatif de code '$codeJ' dans la BD*/
+/* => [True si la ligne a bien été mise à jour, False Sinon  */
+function majJustificatifBD($codeJ, $nouveauCheminJ, $link) {
+    $query = "UPDATE justificatif "
+            ."SET CheminJ = '$nouveauCheminJ', CodeT = NULL, StatutJ = NULL "
+            ."WHERE CodeJ = $codeJ";
+
+    return mysqli_query($link, $query);
+}
+
+/* Supprime le fichier de chemin $cheminJ1 puis enregistre le fichier de chemin $cheminJ2 */
+/* => [True si le fichier a été supprimer, False Sinon  */
+function majFichier($ftp_stream, $fichier, $justificatif, $nouveauCheminJ, $link) {
+    $codeJ = $justificatif["CodeJ"];
+    $codeD = $justificatif["CodeD"];
+    $ancienCheminJ = $justificatif["CheminJ"];
+
+    // Suppression physique du fichier de chemin $ancienCheminJ
+    if(supprimerFichierPhysique($ftp_stream, $ancienCheminJ)) {
+        // Mise à jour du justificatif de code $codeJ
+        if(majJustificatifBD($codeJ, $nouveauCheminJ, $link)) {
+            //Enregistrement physique du fichier de chemin $cheminJ2
+            if(ftp_put($ftp_stream, $nouveauCheminJ, $fichier['tmp_name'], FTP_BINARY)) {
+                return True;
+            } else {echo "Échec lors de l'ajout physique !";}
+        } else {echo "Échec lors de la mise à jour dans la BD !";}
+    } else {echo "Échec lors de la suppression physique !";}
+
+    return False;
+}
+
+/* Écrase et remplace tous les fichiers de la liste $listeFichiers dans  */
+function majFichiers($ftp_stream, $listeFichiers, $codeA, $nirA, $codeD, $refD, $link) {
+    $resultats = array();
+
+    foreach ($listeFichiers as $key => $fichier) {
+        if(is_int($key)) { // Si le justificatif a été trouvé
+            $justificatif = recupererJustificatif($link, $key);
+            $ancienCheminJ = $justificatif["CheminJ"];
+            $designation = $justificatif["Designation"];
+            $nirA = $justificatif["NirA"];
+            $refD = $justificatif["RefD"];
+    
+            $file = basename($fichier['name']);
+            
+            // Récupération du nom du fichier sans son extension
+            $nomFichier = explode(".", basename($ancienCheminJ))[0]; // Le nom du fichier sans l'extension
+            $j = substr($nomFichier, strrpos($nomFichier, "_") + 1); // Le numéro du fichier
+
+            $target_dir =  getenv("STORAGE_PATH") . "/$nirA/$refD";
+            $ext = strtolower(pathinfo($file)['extension']);
+            $nouveauCheminJ = "$target_dir/$nomFichier.$ext";
+    
+            $designation = "Document mis à jour : $designation No. $j";
+            
+            if(majFichier($ftp_stream, $fichier, $justificatif, $nouveauCheminJ, $link)) {
+                if (ftp_put($ftp_stream, $nouveauCheminJ, $fichier['tmp_name'], FTP_BINARY)) {
+                    $resultats[] = array(TRUE, $file, $designation);
+                } else {
+                    $resultats[] = array(FALSE, $file, $designation);
+                }
+            } else {
+                $resultats[] = array(FALSE, $file, $designation);
+            }
+        }
+        else { // Sinon, on enregistre le fichier
+            $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
+
+            $j = compterPJDansDossierAvecMnemo(
+                $codeA, $codeD, $mnemonique["CodeM"], $link
+            ) + 1;
+
+            for ($i = 0; $i < count($fichier['name']); $i++) {
+                if ($fichier['name'][$i] != "") {
+                    $file = basename($fichier['name'][$i]);
+
+                    $target_dir =  getenv("STORAGE_PATH") . "/$nirA/$refD";
+                    $ext = strtolower(pathinfo($file)['extension']);
+                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+
+                    $designation = "Document sauvegardé : ".$mnemonique["Designation"]." No. $j";
+                    
+                    if (enregistrerFichier($cheminJustificatif, $codeD, $mnemonique["CodeM"], $link)) {
+                        if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_BINARY)) {
+                            $resultats[] = array(TRUE, $file, $designation);
+                        } else {
+                            $resultats[] = array(FALSE, $file, $designation);
+                        }
+                    } else {
+                        $resultats[] = array(FALSE, $file, $designation);
+                    }
+                    $j++;
+                }
+            }
+        }
+    }
+        
+
+    return $resultats;
+}
 
 /*------------------------------------------------------------------
  	FONCTIONS : BACK OFFICE (INTERFACE TECHNICIEN)
@@ -481,8 +597,6 @@ function changerStatutPJ($link, $codeJustificatif, $statut, $codeTechnicien) {
     if($codeTechnicien == Null) $query .= "CodeT = NULL ";
     else $query .= "CodeT = $codeTechnicien ";
     $query .= "WHERE CodeJ = $codeJustificatif";
-
-    echo $query;
     
     $result = mysqli_query($link, $query);
 
@@ -1028,6 +1142,20 @@ function nbDossiersTermines($link) {
 
 /* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererJustificatif($link, $codeJ) {
+    $query = "SELECT * "
+            ."FROM justificatif j, listemnemonique l, dossier d, assure a "
+            ."WHERE j.CodeJ = $codeJ "
+            ."AND j.CodeD = d.codeD "
+            ."AND j.CodeM = l.codeM "
+            ."AND d.CodeA = a.codeA ";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function recupererJustificatifs($link, $codeDossier) {
     $query = "SELECT CodeJ, CheminJ, Mnemonique, StatutJ, CodeT AS Matricule "
             ."FROM justificatif j, listemnemonique l "
@@ -1039,7 +1167,31 @@ function recupererJustificatifs($link, $codeDossier) {
             ."FROM justificatif j, listemnemonique l, technicien t "
             ."WHERE j.CodeM = l.CodeM "
             ."AND j.CodeT = t.CodeT "
-            ."AND j.CodeD = '$codeDossier'";
+            ."AND j.CodeD = '$codeDossier' "
+            ."ORDER BY StatutJ, CodeJ";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' ayant pour statut $statutPJ */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererJustificatifsAvecStatutJ($link, $codeDossier, $statutPJ) {
+    $query = "SELECT CodeJ, CheminJ, Mnemonique, Designation, Matricule "
+            ."FROM justificatif j, listemnemonique l, technicien t "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeT = t.CodeT "
+            ."AND j.CodeD = '$codeDossier' "
+            ."AND j.StatutJ = '$statutPJ'";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Renvoie la liste de toutes les mnémoniques de la BD */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererMnemoniques($link) {
+    $query = "SELECT * FROM listemnemonique";
     $result = mysqli_query($link, $query);
 
     return $result;
