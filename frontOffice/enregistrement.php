@@ -183,10 +183,19 @@
                         
                         // Enregistrement des PJ
                         if(!isset($_SESSION["MessageFichiers"])) {
-                            $resultats = enregistrerFichiers(
-                                $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
-                                $dossier["CodeD"], $dossier["RefD"], $link
-                            );
+                            if(isset($_GET['repost'])) { // Si ce n'est pas le premier dépôt                                
+                                // On remplace ou ajoute les fichiers
+                                $resultats = majFichiers(
+                                    $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
+                                    $dossier["CodeD"], $dossier["RefD"], $link
+                                );    
+                            }
+                            else {
+                                $resultats = enregistrerFichiers(
+                                    $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
+                                    $dossier["CodeD"], $dossier["RefD"], $link
+                                );
+                            }
                             
                             if($resultats != null) { // Message de réussite
                                 $_SESSION["MessageFichiers"] = "
