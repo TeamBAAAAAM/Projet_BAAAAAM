@@ -142,35 +142,7 @@
                             </div>");
                     }
                 }                
-            ?>
-			<!--div class="row">
-				<div id="interim" class="col-sm-3 btn-status">
-					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
-				</div>
-				<div id="cesu" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par CESU / PAJEMPLOI ou je suis assistant·e maternel·le</h2>
-				</div>
-				<div id="pole-emploi" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
-				</div>
-				<div id="pole-emploiC" class="col-sm-3 btn-status">
-					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div id="independant" class="col-sm-3 btn-status">
-					<h2>Je suis travailleur indépendant et j'attends un enfant</h2>
-				</div>
-				<div id="intermit" class="col-sm-3 btn-status">
-                    <h2>Je suis intermittent·e du spectacle</h2>
-                </div>
-				<div id="art-aut" class="col-sm-3 btn-status">
-                    <h2>Je suis artiste auteur</h2>
-                </div>
-				<div id="salarie" class="col-sm-3 btn-status">
-					<h2>Je suis salarié·e</h2>
-				</div>
-            </div-->                
+            ?>             
         </div>
     <?php endif ?>
 
