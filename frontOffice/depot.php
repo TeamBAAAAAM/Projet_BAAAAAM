@@ -129,7 +129,21 @@
         
     <?php if (!$repost && !$repost_ok) : ?>
         <div class="container text-center" id="status">
-			<div class="row">
+            <?php //Affichage dynamique des catégories 
+                $listeCategories = categoriesActives($link);
+                if ($listeCategories != null){
+                    $rows = mysqli_num_rows($listeCategories);
+                    for ($i = 0; $i < $rows; $i++) { // Pour chaque dossier de la base de données
+                        $categorie = mysqli_fetch_array($listeCategories);
+                        
+                        // Affichage des informations d'un dossier
+                        echo("<div id='".$categorie['NomC']."' class='col-sm-3 btn-status'>
+                                <h2>".$categorie['DesignationC']."</h2>
+                            </div>");
+                    }
+                }                
+            ?>
+			<!--div class="row">
 				<div id="interim" class="col-sm-3 btn-status">
 					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
 				</div>
@@ -156,7 +170,7 @@
 				<div id="salarie" class="col-sm-3 btn-status">
 					<h2>Je suis salarié·e</h2>
 				</div>
-            </div>                
+            </div-->                
         </div>
     <?php endif ?>
 

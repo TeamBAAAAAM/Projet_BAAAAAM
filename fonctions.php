@@ -215,7 +215,7 @@ function categoriesActives($link) {
     $query = "SELECT CodeC, NomC, DesignationC FROM categorie WHERE StatutC = 'Actif'";
     $result = mysqli_query($link, $query);
 
-    return mysqli_fetch_array($result);
+    return $result;
 }
 
 /* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
