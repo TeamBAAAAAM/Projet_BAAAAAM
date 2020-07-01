@@ -129,34 +129,19 @@
         
     <?php if (!$repost && !$repost_ok) : ?>
         <div class="container text-center" id="status">
-			<div class="row">
-				<div id="interim" class="col-sm-3 btn-status">
-					<h2>Je suis interimaire et/ou j'ai un emploi saisonnier</h2>
-				</div>
-				<div id="cesu" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par CESU / PAJEMPLOI ou je suis assistant·e maternel·le</h2>
-				</div>
-				<div id="pole-emploi" class="col-sm-3 btn-status">
-					<h2>Je suis indemnisé·e par Pôle Emploi</h2>
-				</div>
-				<div id="pole-emploiC" class="col-sm-3 btn-status">
-					<h2>J'exerce une activité salariée avec un complément Pôle Emploi</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div id="independant" class="col-sm-3 btn-status">
-					<h2>Je suis travailleur indépendant et j'attends un enfant</h2>
-				</div>
-				<div id="intermit" class="col-sm-3 btn-status">
-                    <h2>Je suis intermittent·e du spectacle</h2>
-                </div>
-				<div id="art-aut" class="col-sm-3 btn-status">
-                    <h2>Je suis artiste auteur</h2>
-                </div>
-				<div id="salarie" class="col-sm-3 btn-status">
-					<h2>Je suis salarié·e</h2>
-				</div>
-            </div>                
+            <?php //Affichage dynamique des catégories 
+                $listeCategories = categoriesActives($link);
+                if ($listeCategories != null){
+                    $rows = mysqli_num_rows($listeCategories);
+                    // Affichage des boutons de chaque catégorie active
+                    for ($i = 0; $i < $rows; $i++) {
+                        $categorie = mysqli_fetch_array($listeCategories);
+                        echo("<div id='".$categorie['NomC']."' class='col-sm-3 btn-status'>
+                                <h2>".$categorie['DesignationC']."</h2>
+                            </div>");
+                    }
+                }                
+            ?>
         </div>
     <?php endif ?>
 
@@ -383,7 +368,22 @@
                         <div class="container" id="pj">
                         <?php if (!$repost || $repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
-                            <div class="row pj salarie">
+                            <?php //Affichage dynamique des types de PJ demandés
+                                $listeCategories = categoriesActives($link);
+                                if ($listeCategories != null){
+                                    for ($i = 0; $i < mysqli_num_rows($listeCategories); $i++) {
+                                        $categorie = mysqli_fetch_array($listeCategories);
+                                        // Affichage des zones de dépôt de PJ avec libellés exacts
+                                        echo("<div class='row pj ".$categorie['NomC']."'>
+                                                <div class='col-sm-12'>
+                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ."<span class='champ_obligatoire'>(*)</span> :</label>
+                                                    <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."\[]' multiple>
+                                                </div>
+                                            </div>");
+                                    }                                 
+                                }                                
+                            ?>
+                            <!--div class="row pj salarie">
                                 <div class="col-sm-12">
                                     <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur <span class="champ_obligatoire">(*)</span> :</label>
                                     <input type="file" id="ATT_SAL" name="ATT_SAL[]" multiple>
@@ -406,7 +406,7 @@
                                     <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
-                            </div>
+                            </div-->
                             
                             
                             <div class="row" style="margin-top: 20px;">
