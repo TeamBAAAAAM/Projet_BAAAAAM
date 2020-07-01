@@ -133,16 +133,15 @@
                 $listeCategories = categoriesActives($link);
                 if ($listeCategories != null){
                     $rows = mysqli_num_rows($listeCategories);
-                    for ($i = 0; $i < $rows; $i++) { // Pour chaque dossier de la base de données
+                    // Affichage des boutons de chaque catégorie active
+                    for ($i = 0; $i < $rows; $i++) {
                         $categorie = mysqli_fetch_array($listeCategories);
-                        
-                        // Affichage des informations d'un dossier
                         echo("<div id='".$categorie['NomC']."' class='col-sm-3 btn-status'>
                                 <h2>".$categorie['DesignationC']."</h2>
                             </div>");
                     }
                 }                
-            ?>             
+            ?>
         </div>
     <?php endif ?>
 
@@ -369,7 +368,22 @@
                         <div class="container" id="pj">
                         <?php if (!$repost || $repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
-                            <div class="row pj salarie">
+                            <?php //Affichage dynamique des types de PJ demandés
+                                $listeCategories = categoriesActives($link);
+                                if ($listeCategories != null){
+                                    for ($i = 0; $i < mysqli_num_rows($listeCategories); $i++) {
+                                        $categorie = mysqli_fetch_array($listeCategories);
+                                        // Affichage des zones de dépôt de PJ avec libellés exacts
+                                        echo("<div class='row pj ".$categorie['NomC']."'>
+                                                <div class='col-sm-12'>
+                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ."<span class='champ_obligatoire'>(*)</span> :</label>
+                                                    <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."\[]' multiple>
+                                                </div>
+                                            </div>");
+                                    }                                 
+                                }                                
+                            ?>
+                            <!--div class="row pj salarie">
                                 <div class="col-sm-12">
                                     <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur <span class="champ_obligatoire">(*)</span> :</label>
                                     <input type="file" id="ATT_SAL" name="ATT_SAL[]" multiple>
@@ -392,7 +406,7 @@
                                     <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
-                            </div>
+                            </div-->
                             
                             
                             <div class="row" style="margin-top: 20px;">
