@@ -229,7 +229,7 @@ function categoriesActives($link) {
 /* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
 /* => [Vrai si le NIR est reconnu, Faux sinon] */
 function assureExiste($nir, $link) {
-    $query = "SELECT * FROM Assure WHERE NirA = '$nir'";
+    $query = "SELECT * FROM assure WHERE NirA = '$nir'";
     $result = mysqli_query($link, $query);
 
     return (mysqli_fetch_array($result) != NULL);
@@ -238,7 +238,7 @@ function assureExiste($nir, $link) {
 /* Renvoie les informations de l'assuré ayant le NIR '$nir' sous la forme d'une liste */
 /* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
 function chercherAssureAvecNIR($nir, $link) {
-    $query = "SELECT * FROM Assure WHERE NirA = '$nir'";
+    $query = "SELECT * FROM assure WHERE NirA = '$nir'";
     $result = mysqli_query($link, $query);
 
     return mysqli_fetch_array($result);
@@ -247,7 +247,7 @@ function chercherAssureAvecNIR($nir, $link) {
 /* Renvoie les informations d'un dossier ayant pour référence '$ref' sous la forme d'une liste */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function chercherDossierAvecREF($ref, $link) {
-    $query = "SELECT * FROM Assure A, Dossier D "
+    $query = "SELECT * FROM assure A, dossier D "
             ."WHERE A.CodeA = D.CodeA AND RefD = '$ref'";
     $result = mysqli_query($link, $query);
 
@@ -257,7 +257,7 @@ function chercherDossierAvecREF($ref, $link) {
 /* Renvoie les informations correspondant au mnémonique '$mnemonique' */
 /* => [Objet de type array si le mnémonique existe, NULL sinon] */
 function chercherObjetMnemoAvecMnemo($mnemonique, $link) {
-    $query = "SELECT * FROM Listemnemonique "
+    $query = "SELECT * FROM listemnemonique "
             ."WHERE Mnemonique = '$mnemonique'";
     $result = mysqli_query($link, $query);
 
@@ -267,7 +267,7 @@ function chercherObjetMnemoAvecMnemo($mnemonique, $link) {
 /* Renvoie la référence du dossier ayant pour code '$codeDossier' sous la forme d'une liste */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function chercherREFAvecCodeD($codeDossier, $link) {
-    $query = "SELECT RefD FROM Assure A, Dossier D "
+    $query = "SELECT RefD FROM assure A, dossier D "
             ."WHERE A.CodeA = D.CodeA AND CodeD = $codeDossier";
     $result = mysqli_query($link, $query);
 
@@ -278,7 +278,7 @@ function chercherREFAvecCodeD($codeDossier, $link) {
 /* => [Entier positif] */
 function compterPJDansDossierAvecMnemo($codeAssure, $codeDossier, $codeMnemonique, $link) {   
     $query = "SELECT COUNT(*) AS NombreJustificatif "
-            ."FROM Assure A, Dossier D, Justificatif J, ListeMnemonique M "
+            ."FROM assure A, dossier D, justificatif J, listeMnemonique M "
             ."WHERE A.CodeA = D.CodeA AND D.CodeD = J.CodeD AND M.CodeM = J.CodeM "
             ."AND A.CodeA = $codeAssure AND D.CodeD = $codeDossier AND J.CodeM = $codeMnemonique";
     $result = mysqli_query($link, $query);
@@ -303,7 +303,7 @@ function creerRepertoireNIR($ftp_stream, $nir) {
 /* Vérifie si le dossier de référence '$ref' existe déjà dans la base de données */
 /* => [Vrai si la référence de dossier est reconnue, Faux sinon] */
 function dossierExiste($ref, $link) {
-    $query = "SELECT RefD FROM Dossier WHERE RefD = '$ref'";
+    $query = "SELECT RefD FROM dossier WHERE RefD = '$ref'";
     $result = mysqli_query($link, $query);
 
     return (mysqli_fetch_array($result) != NULL);
@@ -429,7 +429,7 @@ function enregistrerFichiers($ftp_stream, $listeFichiers,
 /* => [Vrai s'il y a bien une correspondance entre le NIR '$nirA' et la référence '$redD', Faux sinon] */
 function estAssocie($nir, $ref, $link) {
     $query = "SELECT a.* "
-            ."FROM Assure a, Dossier d  "
+            ."FROM assure a, dossier d  "
             ."WHERE a.NirA = '$nir' "
             ."AND d.CodeA = a.CodeA "
             ."AND d.RefD = '$ref'" ;
@@ -490,11 +490,11 @@ function changerStatutDossier($link, $codeDossier, $statut) {
 /* Renvoie les informations d'un dossier en cours de traitement ou traité ayant pour code '$codeDossier' */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
 function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
-    $query = "SELECT * FROM Assure A, Dossier D, Traiter Tr, Technicien T "
+    $query = "SELECT * FROM assure A, dossier D, traiter Tr, technicien T "
             ."WHERE A.CodeA = D.CodeA AND D.CodeD = $codeDossier "
             ."AND D.CodeD = Tr.CodeD AND T.CodeT = Tr.CodeT "
             ."AND Tr.DateTraiterD = (SELECT MAX(DateTraiterD) "
-                                    ."FROM Traiter "
+                                    ."FROM traiter "
                                     ."WHERE CodeD = $codeDossier)";
     $result = mysqli_query($link, $query);
 
@@ -773,7 +773,7 @@ function extraireMessage($contenu) {
 /* Retire le dossier de code '$codeDossier' de la liste des dossiers traités */
 /* => [Vrai si le retrait a bien été effectué, Faux sinon] */
 function libererDossier($link, $codeDossier) {
-    $query = "DELETE FROM Traiter WHERE CodeD = $codeDossier";
+    $query = "DELETE FROM traiter WHERE CodeD = $codeDossier";
     $result = mysqli_query($link, $query);
 
     return $result;
@@ -784,7 +784,7 @@ function libererDossier($link, $codeDossier) {
 // Liste des messages adressés à un assuré
 function listeMessages($codeAssure, $link) {
     $query = "SELECT DateEnvoiM, Contenu, T.Matricule "
-            ."FROM Message M, Assure A, Technicien T "
+            ."FROM message M, assure A, technicien T "
             ."WHERE A.CodeA = M.CodeA "
             ."AND A.CodeA = $codeAssure "
             ."AND T.CodeT = M.CodeT "
