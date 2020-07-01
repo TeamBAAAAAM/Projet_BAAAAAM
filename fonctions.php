@@ -209,10 +209,18 @@ function demandeDeConnexion() {
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
 ------------------------------------------------------------------*/
 
-/* Renvoie les catégories d'assuré actives */
+/* Renvoie les catégories d'assuré actives et les types de documents (mnémoniques) associés */
 /* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
 function categoriesActives($link) {
-    $query = "SELECT CodeC, NomC, DesignationC FROM categorie WHERE StatutC = 'Actif'";
+    //$query = "SELECT CodeC, NomC, DesignationC FROM categorie WHERE StatutC = 'Actif'";
+    $query = "SELECT ca.CodeC, ca.NomC, ca.DesignationC, lm.CodeM, lm.Mnemonique, lm.Designation, cc.Label 
+    FROM categorie ca, listemnemonique lm, concerner cc 
+    WHERE ca.StatutC = 'Actif' AND cc.CodeC = ca.CodeC AND cc.CodeM = lm.CodeM 
+    UNION 
+    SELECT ca.CodeC, ca.NomC as nomCategorie, ca.DesignationC, null, null, null, null 
+    FROM categorie ca WHERE ca.StatutC = 'Actif' 
+    AND ca.CodeC NOT IN (SELECT CodeC FROM concerner) 
+    ORDER BY CodeC";
     $result = mysqli_query($link, $query);
 
     return $result;
