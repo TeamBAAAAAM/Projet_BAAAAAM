@@ -1004,7 +1004,7 @@ function envoyerMailConfirmationTraitement($prenomAssure, $nomAssure, $refDossie
     }
     else {
         $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
-        $content .= "nous vous avons le plaisir de vous informer que votre dossier (Référence : $refDossier) ";
+        $content .= "nous avons le plaisir de vous informer que votre dossier (Référence : $refDossier) ";
         $content .= "est complet et a été traité par nos services. Vous recevrez vos indemnités journalières ";
         $content .= "dans les prochains jours.</p>";
     }
