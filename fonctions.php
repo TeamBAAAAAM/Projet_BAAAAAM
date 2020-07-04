@@ -121,7 +121,7 @@ function genererFichierCSV($link) {
             $ligne = $tuple["CheminJ"].";";
             $ligne .= "IJ;";
             $ligne .= "OUI;";
-            $ligne .= $tuple["DateD"].";";
+            $ligne .= substr($tuple["DateD"], 0, 10).";";
             $ligne .= "vide;";
             $ligne .= ";";
             $ligne .= ";";
@@ -184,11 +184,11 @@ function genererMessage($title, $body, $icon, $type) {
 
 /* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
 function recupererDossierSauvegarde($link) {
-    $query = "SELECT CheminJ, DateD, Mnemonique"
-            ."FROM dossier d, justificatif j, litemnemonique m "
+    $query = "SELECT CheminJ, DateD, Mnemonique "
+            ."FROM dossier d, justificatif j, listemnemonique m "
             ."WHERE (d.StatutD = 'À traiter' "
             ."OR d.StatutD = 'En cours') "            
-            ."AND j.CodeD = d.CodeD "            
+            ."AND j.CodeD = d.CodeD "
             ."AND m.CodeM = j.CodeM";
 
     return mysqli_query($link, $query);
