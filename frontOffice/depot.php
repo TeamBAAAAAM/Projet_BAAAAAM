@@ -113,6 +113,42 @@
             $(document).ready(function(){
                 $("#form_panel").show();
             });
+
+            function initInputMnemo(id) {
+                $("#" + id).html("<?php                    
+                    // Récupération de tous les mnémoniques de la BD
+                    $result = recupererMnemoniques($link);
+                    if ($result != NULL)
+                        $rows = mysqli_num_rows($result);
+                    else $rows = 0;
+
+                    echo "<option selected>---</option>";
+                    for ($i = 0; $i < $rows; $i++){
+                        $obj = mysqli_fetch_array($result);
+                        $mnemonique = $obj["Mnemonique"];
+                        $designation = $obj["Designation"];
+                        echo "<option value='$mnemonique'>$designation</option>";
+                    }
+                ?>");
+            }
+            
+            function missingFileAddButton() {
+                var i = 1;
+
+                while($("#missing-file-" + i).length) {
+                    i++;
+                }
+
+                var content = "<div id='missing-file-" + i +"' class='row container-fluid repost'>";
+                content += "<div class='col-sm-3'>";
+                content += "Type de document : <select id='select-" + i +"' onChange='MajInputMnemo(\"select-" + i +"\")'>";
+                content += "<script>initInputMnemo(\"select-" + i +"\")<\/script>";
+                content += "</select></div>";
+                content += "<div class='col-sm-7'><input type='file' multiple required></div>";
+                content += "<div class='col-sm-2'><button type='button' class='btn btn-danger' onClick='supprimerInput(\"missing-file-" + i +"\")'><span class='glyphicon glyphicon-minus'></span>Retirer</button></div></div>";
+            
+                $("div#missing-file").prepend(content);
+            }
         </script>
         <?php endif ?>
 
@@ -161,8 +197,8 @@
             <!-- Message en cas de référence de dossier valide -->                
             <?php
                 if($repost && !$msg_error_nir_ref && !$msg_error_nir && !$msg_error_ref) {
-                    $title = "Veuillez saisir votre NIR";
-                    $body = "Dans le but de vous authentifier, merci de saisir votre NIR";
+                    $title = "Veuillez saisir votre numéro de sécurité sociale (NIR)";
+                    $body = "Dans le but de vous authentifier, merci de saisir votre numéro de sécurité sociale (NIR).";
 
                     if(isset($_GET["RefD"]) && $_GET["RefD"] == "")
                         $title .= ", ainsi que la référence du dossier qui vous a été délivrée.";
@@ -183,8 +219,8 @@
             <?php 
                 if ($msg_error_nir) {
                     GenererMessage (
-                        "NIR non enregistré !",
-                        "Il semblerait que ce NIR ne soit affilié à aucun dossier.",
+                        "Numéro de sécurité sociale (NIR) non enregistré !",
+                        "Il semblerait que ce numéro de sécurité sociale (NIR) ne soit affilié à aucun dossier.",
                         "remove",
                         "danger"
                     );
@@ -208,9 +244,8 @@
             <div class="panel panel-default" id="form_panel">
                 <div class="panel-heading">Formulaire d'envoi</div>
                 <div class="panel-body">
-
                 <?php if (!$repost) : ?>
-                    <form enctype="multipart/form-data" method="POST" action="enregistrement.php">
+                    <form enctype="multipart/form-data" method="POST" action="enregistrement.php<?php if($repost_ok) echo "?repost";?>">
                 <?php else : ?>
                     <form method="POST" action="depot.php">
                 <?php endif ?>
@@ -353,7 +388,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">                            
-                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : <span class="champ_obligatoire">(*)</span></label>
+                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                         <input type="date" id="date_arret" class="form-control" name="date_arret" 
@@ -366,7 +401,89 @@
                         </div>
 
                         <div class="container" id="pj">
-                        <?php if (!$repost || $repost_ok) : ?>
+                        <?php if($repost_ok) : ?>
+                            <h3>Pièces justificatives à déposer :</h3>
+                            <?php 
+                                $result = recupererJustificatifsAvecStatutJ(
+                                    $link,
+                                    chercherDossierAvecREF($_SESSION["RefD"], $link)["CodeD"],
+                                    "Invalide"
+                                );
+
+                                if ($result != NULL) {
+                                    $rows = mysqli_num_rows($result);
+                                    if($rows > 0) echo "<h4>Remplacer les documents invalides</h4>";
+                                }
+                                else $rows = 0;
+
+                                echo "<div class='container-fluid repost'>";
+                                for ($i = 0; $i < $rows; $i++){
+                                    $justificatif = mysqli_fetch_array($result);
+                                    $codeJ = $justificatif["CodeJ"];
+                                    $cheminJ = $justificatif["CheminJ"];
+                                    $mnemonique = $justificatif["Mnemonique"];
+                                    $designation = $justificatif["Designation"];
+                                    
+                                    $nomFichier = strrchr($cheminJ, '/');
+                                    $nomFichier = substr($nomFichier, 1);
+                                    $extension = strrchr($cheminJ, '.');
+                                    $extension = substr($extension, 1);
+
+                                    // Récupération du nom du fichier sans son extension
+                                    $j = substr(explode(".", $nomFichier)[0],
+                                        strrpos(explode(".", $nomFichier)[0], "_") + 1); // Le numéro du fichier
+
+                                    echo "
+                                        <div class='row'>
+                                            <div class='col-sm-4'>
+                                                <div class='row'>
+                                                    <div class='col-sm-12'>
+                                                        <img src='../img/icons/$extension-icon.png' class='ext-icon'>
+                                                    </div>
+                                                    <div class='col-sm-12'>
+                                                        <strong>$designation No. $j <span class='champ_obligatoire'>(*)</span>< :/strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-3'>
+                                                <div class='btn-group-vertical'>
+                                                    <a href='fichier.php?filepath=$cheminJ&type=view' 
+                                                        class='btn btn-default' target='_blank'>
+                                                            <span class='glyphicon glyphicon-eye-open'></span>Apercu</a>
+                                                    <a href='fichier.php?filepath=$cheminJ&type=download' 
+                                                        class='btn btn-default' target='_blank'>
+                                                            <span class='glyphicon glyphicon-download-alt'></span>Télécharger</a>
+                                                </div>
+                                            </div>
+                                            <div class='col-sm-6'>
+                                                <input type='file' name='$codeJ' multiple required>
+                                            </div>
+                                        </div> 
+                                    ";       
+                                }      
+                                echo "</div>";
+                            ?>
+
+                            <h4>Ajouter des documents manquants</h4>
+                            <button type='button' class='btn btn-success' onClick='missingFileAddButton()'><span class='glyphicon glyphicon-plus'></span>Ajouter un document</button>
+                            <div id='missing-file' class='container-fluid repost'></div>
+                            
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-sm-12">
+                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je certifie sur l'honneur l'exactitude des renseignements fournis. <span class="champ_obligatoire">(*)</span> </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je reconnais avoir pris connaissance et j'accepte les <a target="_blank" href="../documentation-juridique/cgu.html">conditions générales d'utilisation</a> du site. <span class="champ_obligatoire">(*)</span> </span>
+                                </div>
+                            </div>
+
+                            <div id="champ_obligatoire" class="champ_obligatoire">                    
+                                <p>(*) : Champs obligatoires</p>
+                            </div>
+                        <?php endif ?>
+                        <?php if (!$repost && !$repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
                             <?php //Affichage dynamique des types de PJ demandés
                                 $listeCategories = categoriesActives($link);
@@ -376,7 +493,7 @@
                                         // Affichage des zones de dépôt de PJ avec libellés exacts
                                         echo("<div class='row pj ".$categorie['NomC']."'>
                                                 <div class='col-sm-12'>
-                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ."<span class='champ_obligatoire'>(*)</span> :</label>
+                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ." <span class='champ_obligatoire'>(*)</span> :</label>
                                                     <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."\[]' multiple>
                                                 </div>
                                             </div>");
@@ -406,9 +523,8 @@
                                     <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
-                            </div-->
-                            
-                            
+                            </div-->     
+                         
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-sm-12">
                                     <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je certifie sur l'honneur l'exactitude des renseignements fournis. <span class="champ_obligatoire">(*)</span> </span>

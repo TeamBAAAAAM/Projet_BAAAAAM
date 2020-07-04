@@ -302,21 +302,16 @@ function checkFormatRefD() {
     document.getElementById("refD").setSelectionRange(caret, caret);
 }
 
-//Vérifie si une référence est correcte
-function verifierRef() {
-    var xhttp;
-    xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            (this);
-        }
-    };
-    xhttp.open("GET", url, true);
-    xhttp.send();
+//Mise à jour du mnémonique
+function MajInputMnemo(id) {
+    var select = $("#" + id);
+    var input = select.parent().parent().find("input[type='file'");
+    input.attr("name", select.val()+"[]");
 }
 
-function remplirFormulaire(xhttp) {
-    // action goes here
+//Supprimer la ligne de dépôt de document d'id 'id'
+function supprimerInput(id) {
+    $("#" + id).remove();
 }
 
 //Affichage des zones de dépot des PJ en fonction
