@@ -159,6 +159,25 @@ function connecterBD() {
     return $link;
 }
 
+function genererFichierCSV($link) {
+    $fichier = fopen(getenv("CSV_NAME_FILE"), 'w+');
+
+    // Ajout de l'entête
+    fputs($fichier, getenv("CSV_HEADER")."\n");
+
+    $result = recupererDossierSauvegarde($link);
+    do {
+        $tuple = mysqli_fetch_array($result);
+        if($tuple != NULL) {
+            $ligne = implode(";", $tuple); // Concaténation des éléments du tuple avec ';' comme séparateur
+            //fseek($fichier, 0); // On remet le curseur au début du fichier
+            fputs($fichier, $ligne."\n"); // On écrit le tuple dans le fichier CSV
+        }
+    } while($tuple != NULL);
+     
+    fclose($fichier);
+}
+
 /* Génère un lien pour le suivi du dossier de référence '$ref' */
 /* => Chaine de caractère */
 function genererLienSuivi($ref) {
@@ -182,6 +201,16 @@ function genererMessage($title, $body, $icon, $type) {
             </p>
         </div>
     ";
+}
+
+/* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
+function recupererDossierSauvegarde($link) {
+    $query = "SELECT * "
+            ."FROM dossier d "
+            ."WHERE d.StatutD = 'À traiter' "
+            ."OR d.StatutD = 'En cours'";
+
+    return mysqli_query($link, $query);
 }
 
 /* Redirige vers la page '$nomPage' */
