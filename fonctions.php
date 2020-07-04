@@ -7,9 +7,13 @@
 // Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
 // Puis par ordre alphabétique
 
+/* Chargement du Composer */
+require 'vendor/autoload.php';
+
 /*------------------------------------------------------------------
  	IMPORTATION DES CLASSES PHPMailer
 ------------------------------------------------------------------*/
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -17,15 +21,18 @@ use PHPMailer\PHPMailer\Exception;
 /*------------------------------------------------------------------
  	IMPORTATION DES VARIABLES D'ENVIRONNEMENT DU FICHIER '.env'
 ------------------------------------------------------------------*/
-// Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
-chargerVarEnv(__DIR__."/.env");
+
+/* Les variables de ce fichiers ne sont disponibles que depuis ce fichier PHP */
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
 ------------------------------------------------------------------*/
 
-// Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
-// précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
+/* Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
+précisées dans le fichier README.md > Section "Initialisation de SENDGRID" */
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
 define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
 define("MAIL_CONFIRM_TREATMENT", "PJPE - Confirmation de traitement");             // Objet du message de confirmation de traitement
@@ -36,65 +43,6 @@ define("FOOTER_EMAIL",
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
-/* Renvoie les lignes du fichier '$filename' de format ENV dans une liste */
-function chargerFichierEnv($filename) {
-    $res = [];
-    
-    try {
-        // Caractère indiquant un commentaire
-        $CHAR_COMMENT = "#";
-        // Délimiteur de ligne
-        $CHAR_DELIMITER = ";";
-        // Les caractères à ne pas tenir compte (par exemple : '"')
-        $CHAR_ESCAPE = array("'", "\"", ";", "\n", "\r", "\t");
-
-        // Chargement du fichier
-        $fichier = fopen($filename, 'rb');
-        
-        $res = [];
-        // Tant qu'on est pas à la dernière ligne du fichier
-        while(!feof($fichier)){
-            // Chargement de la ligne suivante
-            $ligne = fgets($fichier);
-            
-            // Si la ligne n'est pas vide
-            if($ligne != "") {
-                /* GESTION DES COMMENTAIRES */
-                $pos_comment = strpos($ligne, $CHAR_COMMENT); // Position d'un éventuel commentaire
-
-                // S'il y a bien un commentaire
-                if($pos_comment !== False || $ligne[0] == $CHAR_COMMENT) {
-                    $ligne = substr($ligne, 0, $pos_comment); // Suppression du commentaire
-                }
-                
-                $ligne = str_replace($CHAR_ESCAPE, "", $ligne); // Supresseion des caractères inutiles
-
-                if($ligne != "") {
-                    try {
-                        $arg = explode("=", $ligne);
-                        $arg[0] = trim($arg[0]); //Supression des espaces avant et après de la clé
-                        $arg[1] = trim($arg[1]); //Supression des espaces avant et après de la valeur
-                        $res[] = implode("=", $arg);
-                    } catch (Exception $e) {}
-                }
-            }
-        }
-        fclose($fichier);
-    } catch (Exception $e) {}
-
-    return $res;
-}
-
-/* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
-/* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
-function chargerVarEnv($nomDeFichier) {
-    $lignes = chargerFichierEnv($nomDeFichier);
-
-    foreach ($lignes as $ligne) {
-        // Insertion des valeurs dans le tableau getenv()
-        putenv($ligne);
-    }
-}
 
 /* Renvoie le chemin permettant d'accéder au serveur FTP */
 function cheminVersServeurFTP() {
@@ -875,9 +823,6 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
 /*                              => 'text/plain' : Message standard                  */
 /* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
 function envoyerMail($to, $subject, $content, $type) {
-    // Load Composer's autoloader
-    require 'vendor/autoload.php';
-
     // Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
 
