@@ -388,7 +388,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">                            
-                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le : <span class="champ_obligatoire">(*)</span></label>
+                                    <label for="date_arret" class="control-label">Je n'exerce plus d'activité depuis le <span class="champ_obligatoire">(*)</span> :</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                         <input type="date" id="date_arret" class="form-control" name="date_arret" 
@@ -441,7 +441,7 @@
                                                         <img src='../img/icons/$extension-icon.png' class='ext-icon'>
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <strong>$designation No. $j <span class='champ_obligatoire'>(*)</span></strong>
+                                                        <strong>$designation No. $j <span class='champ_obligatoire'>(*)</span>< :/strong>
                                                     </div>
                                                 </div>
                                             </div>
@@ -463,14 +463,10 @@
                                 }      
                                 echo "</div>";
                             ?>
-                            <?php
-                                echo "
-                                    <h4>Ajouter des documents manquants</h4>
-                                    <button type='button' class='btn btn-success' onClick='missingFileAddButton()'><span class='glyphicon glyphicon-plus'></span>Ajouter un document</button>
-                                    <div id='missing-file' class='container-fluid repost'>                                        
-                                    </div>
-                                ";
-                            ?>
+
+                            <h4>Ajouter des documents manquants</h4>
+                            <button type='button' class='btn btn-success' onClick='missingFileAddButton()'><span class='glyphicon glyphicon-plus'></span>Ajouter un document</button>
+                            <div id='missing-file' class='container-fluid repost'></div>
                             
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-sm-12">
@@ -486,10 +482,8 @@
                             <div id="champ_obligatoire" class="champ_obligatoire">                    
                                 <p>(*) : Champs obligatoires</p>
                             </div>
-                        <?php elseif (!$repost) : ?>
-                            <h3>Pièces justificatives à déposer :</h3>
-                            <div class="row pj salarie">
-                        <?php if (!$repost || $repost_ok) : ?>
+                        <?php endif ?>
+                        <?php if (!$repost && !$repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
                             <?php //Affichage dynamique des types de PJ demandés
                                 $listeCategories = categoriesActives($link);
@@ -499,7 +493,7 @@
                                         // Affichage des zones de dépôt de PJ avec libellés exacts
                                         echo("<div class='row pj ".$categorie['NomC']."'>
                                                 <div class='col-sm-12'>
-                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ."<span class='champ_obligatoire'>(*)</span> :</label>
+                                                    <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ." <span class='champ_obligatoire'>(*)</span> :</label>
                                                     <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."\[]' multiple>
                                                 </div>
                                             </div>");
@@ -529,8 +523,8 @@
                                     <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
                                     <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
                                 </div>
-                            </div-->                            
-                            
+                            </div-->     
+                         
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-sm-12">
                                     <input type="checkbox" required> En cochant cette case, <span style="font-style: italic;">je certifie sur l'honneur l'exactitude des renseignements fournis. <span class="champ_obligatoire">(*)</span> </span>
