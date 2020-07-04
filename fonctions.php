@@ -1235,5 +1235,36 @@ function verifierMatricule($link, $matricule) {
     }
     return "Erreur de vérification du Matricule";
 }
+/* Retourne la liste contenant toutes les catégories*/
+function listeCategorie($link) {
+    $query = "SELECT * "
+            ."FROM categorie c ";
+
+    return mysqli_query($link, $query) ;
+}
+/* Retourne les catégories actives */
+function categorieActif($link) {
+    $query = "SELECT * "
+            ."FROM categorie c "
+            ."WHERE c.StatutC = 'Actif'";
+
+    return mysqli_query($link, $query) ;
+}
+
+/* Retourne les catégories inactives */
+function categorieInactif($link) {
+    $query = "SELECT * "
+            ."FROM categorie c "
+            ."WHERE c.StatutC = 'Inactif'";
+  
+    return mysqli_query($link, $query);
+}
+/* Retourne la liste des mnémoniques */
+function listeMnemonique($link) {
+    $query = "SELECT *  "
+            ."FROM listemnemonique ";
+            
+    return mysqli_query($link, $query);  
+}
 
 ?>
