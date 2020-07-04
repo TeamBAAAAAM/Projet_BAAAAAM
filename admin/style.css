@@ -1,6 +1,6 @@
 /******************************************************************/
 
-/*             FEUILLE DE STYLE DES PAGES CÔTÉ ASSURÉ             */
+/*     FEUILLE DE STYLE DES PAGES CÔTÉ TECHNICIEN (CONNECTÉ)      */
 
 /******************************************************************/
 
@@ -14,310 +14,384 @@ body {
 }
 
 /*------------------------------------------------------
+ 	STYLE GÉNÉRAL
+-------------------------------------------------------*/
+
+.glyphicon {
+    margin: 0 5px;
+}
+
+/*------------------------------------------------------
  	ENTÊTE DE LA PAGE
 -------------------------------------------------------*/
 
+.affix {
+    z-index: 9999 !important;
+    top: 0;
+    width: 100%;
+}
+
+.affix + .container {
+    padding-top: 71px;
+}
+
+.affix + .container {
+    padding-top: 71px;
+}
+
 .header {
-	padding: 10px 32px;
-	border: none;
-	border-radius: 0px;
-	background-color: #339966;
-	color: white;
-	box-shadow: 1px 1px 10px grey;
+    margin-bottom: 0;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 0;
+    color: white;
+    background-color: #396;
+    box-shadow: 1px 1px 10px grey;
+}
+
+.header .dropdown {
+    margin-left: 0;
+}
+
+.header .dropdown > button {
+    padding-right: 20px;
+    padding-left: 20px;
+    color: #396;
 }
 
 .header img {
-	margin-left: 15px;
-	height: 50px;
+    height: 50px;
+    margin-left: 15px;
 }
 
 .navbar-header > button {
-	height: 50px;
-	background-color: white;
-        
+    height: 50px;
 }
- .affix {
-    top: 0;
+
+.navbar-menu-police {
+    font-size: 17px;
+}
+
+/*------------------------------------------------------
+ 	CHAMPS DE SAISI POUR LA RECHERCHE
+-------------------------------------------------------*/
+
+.container-accueil {
+    margin: 5% 0%;
+}
+
+#container_filters > .row > * {
+    margin-bottom: 15px;
+}
+
+#research,
+#data-table {
+    margin: 20px 0;
+}
+
+#research {
+    width: 80%;
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
+/*------------------------------------------------------
+ 	TABLEAUX RÉCAPITULATIFS DE LA PAGE D'ACCUEIL
+-------------------------------------------------------*/
+
+.table-item-title {
+    font-size: 17px;
+}
+
+.table-header-title {
+    font-size: 23px;
+}
+
+/*------------------------------------------------------
+ 	BOITE DE DIALOGUE POUR L'ENVOI DES MAILS
+-------------------------------------------------------*/
+
+#mail_text {
     width: 100%;
-    z-index: 9999 !important;
-  }
-  .affix + .container-fluid {
-    padding-top: 70px;
-  }
-
-/*------------------------------------------------------
- 	BOUTONS DES CATÉGORIES
--------------------------------------------------------*/
-
-#status {
-	margin-bottom: 20px;
-}
-
-div.btn-status {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	text-decoration: none;
-	border-radius: 20px;
-	font-family: Calibri;
-	padding-bottom: 10px;
-	border: 1px solid white;
-}
-
-div.btn-status:hover {
-	transition: background-color 0.25s, color 0.75s ease-out;
-}
-
-#btn-modal {
-	border: 5px outset white;
-	background-color: #1058af;
-	color: white;
-	font-weight: bold;
-	margin-top: 34px;
-	font-size: 20px;
-	padding-left: 16px; 
-	padding-right: 16px; 
-	border-radius: 100px;
-}
-#btn-modal:hover {
-	border-style: inset;
-}
-
-.unselected {
-	background-color: rgb(0, 199, 235);
-	color: white;
-}
-
-.unselected:hover {
-	background-color: rgb(0, 114, 255);
-	color: white;
-	cursor: pointer;
-}
-
-.selected {
-	background-color: rgb(0, 114, 255);
-	color: white;
-}
-
-#champ_obligatoire {
-	margin: 20px 0px;
-	font-style: italic;
-	font-weight: bold;
-}
-
-.control-label {
-	margin-left: 5px;
-	margin-top : 15px;
 }
 
 /*------------------------------------------------------
-	FORMULAIRE
+ 	ZONE D'APERCU DES DOCUMENTS JUSTIFICATIFS
 -------------------------------------------------------*/
 
-#form_panel {
-	margin-top: 50px;
-	border-radius: 25px;
+#panel-apercu .panel-body,
+#panel-pjs .panel-body {
+    height: 1000px;
 }
 
-#form_panel > .panel-heading {
-	border-radius: 25px 25px 0px 0px;
-	padding-left: 40px;
-	background-color: rgb(0, 114, 255);
-	font-size: 2em;
-	color: white;
+#apercu {
+    width: 100%;
+    height: inherit;
+    border: none;
+    padding: 0px;
 }
 
-.modal-content {
-	background-color: rgba(0, 16, 29, 0.88);
-	color: white;
+/*------------------------------------------------------
+ 	LISTES DES PIÈCES JUSTIFICATIVES
+-------------------------------------------------------*/
+
+#panel-pjs .icon {
+    height: 45px;
+    margin-right: 10px;
 }
-.head_modal_title {
-	border: none;
+#panel-apercu .panel-body,
+#panel-pjs .panel-body {
+    padding: 0;
 }
 
-.label_enregistrement {
-	font-size: small;
-	margin-left: 15px;
-	padding: 4px;
+#panel-pjs .panel-body {
+    overflow-y: scroll;
 }
 
-span.badge {	
-	font-size: small;
-	padding: 4px 8px;
+#panel-pjs li.pj-selected h5 {
+    cursor: default;
 }
 
-.panel_header_fichier {
-	background-color: #29293d;
-	color: #00ace6;
+#panel-pjs a.btn {
+    padding: 0px;
+    padding-top: 4px;
+    border-radius: 20px;
+    height: 26px;
+    box-shadow: 1px 1px 3px black;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: none;
+    align-items: center;
 }
 
-span.glyphicon {
-	margin-right: 15px;
+#panel-pjs .panel-heading h4.row,
+#panel-apercu .panel-heading h4.row {
+    background-color: lightgrey;
+    color: black;
+    font-size: 15px;
+    margin-bottom: 0px;
+    padding: 5px 0px;
 }
 
-li.list-group-item {	
-	font-size: larger;
+#panel-pjs .panel-heading h4.row .glyphicon,
+#panel-apercu .panel-heading h4.row .glyphicon{
+    margin: 0px;
 }
 
-/* Bar de progression du suivi */
-.bar-icons {
-	background: none;
-	margin-bottom: 10px;
-	display: flex;
-	justify-content: space-between;
-	font-size: 64px;
-}
-.bar-icons.danger {color: #a94442;}
-.bar-icons.success {color: #3c763d;}
-.bar-icons.info {color: #31708f;}
-.bar-icons.warning {color: #8a6d3b;}
-
-.bar-icons .icon.disabled {
-	background-color: #1e1a25;
-	color: transparent;
-	text-shadow: 2px 2px 3px rgba(255,255,255,0.75);
-	-webkit-background-clip: text;
-	   -moz-background-clip: text;
-			background-clip: text;
+#panel-pjs div.button {
+    padding: 0px;
+    margin: 0px 2px;
 }
 
-/*note*/
-.note {
-	font-style: italic;
-	font-size: 0.75em;
-	color: blue;
+#panel-pjs li div.row {
+    height: 100%;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
 }
 
-/*footer*/
-footer {
-	margin-top: 95px;
-	background-color: rgba(28, 35, 49, 0.568);
-	color: white;
-	padding: 0px 50px;
+#panel-pjs li div.row div.text{
+    overflow-wrap: anywhere;
 }
 
-footer div.title_footer {
-	padding-top: 30px;
-	padding-bottom: 10px;
-	margin-bottom: 15px;
-	font-size: 18px;
-	font-weight: bold;
-	border-bottom: 1px solid #21d192;
-	text-transform: uppercase;
-}
-
-footer iframe.col-sm-5 {
-	padding-left: 30px;
-	padding-right: 0px;
-	border: none;
-}
-
-#juridique {
-	margin-top: 15px;
-	padding: 10px 0px;
-	background-color: rgba(24, 31, 43, 0.78);
-}
-
-footer a {
-	text-decoration: none;	
-	color: #21d192;
-}
-footer a:hover {
-	text-decoration: none;	
-	color: lightgrey;
-}
-
-footer #links a {
-	margin-bottom: 10px;
-}
-
-#copyright {
-	padding: 20px 0px;
-	background-color: #161c27;
-}
-
-footer div.list-group a {
-	border: none;
-	background-color: #1c2331;
-	color: #21d192;
-}
-
-.header a {
-	border: none;
-	text-decoration: none;
-	color: white;
-}
-
-.header a:hover {
-	color: rgb(163, 206, 204);
-}
-
-a[href='https://www.oups.gouv.fr/'] > img {
-	width: 180px;
-}
-
-img[src="../img/num_tel.png"] {
-	height: 50px;
-}
-
-.champ_obligatoire{
-	font-size: 14px;
+.matricule {
+    width: 100%;
+    text-align: right;
     font-style: italic;
+    font-size: 12px;
+}
+
+.pj-hovering {
+    background-color: lightgray;
+    box-shadow: 1px 1px 3px black inset;
+    cursor: zoom-in;
+}
+
+.pj-selected {
+    color: white;
+    background-color: gray;
+}
+
+/*------------------------------------------------------
+ 	GESTION DES MESSAGES
+-------------------------------------------------------*/
+
+body:not(#body_sign) div.alert {
+    margin: 30px 150px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    min-width: 440px;
+}
+
+body:not(#body_sign) div.alert > h3 {
+    margin-top: 0;
+}
+
+#msg_close {
+    float: right;
+    font-size: 24px;
+}
+
+#msg_close:hover {
+    color: rgb(0,0,0,0.25);
+}
+
+#msg_close + h3 {
+    margin-top: 0;
+}
+
+/******************************************************************/
+
+/*   FEUILLE DE STYLE DES PAGES DE CONNEXION ET D'INSCRIPTION     */
+
+/******************************************************************/
+
+
+/*------------------------------------------------------
+ 	CORPS DE LA PAGE 
+-------------------------------------------------------*/
+
+#body_sign {
+    overflow-x: hidden;
+    background-color: WhiteSmoke;
+}
+
+#body_sign #connexion {
+    width: 600px;
+    margin-top: 5%;
+}
+
+#body_sign #connexion h2 {
+    width: 60%;
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+#body_sign .container_sign {
+    margin-bottom: 50px;
+    padding: 30px;
+    border: 1px solid #f1f1f1;
+    background: #fff;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2) ,0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#body_sign div#inscription {
+    width: 50%;
+    margin-top: 50px;
+}
+
+#body_sign div#connexion {
+    width: 40%;
+    margin-top: 100px;
+}
+
+#body_sign div#confirmation_inscription {	
+    width: 60%;
+    margin-top: 100px;
+}
+
+#body_sign input[type=text],
+#body_sign input[type=password] {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+}
+
+#body_sign input[type=submit] {
+    width: 100%;
+    margin: 8px 0;
+    padding: 14px 20px;
+    border: 1px solid white;
     font-weight: bold;
+    color: white;
+    background-color: #03057b;
+    transition: background-color 0.25s;
+    cursor: pointer;
+}
+
+#body_sign input[type=submit]:hover {
+    border: 1px solid #03057b;
+    color: #03057B;
+    background-color: white;
+}
+
+#body_sign label {
+    margin-top: 16px;
+}
+
+#body_sign .float-right {
+    float: right;
+}
+
+#body_sign div.certif {
+    margin-bottom: 10px;
+}
+
+#body_sign .champ_obligatoire {
+    font-style: italic;
     color: #03057B;
 }
 
-/* Message */
-div.alert {
-	margin: 30px 150px;
-	margin-top: 0px;
-	margin-bottom: 20px;
+#body_sign div.champ_obligatoire {
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
-div.alert > h3 {
+
+/*------------------------------------------------------
+ 	ENTÊTE DES PAGES
+-------------------------------------------------------*/
+
+#body_sign .header {
+    margin-bottom: 0;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 0;
+    color: white;
+    background-color: #EFF6FB;
+    box-shadow: 1px 1px 10px grey;
+}
+
+/*------------------------------------------------------
+ 	BOUTONS DES PAGES
+-------------------------------------------------------*/
+
+#body_sign a:not(.btn) {
+    text-decoration: none;
+    color: #03057B;
+}
+
+#body_sign a:not(.btn):hover {
+    text-decoration: none;
+    color: dodgerblue;
+}
+
+/*------------------------------------------------------
+ 	MESSAGES
+-------------------------------------------------------*/
+
+#body_sign div.alert {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#body_sign div.alert h3 {
 	margin-top: 0px;
 }
 
-/* Bouton de fermeture de message */
-#msg_close {
-	float: right;
-	font-size: 24px;
+#body_sign div.alert h3 > *:not(.glyphicon) {
+	font-size: 16px;
 }
-#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
-#msg_close + h3 {margin-top: 0px;}
 
-/* Gestion du responsive */
-@media (max-width: 576px) {
-	div.btn-status {
-		height: 60px;
-	}
-	div.btn-status > h2 {
-		font-size: 20px;
-	}
-	#contact > * {
-		text-align: center;
-	}
+#body_sign div.alert h3 > *:not(.glyphicon):hover {
+	font-size: 16px;
 }
-@media only screen and (min-width: 576px) and (max-width : 768px) {
-	div.btn-status {
-		height: 80px;
-	}
-	div.btn-status > h2 {
-		font-size: 25px;
-	}
-	#contact > * {
-		text-align: center;
-	}
-}
-@media (min-width: 768px) and (max-width : 992px) {
-	div.btn-status {
-		height: 250px;
-	}
-	div.btn-status > h2 {
-		font-size: 25px;
-	}
-}
-@media only screen and (min-width : 992px) {
-	div.btn-status {
-		height: 250px;
-	}
+
+#body_sign div.alert h3 > .glyphicon:last-child {
+	font-size: 12px;
 }

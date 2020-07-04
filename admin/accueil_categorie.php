@@ -7,16 +7,11 @@ require("../fonctions.php");
 	// Connexion à la BD
 	$link = connecterBD();
 ?>
+
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
+<html lang="fr">
+	<head>
+		<!-- ENCODAGE DE LA PAGE EN UTF-8 ET GESTION DE L'AFFICHAGE SUR MOBILE -->
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -28,38 +23,37 @@ and open the template in the editor.
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 		<script src="script.js"></script>
-               
-        <title></title>
-    </head>
-    <body>
-        
-        
-        <nav class="navbar navbar-default header">
+
+		<title>PJPE - Administrateur</title>
+	</head>
+	<body>
+		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">
-					<h1>PJPE</h1>
+					<h1>PJPE - Administrateur</h1>
 				</div>
 			</div>
 		</nav>
 
-	<nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</div>
-				<div class="collapse navbar-collapse" id="myNavbar2">
-					<ul class="nav navbar-nav" id="menu">
-                                            <li class="active"><a href="accueil_categorie.php"><span class="glyphicon glyphicon-home"></span> Gestion Catégorie </a></li>
-                                            <li><a href="accueil_mnemonique.php"><span class="glyphicon glyphicon-list-alt"></span>Gestion Mnémonique</a></li>
-						
-					</ul>
-                                </div>
-                        </div>
+        <nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar2">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar2">
+                    <ul class="nav navbar-nav" id="menu">
+                        <li class="active"><a href="accueil_categorie.php"><span class="glyphicon glyphicon-home"></span> Gestion Catégorie </a></li>
+                        <li><a href="accueil_mnemonique.php"><span class="glyphicon glyphicon-list-alt"></span>Gestion Mnémonique</a></li>
+                        <li><a href="export_csv.php"><span class="glyphicon glyphicon-list-alt"></span>Export CSV</a></li>
+                    </ul>
+                </div>
+            </div>
         </nav>
+
         <div class="container">
             <a href='creation_categorie.php'><i class='glyphicon glyphicon-plus'></i>Nouvelle Catégorie</a>
             <div>
