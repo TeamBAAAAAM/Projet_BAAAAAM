@@ -107,8 +107,9 @@ function connecterBD() {
     return $link;
 }
 
-function genererFichierCSV($link) {
-    $fichier = fopen(getenv("CSV_NAME_FILE"), 'w+');
+/* Génère le fichier CSV pour l'insertion dans ADDICT */
+function genererFichierCSV($link) {    
+    $fichier = tmpfile();
 
     // Ajout de l'entête
     fputs($fichier, getenv("CSV_HEADER")."\n");
@@ -117,13 +118,43 @@ function genererFichierCSV($link) {
     do {
         $tuple = mysqli_fetch_array($result);
         if($tuple != NULL) {
-            $ligne = implode(";", $tuple); // Concaténation des éléments du tuple avec ';' comme séparateur
-            //fseek($fichier, 0); // On remet le curseur au début du fichier
+            $ligne = $tuple["CheminJ"].";";
+            $ligne .= "IJ;";
+            $ligne .= "OUI;";
+            $ligne .= $tuple["DateD"].";";
+            $ligne .= "vide;";
+            $ligne .= ";";
+            $ligne .= ";";
+            $ligne .= $tuple["Mnemonique"];
             fputs($fichier, $ligne."\n"); // On écrit le tuple dans le fichier CSV
         }
     } while($tuple != NULL);
-     
+
+    return $fichier;
+}
+
+/* Sauvegarde le fichier d'enregistrement du fichier CSV sur l'espace du serveur */
+function sauvegarderFichierCSVServeur($ftp_stream, $link) {
+    $fichier = genererFichierCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    $result = ftp_put($ftp_stream, getenv("CSV_NAME_FILE"), $nomFichier, FTP_BINARY);
+
     fclose($fichier);
+
+    return $result;
+}
+
+/* Sauvegarde le fichier d'enregistrement du fichier CSV sur l'espace du serveur */
+function sauvegarderFichierCSVLocal($link) {    
+    $fichier = genererFichierCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    header("Content-Type: application/octet-stream");
+    header("Content-Length: ".filesize($nomFichier));
+    header("Content-Disposition: attachment; filename=".getenv("CSV_NAME_FILE"));
+
+    readfile($nomFichier);
 }
 
 /* Génère un lien pour le suivi du dossier de référence '$ref' */
@@ -153,10 +184,12 @@ function genererMessage($title, $body, $icon, $type) {
 
 /* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
 function recupererDossierSauvegarde($link) {
-    $query = "SELECT * "
-            ."FROM dossier d "
-            ."WHERE d.StatutD = 'À traiter' "
-            ."OR d.StatutD = 'En cours'";
+    $query = "SELECT CheminJ, DateD, Mnemonique"
+            ."FROM dossier d, justificatif j, litemnemonique m "
+            ."WHERE (d.StatutD = 'À traiter' "
+            ."OR d.StatutD = 'En cours') "            
+            ."AND j.CodeD = d.CodeD "            
+            ."AND m.CodeM = j.CodeM";
 
     return mysqli_query($link, $query);
 }
