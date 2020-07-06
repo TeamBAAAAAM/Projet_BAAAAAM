@@ -4,13 +4,24 @@
     $ftp_stream = connecterServeurFTP();
     
     // Si c'est bien une requête POST pour générer le fichier CSV
-    if(isset($_POST["save"]) && $_POST["save"] == "OK") {
-        if(sauvegarderFichierCSVServeur($ftp_stream, $link)) {
-            $saved_file = True;
+    if(isset($_POST["injection_file_save"]) && $_POST["injection_file_save"] == "OK") {
+        if(sauvegarderFichierInjectionCSVServeur($ftp_stream, $link)) {
+            $injection_file_saved = True;
         }
         else {
             // Booléen pour génération du fichier CSV
-            $saved_file = False;
+            $injection_file_saved = False;
+        }
+    }
+
+    // Si c'est bien une requête POST pour générer le fichier CSV
+    if(isset($_POST["list_folders_save"]) && $_POST["list_folders_save"] == "OK") {
+        if(sauvegarderListeDossiersCSVServeur($ftp_stream, $link)) {
+            $list_folders_saved = True;
+        }
+        else {
+            // Booléen pour génération du fichier CSV
+            $list_folders_saved = False;
         }
     }
 ?>
@@ -63,10 +74,27 @@
 
         <div class="container">
             <h2>Export des données en fichier CSV</h2>
-
             <?php
-                if(isset($saved_file)) {
-                    if($saved_file) {
+                if(isset($injection_file_saved)) {
+                    if($injection_file_saved) {
+                        genererMessage(
+                            "Sauvegarde sur le serveur",
+                            "Sauvegarde effectuée avec succès !",
+                            "glyphicon glyphicon-cloud-download", 
+                            "success"
+                        );
+                    }
+                    else {
+                        genererMessage(
+                            "Sauvegarde sur le serveur",
+                            "Échec lors de la sauvegarde sur le serveur !",
+                            "glyphicon glyphicon-cloud-download", 
+                            "danger"
+                        );
+                    }
+                }
+                else if(isset($list_folders_saved)) {
+                    if($list_folders_saved) {
                         genererMessage(
                             "Sauvegarde sur le serveur",
                             "Sauvegarde effectuée avec succès !",
@@ -84,20 +112,60 @@
                     }
                 }
             ?>
-            
-            <form method="POST" action="export_csv.php">
-                <input type="hidden" name="save" value="OK">
-                <button type="submit" class="btn btn-default btn-lg">
-                    <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
-                </button>
-            </form>
-
-            <form method="POST" action="download_csv.php">
-                <input type="hidden" name="download" value="OK">
-                <button type="submit" class="btn btn-default btn-lg">
-                    <span class='glyphicon glyphicon-download-alt'></span> Télécharger en local
-                </button>
-            </form>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class= "panel panel-default">
+                            <div class="panel-heading text-center">
+                                <h4>
+                                    <strong>
+                                        <span class="glyphicon glyphicon-share"></span> Injection dans Diademe
+                                    </strong>
+                                </h4>
+                            </diV>
+                            <div class="panel-body text-center">
+                                <form class="row" method="POST" action="export_csv.php">
+                                    <input type="hidden" name="injection_file_save" value="OK">
+                                    <button type="submit" class="btn btn-default col-sm-12">
+                                        <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
+                                    </button>
+                                </form>
+                                <form class="row" method="POST" action="download_csv.php">
+                                    <input type="hidden" name="injection_file_download" value="OK">
+                                    <button type="submit" class="btn btn-default col-sm-12">
+                                        <span class='glyphicon glyphicon-download-alt'></span> Télécharger en local
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class= "panel panel-default">
+                            <div class="panel-heading text-center">
+                                <h4>
+                                    <strong>
+                                        <span class="glyphicon glyphicon-th-list"></span> Dossiers "À traiter" et "En cours"
+                                    </strong>
+                                </h4>
+                            </diV>
+                            <div class="panel-body text-center">
+                                <form class="row" method="POST" action="export_csv.php">
+                                    <input type="hidden" name="list_folders_saved" value="OK">
+                                    <button type="submit" class="btn btn-default col-sm-12">
+                                        <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
+                                    </button>
+                                </form>
+                                <form class="row" method="POST" action="download_csv.php">
+                                    <input type="hidden" name="list_folders_download" value="OK">
+                                    <button type="submit" class="btn btn-default col-sm-12">
+                                        <span class='glyphicon glyphicon-download-alt'></span> Télécharger en local
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
