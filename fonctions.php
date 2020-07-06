@@ -118,7 +118,7 @@ function genererFichierCSV($link) {
     do {
         $tuple = mysqli_fetch_array($result);
         if($tuple != NULL) {
-            $ligne = $tuple["CheminJ"].";";
+            $ligne = ";";
             $ligne .= "IJ;";
             $ligne .= "OUI;";
             $ligne .= substr($tuple["DateD"], 0, 10).";";
@@ -184,12 +184,14 @@ function genererMessage($title, $body, $icon, $type) {
 
 /* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
 function recupererDossierSauvegarde($link) {
-    $query = "SELECT CheminJ, DateD, Mnemonique "
+    $query = "SELECT DISTINCT DateD, Mnemonique "
             ."FROM dossier d, justificatif j, listemnemonique m "
             ."WHERE (d.StatutD = 'À traiter' "
             ."OR d.StatutD = 'En cours') "            
             ."AND j.CodeD = d.CodeD "
             ."AND m.CodeM = j.CodeM";
+
+    echo $query;
 
     return mysqli_query($link, $query);
 }
@@ -232,6 +234,7 @@ function categoriesActives($link) {
     FROM categorie ca WHERE ca.StatutC = 'Actif' 
     AND ca.CodeC NOT IN (SELECT CodeC FROM concerner) 
     ORDER BY CodeC";
+
     $result = mysqli_query($link, $query);
 
     return $result;

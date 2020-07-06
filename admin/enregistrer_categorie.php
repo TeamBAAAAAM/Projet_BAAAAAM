@@ -4,28 +4,22 @@
     //Connexion à la BD
     $link = connecterBD();
     
-
-
-if(isset($_POST["nomC"]) and isset($_POST["designationC"]) and isset($_POST["mnemonique"])){
-     
-     
-    //Enregistrement dans la table catégorie
-    $nomC = $_POST['nomC'];
-    $designationC = $_POST['designationC'];
-   $idC = $_SESSION['id'];
-   
-    //if(isset($_SESSION['modif'])){
-     //   $query = "UPDATE categorie SET NomC=".$nomC.", DesignationC=".$designationC." WHERE CodeC=".$idC;
-    //}else{
-     $query = 'INSERT INTO categorie
-   (NomC, DesignationC, StatutC)
-VALUES
-   ("'.$nomC.'", "'.$designationC.'", "Actif")';
-//} 
-    mysqli_query($link, $query);
-header('Location: creation_categorie.php?msg=Success');
-    exit();
-}
+    if(isset($_POST["nomC"]) and isset($_POST["designationC"]) and isset($_POST["mnemonique"])){
+        //Enregistrement dans la table catégorie
+        $nomC = $_POST['nomC'];
+        $designationC = $_POST['designationC'];
+    
+        //if(isset($_SESSION['modif'])){
+        //   $query = "UPDATE categorie SET NomC=".$nomC.", DesignationC=".$designationC." WHERE CodeC=".$idC;
+        //}else{
+        $query = "INSERT INTO categorie(NomC, DesignationC, StatutC)";
+        $query .= "VALUES('$nomC', '$designationC', 'Actif')";
+        //} 
+        echo $query;
+        mysqli_query($link, $query);
+        //header('Location: creation_categorie.php?msg=Success');
+        exit();
+    }
 
     
     //On va faire une requete pour recuperer l'id de la catégorie qui vient d'etre enregistré
