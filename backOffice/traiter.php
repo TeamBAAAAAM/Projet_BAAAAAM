@@ -144,7 +144,8 @@
 				</div>
 			</div>
 		</nav>		
-		<div class="container-fluid">
+
+		<div class="container">		
 			<?php
 				if(isset($_POST['email'])) {
 					if(envoyerMailDemandePJ($mailAssure, $refDossier, implode("",$_POST['mail_text']))) {
@@ -175,7 +176,8 @@
 
 							//Récupération des messages de l'assuré
 							$messagesAssure = listeMessages($codeAssure, $link);
-						} else {						
+						}
+						else {						
 							GenererMessage (
 								"Erreur lors de l'enregistrement !",
 								"Votre message n'a pas pu être enregistré !",
@@ -183,7 +185,8 @@
 								"danger"
 							);
 						}
-					} else {				
+					}
+					else {				
 						GenererMessage (
 							"Erreur lors de l'envoi !",
 							"Votre message n'a pas pu être envoyé !",
@@ -197,9 +200,7 @@
 					unset($_POST['email']);
 				}
 			?>
-		</div>
 
-		<div class="container">
 			<div class="row container">
 				<div id="panel-dossier" class="col-lg-6">
 					<div class="panel panel-default">
