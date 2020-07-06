@@ -232,6 +232,7 @@ function categoriesActives($link) {
     FROM categorie ca WHERE ca.StatutC = 'Actif' 
     AND ca.CodeC NOT IN (SELECT CodeC FROM concerner) 
     ORDER BY CodeC";
+
     $result = mysqli_query($link, $query);
 
     return $result;
