@@ -102,16 +102,15 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="style.css">
 
-        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
+        <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="script.js"></script>
 
         <!-- AFFICHAGE DU FORMULAIRE SI REFERENCE DE DOSSIER EXISTANTE -->
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show();
+                $("#form_panel").show(); //Le formulaire est affiché
             });
 
             function initInputMnemo(id) {
@@ -150,7 +149,24 @@
                 $("div#missing-file").prepend(content);
             }
         </script>
+        <?php else: ?>
+        <script>
+            $(document).ready(function(){
+                $("#form_panel").hide(); //Le formulaire est affiché
+            });
+
+            var pj = [<?php
+                $result = categorieActif($link);
+
+                for($i = 0 ; $i < mysqli_num_rows($result) - 1 ; $i++) {
+                    echo '"'.mysqli_fetch_array($result)["NomC"].'",';
+                }
+                
+                echo '"'.mysqli_fetch_array($result)["NomC"].'"';
+            ?>];</script>
         <?php endif ?>
+
+        <script src="script.js"></script>
 
         <title>PJPE - Dépôt des documents</title>
     </head>
@@ -172,7 +188,7 @@
                     // Affichage des boutons de chaque catégorie active
                     for ($i = 0; $i < $rows; $i++) {
                         $categorie = mysqli_fetch_array($listeCategories);
-                        echo("<div id='".$categorie['NomC']."' class='col-sm-3 btn-status'>
+                        echo("<div id='".$categorie['NomC']."' class='col-sm-3 btn-status unselected'>
                                 <h2>".$categorie['DesignationC']."</h2>
                             </div>");
                     }
@@ -441,7 +457,7 @@
                                                         <img src='../img/icons/$extension-icon.png' class='ext-icon'>
                                                     </div>
                                                     <div class='col-sm-12'>
-                                                        <strong>$designation No. $j <span class='champ_obligatoire'>(*)</span>< :/strong>
+                                                        <strong>$designation No. $j <span class='champ_obligatoire'>(*)</span> :</strong>
                                                     </div>
                                                 </div>
                                             </div>
@@ -491,39 +507,24 @@
                                     for ($i = 0; $i < mysqli_num_rows($listeCategories); $i++) {
                                         $categorie = mysqli_fetch_array($listeCategories);
                                         // Affichage des zones de dépôt de PJ avec libellés exacts
-                                        echo("<div class='row pj ".$categorie['NomC']."'>
+                                        if($categorie['Mnemonique'] != "") {
+                                            echo("<div class='row pj ".$categorie['NomC']."'>
                                                 <div class='col-sm-12'>
                                                     <label for='". $categorie['Mnemonique'] ."'>". $categorie['Label'] ." <span class='champ_obligatoire'>(*)</span> :</label>
-                                                    <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."\[]' multiple>
+                                                    <input type='file' id='". $categorie['Mnemonique'] ."' name='". $categorie['Mnemonique'] ."[]' multiple>
                                                 </div>
                                             </div>");
+                                        }
+                                        else {
+                                            echo("<div class='row pj ".$categorie['NomC']."'>
+                                                <div class='col-sm-12'>
+                                                    <p># Type de pièces non-défini, merci de contacter l'administrateur ...</p>
+                                                </div>
+                                            </div>");
+                                        }
                                     }                                 
                                 }                                
-                            ?>
-                            <!--div class="row pj salarie">
-                                <div class="col-sm-12">
-                                    <label for="ATT_SAL">Attestation de salaire délivrée par votre employeur <span class="champ_obligatoire">(*)</span> :</label>
-                                    <input type="file" id="ATT_SAL" name="ATT_SAL[]" multiple>
-                                </div>
-                            </div>
-                            <div class="row pj interim cesu pole-emploi pole-emploiC">
-                                <div class="col-sm-12">
-                                    <label for="BS">Les bulletins de salaire des <span id="nb_BS">12</span> mois précédant <span id="seuil_BS">l'arrêt de travail</span>  (de tous vos employeurs) <span class="champ_obligatoire">(*)</span> : </label>
-                                    <input type="file" id="BS" name="BS[]" multiple>
-                                </div>
-                            </div>
-                            <div class="row pj intermit">
-                                <div class="col-sm-12">
-                                    <label for="CACHET_GUSO">Cachet du GUSO <span class="champ_obligatoire">(*)</span> : </label>
-                                    <input type="file" id="CACHET_GUSO" name="JUSTIF_SAL[]" multiple>
-                                </div>
-                            </div>
-                            <div class="row pj art-aut">
-                                <div class="col-sm-12">
-                                    <label for="DOC_AGESSA">Imprimé délivré par AGESSA <span class="champ_obligatoire">(*)</span> : </label>
-                                    <input type="file" id="DOC_AGESSA" name="PJ_IJ[]" multiple>
-                                </div>
-                            </div-->     
+                            ?>  
                          
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-sm-12">
