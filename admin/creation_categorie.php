@@ -28,7 +28,7 @@ and open the template in the editor.
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
 
-        <title></title>
+        <title>PJPE - Administrateur</title>
     </head>
      <?php
             if(isset($_GET['msg']) and $_GET['msg'] == "Success"){
@@ -42,7 +42,7 @@ and open the template in the editor.
         <nav class="navbar navbar-default header">
             <div class="container">
                 <div class="navbar-header">
-                    <h1>PJPE</h1>
+                    <h1>PJPE - Administrateur</h1>
                 </div>
             </div>
         </nav>
@@ -59,9 +59,9 @@ and open the template in the editor.
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar2">
                     <ul class="nav navbar-nav" id="menu">
-                         <li class="active"><a href="accueil_categorie.php"><span class="glyphicon glyphicon-home"></span> Gestion Catégorie </a></li>
-                         <li><a href="accueil_mnemonique.php"><span class="glyphicon glyphicon-list-alt"></span>Gestion Mnémonique</a></li>
-						
+                        <li class="active"><a href="accueil_categorie.php"><span class="glyphicon glyphicon-home"></span> Gestion Catégorie </a></li>
+                        <li><a href="accueil_mnemonique.php"><span class="glyphicon glyphicon-list-alt"></span>Gestion Mnémonique</a></li>
+                        <li><a href="export_csv.php"><span class="glyphicon glyphicon-list-alt"></span>Export CSV</a></li>
                     </ul>
                 </div>
             </div>
