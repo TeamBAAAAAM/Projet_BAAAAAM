@@ -150,6 +150,26 @@ li.list-group-item {
 	font-size: larger;
 }
 
+.ext-icon {
+	height: 100px;
+}
+
+.repost {
+	width: 94.5%;
+	margin: 0px;
+}
+
+.repost > div.row {
+	display: flex;
+	align-items: center;
+	margin: 20px 0px;
+	padding: 15px;
+	border: 1px solid lightgrey;
+	border-radius: 10px;
+	box-shadow: 1px 1px 3px black inset;
+	text-align: center;
+}
+
 /* Bar de progression du suivi */
 .bar-icons {
 	background: none;

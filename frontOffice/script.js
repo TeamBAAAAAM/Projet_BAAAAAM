@@ -9,50 +9,12 @@
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
 
-// Initialisation des variables
-var pj = ["salarie", "interim", "cesu", "pole-emploi", "pole-emploiC", "intermit", "independant", "art-aut"];
-var msg_salarie = "Uniquement si vous ne faîte pas partie des autres cas.";
-var msg_interim = "A titre d'exemple, peuvent ";
-var msg_cesu = "";
-var msg_pole_emploi = "";
-var msg_pole_emploiC = "";
-var msg_intermit = "";
-var msg_independant = "";
-var msg_art_aut = "";
-
 //À modifier si l'on souhaite modifier le formalisme de NIR et de la référence dossier
 var formatNIR = "# ## ## ## ### ###";
 var nbCharRefD = 8;
 
 //Fonction pour gérer les messages des statuts
 function showInfo_function(currentPJ) {
-    switch (currentPJ) {
-        case "salarie":
-            $("#message").html(msg_salarie);
-            break;
-        case "interim":
-            $("#message").html(msg_interim);
-            break;
-        case "cesu":
-            $("#message").html(msg_cesu);
-            break;
-        case "pole-emploi":
-            $("#message").html(msg_pole_emploi);
-            break;
-        case "pole-emploiC":
-            $("#message").html(msg_pole_emploiC);
-            break;
-        case "intermit":
-            $("#message").html(msg_intermit);
-            break;
-        case "independant":
-            $("#message").html(msg_independant);
-            break;
-        case "art-aut":
-            $("#message").html(msg_art_aut);
-            break;
-    }
-
     $("#info-status").show();
 }
 
@@ -302,28 +264,22 @@ function checkFormatRefD() {
     document.getElementById("refD").setSelectionRange(caret, caret);
 }
 
-//Vérifie si une référence est correcte
-function verifierRef() {
-    var xhttp;
-    xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            (this);
-        }
-    };
-    xhttp.open("GET", url, true);
-    xhttp.send();
+//Mise à jour du mnémonique
+function MajInputMnemo(id) {
+    var select = $("#" + id);
+    var input = select.parent().parent().find("input[type='file'");
+    input.attr("name", select.val()+"[]");
 }
 
-function remplirFormulaire(xhttp) {
-    // action goes here
+//Supprimer la ligne de dépôt de document d'id 'id'
+function supprimerInput(id) {
+    $("#" + id).remove();
 }
 
 //Affichage des zones de dépot des PJ en fonction
 //de la catégorie choisie via le nom des classes
 $(document).ready(function() {
     showInfo();
-    $("#form_panel").hide(); //Le formulaire est masqué
 
     for (i = 0; i < pj.length; i++) {
         var currentPJ = pj[i];

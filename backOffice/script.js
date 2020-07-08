@@ -13,11 +13,10 @@
 /* Formats autorisés */
 var format = ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "pdf"];
 
-$(document).ready(function(){
-    $("#panel-pjs li").click(function(){
-        clickOnPjsLi($(this))
-    });
-    
+/* Les éléments de la liste des PJs qui doivent réagir à des événements */
+var event_elt_pjs = ["#panel-pjs div.image", "#panel-pjs div.text", "#panel-pjs div.matricule"];
+
+$(document).ready(function(){    
     //Initialisation des écouteurs pour la recherche
     $("#recherche").on("keyup", function() {TrierTableau()});
     $("#statut").change(function() {TrierTableau()});
@@ -52,6 +51,12 @@ $(document).ready(function(){
 
     // Désactivation de tous les boutons de classe disabled
     $(".disabled").attr("disabled", true);
+
+    // Gestion du hover sur les éléments des pièces justificatives
+    hoverListePJS();
+    
+    // Gestion du clique sur les éléments des pièces justificatives
+    clickListePJS();
 });
 
 /* Vérifie et corrige la valeur du champ de saisi du matricule en fonction du format 'format' */
@@ -101,13 +106,6 @@ function checkFormatMatricule(format) {
 //Fonction qui gère modifie le lien vers l'aperçu
 function updateViewer(path) {
     $("iframe#apercu").attr("src", path);
-}
-
-//Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
-//lors d'un clique
-function clickOnPjsLi(node) {
-    $("#panel-pjs li").removeClass("pj-selected");
-    $(node).addClass("pj-selected");
 }
 
 function DateToNumber(date) {
@@ -197,37 +195,6 @@ function NaissanceAssure($nir){
     return Array($mois, $annee);
 }
 
-// Mise à jour du message pré-rempli pour demander des pièces à un assuré
-function MAJMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, CodeJ) {
-    var Raisons = [$("#cb1").prop("checked"), $("#cb2").prop("checked"), $("#cb3").prop("checked")];
-    $("#mail_text").val(EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ));
-}
-
-// Génère et renvoie un message pré-rempli pour demander des pièces à un assuré
-function EcrireMessageAssure(DEPOSITE_LINK, FOOTER_EMAIL, RefD, Raisons, CodeJ) {
-    var message = "Bonjour,\n\n"
-    message += "\tNous souhaiterions vous informer que lors de votre ";
-    message += "dernier dépôt, certaines pièces justificatives affiliées au dossier ";
-    message += "de référence " + RefD + " semblent ";
-    if(!Raisons[0] && !Raisons[1] && !Raisons[2]) {message += "[Mettre les erreurs relevées ici] ";}
-    if(Raisons[0] && (Raisons[1] || Raisons[2])) message += "manquantes et ";
-    else if(Raisons[0]) message += "manquantes";
-    if(Raisons[1] && Raisons[2]) message += "illisibles et ";
-    else if(Raisons[1]) message += "illisibles";
-    if(Raisons[2]) message += "invalides";
-    message += ".\n\nMerci de vous rendre à l'adresse suivante afin de déposer les documents demandés :\n\n\t";
-    message += "<a href='" + DEPOSITE_LINK + "?RefD=" + RefD + "' target='_blank'>";
-    message += DEPOSITE_LINK + "?RefD=" + RefD + "</a>";
-    for(i = 0 ; i < CodeJ ; i++) {
-        message += "&CodeJ_" + i + "=" + CodeJ[i];
-    }
-    message += "\n\n\tBien cordialement,\n\n";
-    message += "La CPAM de la Haute-Garonne";
-    if(FOOTER_EMAIL != "") message +="\n\n<hr>" + FOOTER_EMAIL;
-
-    return message;
-}
-
 //Génère automatiquement la pagination selon le nombre de ligne afficher
 function GenererPagination() {
     nbLignesParPage = $("#nb_page").val();
@@ -283,10 +250,45 @@ function confirmationAnnulation(event) {
 }
 
 /* Gère la taille du contenu de la zone d'aperçu (script de traitement de fichier) */
-function gestionTailleApercu () {
+function gestionTailleApercu() {
     try { // Pour retirer l'erreur du au chargment d'un document
         var iframe = document.getElementById("apercu");
         var elt = iframe.contentWindow.document.getElementsByTagName("body")[0];
         elt.firstChild.style.width = "100%";
     } catch (error) {} // Pas d'erreur à afficher
+}
+
+/* Gestion du hover des éléments de la liste des pièces justificatives  */
+function hoverListePJS() {
+    for(i in event_elt_pjs) {
+        $(event_elt_pjs[i]).hover(function() {
+            var parentNode = $(this).parent().parent(); 
+            
+            if(!parentNode.hasClass("pj-selected")) {
+                parentNode.addClass("pj-hovering");
+                parentNode.attr(
+                    "title",
+                    "Afficher ce fichier dans l'aperçu");
+            }
+        }, function() {
+            var parentNode = $(this).parent().parent();   
+            parentNode.removeClass("pj-hovering");
+            parentNode.attr("title", "");
+        });
+    }
+}
+
+//Fonction qui gère l'affichage d'un item de la liste des pièces justificatives
+//lors d'un clique
+function clickListePJS() {
+    for(i in event_elt_pjs) {
+        $(event_elt_pjs[i]).click(function() {            
+            var parentNode = $(this).parent().parent();
+            var namefile = $(parentNode).find(".text").text();
+            $("#panel-pjs li").removeClass("pj-selected");            
+            $("#panel-apercu").find("#nom-fichier-apercu").text(namefile);
+            $(parentNode).removeClass("pj-hovering");
+            $(parentNode).addClass("pj-selected");
+        });
+    }
 }
