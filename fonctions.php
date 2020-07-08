@@ -54,7 +54,7 @@ function cheminVersServeurFTP() {
     return $chemin;
 }
 
-/* Connecte au serveur FTP */
+/* Connecte au serveur FTP pour la sauvegarde des pièces */
 function connecterServeurFTP() {    
     // Mise en place d'une connexion basique
     $ftp_stream = ftp_connect(
@@ -73,6 +73,29 @@ function connecterServeurFTP() {
     else {            
         echo "Erreur lors de l'identification !<br>";
         echo "Connexion impossible en tant que ".getenv("FTP_USER")." ...<br>";
+        return NULL;
+    }
+}
+
+/* Connecte au serveur FTP pour la sauvegarde des fichiers CSV */
+function connecterServeurFTP_CSV() {    
+    // Mise en place d'une connexion basique
+    $ftp_stream = ftp_connect(
+        getenv("CSV_FTP_HOST")) or 
+        die("Erreur : Impossible de se connecter à ".getenv("CSV_FTP_HOST")." !<br>"); 
+
+    //Tentative d'identification
+    if(ftp_login($ftp_stream, getenv("CSV_FTP_USER"), getenv("CSV_FTP_PWD"))) {
+        //echo "Connecté en tant que ".getent("FTP_USER")."@".FTP_HOST." ...<br>";
+    
+        // Activation du mode passif
+        ftp_pasv($ftp_stream, true);
+
+        return $ftp_stream;
+    }
+    else {            
+        echo "Erreur lors de l'identification !<br>";
+        echo "Connexion impossible en tant que ".getenv("CSV_FTP_USER")." ...<br>";
         return NULL;
     }
 }
@@ -144,7 +167,7 @@ function genererFichierInjectionCSV($link) {
             $ligne = "";
             if(strpos($header, "addict") !== Null)
                 //$ligne .= getenv("STORAGE_PATH")."/".$tuple["NirA"]."/".$tuple["RefD"].";";
-                $ligne .= "";
+                $ligne .= ";";
             if(strpos($header, "processus") !== Null)
                 $ligne .= "IJ;";
             if(strpos($header, "archivage") !== Null)
@@ -180,7 +203,7 @@ function genererListeDossiersCSV($link) {
         $ligne = implode(";", $header);
         fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV 
 
-        do { 
+        do {
             $ligne = implode(";", $tuple);
             fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV            
             $tuple = mysqli_fetch_array($result, MYSQLI_NUM);
@@ -195,7 +218,12 @@ function sauvegarderFichierInjectionCSVServeur($ftp_stream, $link) {
     $fichier = genererFichierInjectionCSV($link);
     $nomFichier = stream_get_meta_data($fichier)['uri'];
 
-    $result = ftp_put($ftp_stream, getenv("CSV_INJECTION_NAME_FILE"), $nomFichier, FTP_BINARY);
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_INJECTION_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_INJECTION_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_INJECTION_FILE_PATH")."/".getenv("CSV_INJECTION_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
 
     fclose($fichier);
 
@@ -219,7 +247,12 @@ function sauvegarderListeDossiersCSVServeur($ftp_stream, $link) {
     $fichier = genererListeDossiersCSV($link);
     $nomFichier = stream_get_meta_data($fichier)['uri'];
 
-    $result = ftp_put($ftp_stream, getenv("CSV_FOLDERS_NAME_FILE"), $nomFichier, FTP_BINARY);
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_FOLDERS_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_FOLDERS_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_FOLDERS_FILE_PATH")."/".getenv("CSV_FOLDERS_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
 
     fclose($fichier);
 
@@ -277,10 +310,12 @@ function recupererDossierInjection($link) {
 
 /* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
 function recupererListeDossiers($link) {
-    $query = "SELECT * "
-            ."FROM dossier d "
+    $query = "SELECT a.CodeA, NirA, NomA, PrenomA, TelA, "
+            ."MailA, CodeD, StatutD, DateD, RefD, DateAM "
+            ."FROM assure a, dossier d "
             ."WHERE (d.StatutD = 'À traiter' "
-            ."OR d.StatutD = 'En cours') ";
+            ."OR d.StatutD = 'En cours') "
+            ."AND d.CodeA = a.CodeA ";
 
     return mysqli_query($link, $query);
 }
@@ -506,9 +541,11 @@ function enregistrerFichiers($ftp_stream, $listeFichiers,
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir =  getenv("STORAGE_PATH") . "/$nir/$ref";
+                $target_dir =  getenv("STORAGE_PATH");
                 $ext = strtolower(pathinfo($file)['extension']);
-                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                $cheminJustificatif = "$target_dir/";
+                $cheminJustificatif .= implode("", explode(" ", $nir));
+                $cheminJustificatif .= "_".$key."_IJ_($ref-$j).$ext";
 
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
@@ -984,6 +1021,55 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
     return mysqli_query($link, $query);
 }
 
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierInjectionCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour injection dans DIADEME";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV pour l'injection des justificatifs dans DIADEME.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererFichierInjectionCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_INJECTION_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierDossiersCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour le listage des dossiers restants à traiter";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV contenant la liste des fichiers ";
+    $content .= "restant à traiter et en cours de traitement.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererListeDossiersCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_FOLDERS_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
 /* Envoie un mail */
 /* 'SENDER_EMAIL_ADDRESS' : Adresse de l'expéditeur (variable globale tout en haut) */
 /* '$to'                  : Adresse de destination                                  */
@@ -993,10 +1079,10 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
 /* Valeurs possibles de $type : => 'text/html'  : Message de type HTML (par défaut) */
 /*                              => 'text/plain' : Message standard                  */
 /* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
-function envoyerMail($to, $subject, $content, $type) {
+function envoyerMail($to, $subject, $content, $type, $attachement = Null, $nameFile = Null) {
     // Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
-
+    
     try {
         //Server settings
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                    // Enable verbose debug output
@@ -1017,8 +1103,8 @@ function envoyerMail($to, $subject, $content, $type) {
         //$mail->addBCC('bcc@example.com');
 
         // Attachments
-        //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        if($nameFile != Null) $mail->addAttachment($attachement, $nameFile); 
+        else $mail->addAttachment($attachement);
 
         // Content
         if($type == "text/html") {        
