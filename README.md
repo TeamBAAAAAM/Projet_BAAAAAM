@@ -14,8 +14,9 @@ Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 </p>
 <p>Il est également possible d’utiliser le lien suivant https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git pour cloner le dossier contenant les différentes pages à l’aide d’un IDE.</p>
 
-<h3>Création de la base de données</h3>
-<p> Script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a></p>
+<h3>Implémentation de la base de données</h3>
+<p> D'abord lancer le script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a></p>
+<p> Puis insérer les données initiales nécessaires (catégories et mnémoniques) : <a href="bd_cpam/ScriptDonnees.sql">ScriptDonnees.sql</a></p>
 <h3>Accès à la base de données</h3>
 <p>Pour la connexion à la BD, il est nécéssaire de renseigner les données de connexion dans un fichier de nom ".env" (cf. <strong>Gestion du fichier ENV</strong></p>
 
