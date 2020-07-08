@@ -1103,8 +1103,8 @@ function envoyerMail($to, $subject, $content, $type, $attachement = Null, $nameF
         //$mail->addBCC('bcc@example.com');
 
         // Attachments
-        if($nameFile != Null) $mail->addAttachment($attachement, $nameFile); 
-        else $mail->addAttachment($attachement);
+        if($nameFile != Null) $mail->addAttachment($attachement, $nameFile);        
+        else if($attachement != Null) $mail->addAttachment($attachement);
 
         // Content
         if($type == "text/html") {        
