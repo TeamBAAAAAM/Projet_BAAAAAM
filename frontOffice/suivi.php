@@ -154,7 +154,7 @@
                         $title .= ", ainsi que la référence du dossier qui vous a été délivrée.";
                         $body .= " et la référence de votre dossier";
 
-                    $body .= " dans le champ précu à cet effet.";
+                    $body .= " dans le champ prévu à cet effet.";
 
                     GenererMessage (
                         $title,
@@ -192,7 +192,7 @@
 		
         <div class="container">
             <div class="panel panel-default" id="form_panel">
-                <div class="panel-heading">Formulaire d'envoi</div>
+                <div class="panel-heading">Formulaire de suivi</div>
                 <div class="panel-body">
 					<form method="POST" action="suivi.php">
 						<div class="container" id="etat-civil">
@@ -394,7 +394,7 @@
 
 				<div class="progress">
 					<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
-						Dossier classé sans suite
+						Dossier mis en attente
 					</div>
 				</div>
 
