@@ -67,7 +67,7 @@
             }
 		}
 
-        redirigerVers('suivi.php?'.$msg); // Passage des varaibles par la méthode GET
+        redirigerVers('suivi.php?'.$msg); // Passage des variables par la méthode GET
 	}
 
 	if(isset($_SESSION["Assure"])) {
@@ -431,6 +431,12 @@
 								Consulter un autre dossier
 							</a>
 						</div>
+						<div class="col-sm-4">
+							<a href="depot.php" class="btn btn-default btn-lg">
+								<span class="glyphicon glyphicon-new-window"></span>
+								Renvoyer des justificatifs
+							</a>
+						</div>						
 					</div>
 				<?php endif ?>
 				</div>

@@ -30,7 +30,7 @@
     $msg_error_ref = False;         // Il n'y a pas de message d'erreur pour la référence du dossier
     $msg_error_nir_ref = False;     // Il n'y a pas de correspondance
 
-    /* Récupération des valeurs contnus dans l'URL */
+    /* Récupération des valeurs contenues dans l'URL */
     if(isset($_GET)) {
         if(isset($_GET["RefD"])) {
             if($_GET["RefD"] != "") {
