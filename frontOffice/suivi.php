@@ -431,12 +431,14 @@
 								Consulter un autre dossier
 							</a>
 						</div>
+						<?php if($StatutD != "Terminé") :?>
 						<div class="col-sm-4">
 							<a href="depot.php" class="btn btn-default btn-lg">
 								<span class="glyphicon glyphicon-new-window"></span>
 								Renvoyer des justificatifs
 							</a>
-						</div>						
+						</div>
+						<?php endif ?>					
 					</div>
 			</div>
 		<?php endif ?>
