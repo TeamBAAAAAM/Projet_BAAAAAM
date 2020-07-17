@@ -143,7 +143,7 @@
                                             <label class='form-check-label'>".$donnees['Mnemonique']."</label>
                                         </div>
                                         <div class='col-sm-9'>
-                                            <input type='text' class='form-control' placeholder='".$donnees['Designation']."'
+                                            <input type='text' class='form-control' placeholder=\"Indiquer l'intitulé exact des justificatifs demandés ...\"
                                                 value=\"".$donnees['Label']."\" name='label[]' id='". $donnees['CodeM'].
                                             "'>
                                         </div>
@@ -159,7 +159,7 @@
                                             <label class='form-check-label'>".$donnees['Mnemonique']."</label>
                                         </div>
                                         <div class='col-sm-9'>
-                                            <input type='text' class='form-control' placeholder='".$donnees['Designation']."'
+                                            <input type='text' class='form-control' placeholder=\"Indiquer l'intitulé exact des justificatifs demandés ...\"
                                                 name='label[]' id='". $donnees['CodeM']."' class='form-control' style='display: none'>
                                         </div>
                                     </div>"
