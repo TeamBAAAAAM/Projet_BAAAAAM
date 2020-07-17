@@ -12,7 +12,7 @@
 //À modifier si l'on souhaite modifier le formalisme de NIR et de la référence dossier
 var formatNIR = "# ## ## ## ### ###";
 var nbCharRefD = 8;
-
+var pj = [];
 //Fonction pour gérer les messages des statuts
 function showInfo_function(currentPJ) {
     $("#info-status").show();
