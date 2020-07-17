@@ -138,7 +138,7 @@ and open the template in the editor.
                     <label for="" class="col-sm-2 col-form-label">Choisir mnémonique</label>
                     <div class='form-check'>
                     <?php
-                    $result = listeMnemonique($link);
+                    $result = listeMnemoniques($link);
 
                     if ($result != NULL)
                         $rows = mysqli_num_rows($result);

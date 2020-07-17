@@ -357,7 +357,7 @@
 						</div>									
 					</div>
 					<div class="modal-body row" style="margin: 10px;">
-						<?php $msgA = GenererMessageAssure($nomAssure, $prenomAssure, $refDossier);?>
+						<?php $msgA = genererMessageAssure($nomAssure, $prenomAssure, $refDossier);?>
 						<input type="hidden" name="mail_text[]" rows="9" class="col-sm-12" style="resize: none;" value="<?php echo $msgA[0];?>" readonly>
 						<div><?php echo $msgA[0];?></div>
 						<textarea name="mail_text[]" rows="10" placeholder="Tapez vos commentaires ici ..." class="col-sm-12" style="resize: none; margin-bottom: 10px"></textarea>

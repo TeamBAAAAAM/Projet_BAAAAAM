@@ -76,7 +76,7 @@ and open the template in the editor.
 				<tbody >
 				<?php
 					
-					$result = listeMnemonique($link);
+					$result = listeMnemoniques($link);
 					
 					if ($result != NULL) 
 						$rows = mysqli_num_rows($result);

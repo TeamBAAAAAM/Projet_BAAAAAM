@@ -71,7 +71,7 @@ require("../fonctions.php");
 				<tbody >
 				<?php
 					
-					$result = categorieActif($link);
+					$result = categoriesActives($link);
 					
 					if ($result != NULL) 
 						$rows = mysqli_num_rows($result);
@@ -105,7 +105,7 @@ require("../fonctions.php");
 				<tbody id="data-list">
 				<?php
 					
-					$result = categorieInactif($link);
+					$result = categoriesInactives($link);
 					
 					if ($result != NULL) 
 						$rows = mysqli_num_rows($result);
