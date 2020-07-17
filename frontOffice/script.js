@@ -50,7 +50,7 @@ function refreshForm() {
     goToByScroll('form_panel', 1000, 50); //On scroll sur le formulaire
 }
 
-//Désactivation de l'évènement clique pour un objet dont le
+//Désactivation de l'évènement clic pour un objet dont le
 //sélecteur est entré en paramètre
 function isUnselected(selector) {
     var classList = $(selector).attr('class').split(/\s+/);
@@ -81,7 +81,7 @@ function showForm() {
     $("#pj").show();
 }
 
-//Création d'une fonction événementielle déclencher du clique
+//Création d'une fonction événementielle déclenchée au clic
 //sur l'un des bouton $("#" + pj[i])
 function click_function(event) {
     var currentPJ = event.data.arg1;
@@ -236,7 +236,7 @@ function checkFormatNir(format) {
         }
 
         str = deb + fin;
-        //Si le nombre de caractères courants dépasse celui du nombre autorisés
+        //Si le nombre de caractères courant dépasse celui du nombre autorisé
         if (str.length > format.length) str = str.substr(0, format.length);
 
         $("#nir").val(str);
@@ -268,7 +268,7 @@ function checkFormatRefD() {
 function MajInputMnemo(id) {
     var select = $("#" + id);
     var input = select.parent().parent().find("input[type='file'");
-    input.attr("name", select.val()+"[]");
+    input.attr("name", select.val() + "[]");
 }
 
 //Supprimer la ligne de dépôt de document d'id 'id'
@@ -320,7 +320,7 @@ $(document).ready(function() {
         elt.className = "glyphicon glyphicon-remove";
         $(this).find(".alert-title").append(elt);
 
-        //Initialisation de l'évènement "clique"
+        //Initialisation de l'évènement "clic"
         $("#msg_close").click(function() {
             // On cache le message parent le plus proche
             $(this).closest(".alert").hide(400, function() {

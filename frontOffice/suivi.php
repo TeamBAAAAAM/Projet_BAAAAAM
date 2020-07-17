@@ -311,7 +311,7 @@
 								<h5>
 									<?php
 										if($TelephoneAssure != "") echo "Tel : $TelephoneAssure";
-										else echo "N/A";
+										else echo "Tel : N/A";
 									?>
 									/
 									<?php
