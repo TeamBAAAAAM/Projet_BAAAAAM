@@ -307,7 +307,6 @@ $(document).ready(function() {
 
     //Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
     $("#date_arret").attr("max", aujourdhui());
-    $("#date_arret").attr("value", aujourdhui());
 
     // Gestion des messages
     $(".alert").hide();

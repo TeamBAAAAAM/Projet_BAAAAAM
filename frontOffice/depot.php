@@ -110,7 +110,7 @@
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show(); //Le formulaire est affiché
+                $("#form_panel").show(); //Le formulaire est affiché  
             });
 
             function initInputMnemo(id) {
@@ -152,7 +152,8 @@
         <?php else: ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").hide(); //Le formulaire est affiché
+                $("#form_panel").hide(); //Le formulaire est affiché          
+                $("#date_arret").attr("value", aujourdhui());
             });
 
             var pj = [<?php
