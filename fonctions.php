@@ -1499,6 +1499,7 @@ function categorieInactif($link) {
   
     return mysqli_query($link, $query);
 }
+
 /* Retourne la liste des mnémoniques */
 function listeMnemonique($link) {
     $query = "SELECT *  "
@@ -1507,4 +1508,20 @@ function listeMnemonique($link) {
     return mysqli_query($link, $query);  
 }
 
+/* Retourne la liste des mnémoniques */
+function listeMnemoniqueAvecCodeC($link, $codeC) {
+    $query = "SELECT c.CodeM, Mnemonique, Designation, Label "
+            ."FROM concerner c, listemnemonique l "
+            ."WHERE CodeC = $codeC "
+            ."AND c.CodeM = l.CodeM "
+            ."  UNION "
+            ."SELECT CodeM, Mnemonique, Designation, NULL "
+            ."FROM listemnemonique "
+            ."WHERE CodeM NOT IN ("
+            ."  SELECT CodeM "
+            ."  FROM concerner "
+            ."  WHERE CodeC = $codeC);";
+
+    return mysqli_query($link, $query);  
+}
 ?>
