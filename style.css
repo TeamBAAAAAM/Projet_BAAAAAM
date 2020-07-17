@@ -304,3 +304,47 @@ a.send_button {
         margin-top: 150px;
     }
 }
+
+
+/* Gestion du responsive */
+@media (max-width: 576px) {
+	div.btn-status {
+		height: 60px;
+	}
+	div.btn-status > h2 {
+		font-size: 20px;
+	}
+}
+@media (min-width: 576px) and (max-width : 768px) {
+	div.btn-status {
+		height: 80px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
+	}
+}
+@media (min-width: 768px) and (max-width : 992px) {
+	div.btn-status {
+		height: 250px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
+	}
+}
+@media (min-width: 992px) {
+	div.btn-status {
+		height: 250px;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	#contact > * {
+		text-align: center;
+	}
+}
+
+@media (min-width: 768px) {
+	#contact > * {
+		text-align: left;
+	}
+}

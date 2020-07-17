@@ -304,19 +304,13 @@ div.alert > h3 {
 	div.btn-status > h2 {
 		font-size: 20px;
 	}
-	#contact > * {
-		text-align: center;
-	}
 }
-@media only screen and (min-width: 576px) and (max-width : 768px) {
+@media (min-width: 576px) and (max-width : 768px) {
 	div.btn-status {
 		height: 80px;
 	}
 	div.btn-status > h2 {
 		font-size: 25px;
-	}
-	#contact > * {
-		text-align: center;
 	}
 }
 @media (min-width: 768px) and (max-width : 992px) {
@@ -327,8 +321,20 @@ div.alert > h3 {
 		font-size: 25px;
 	}
 }
-@media only screen and (min-width : 992px) {
+@media (min-width: 992px) {
 	div.btn-status {
 		height: 250px;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	#contact > * {
+		text-align: center;
+	}
+}
+
+@media (min-width: 768px) {
+	#contact > * {
+		text-align: left;
 	}
 }
