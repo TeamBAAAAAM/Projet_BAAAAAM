@@ -1,16 +1,16 @@
 # Projet_BAAAAAM
 
-> Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
+Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
 Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/.
 
-## Configuration minimale
+## 1 - Configuration minimale
 
 * [MySQL](https://www.mysql.com/fr/) - Système de gestion de base de données (version 5.7.56 ou ultérieure)
 * [Bootstrap 3](https://getbootstrap.com/docs/3.3/) - Framework CSS (version 3.4.1 ou ultérieure)
 * [PHP](https://www.php.net/) - Langage de programmation BACK (version 5.4 ou ultérieure)
 * [jQuery](https://jquery.com/) - Framework JS (version 3.4.1 ou ultérieure)
 
-## Installation
+## 2 - Installation
 
 Dans un terminal gitbash, taper la commande suivante : 
 ```sh
@@ -19,23 +19,24 @@ git clone https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git
 
 Il est également possible d’utiliser le lien suivant https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git pour cloner le dossier contenant les différentes pages à l’aide d’un IDE.
 
-### Implémentation de la base de données
+### 2.1 - Implémentation de la base de données
 
-> D'abord lancer le script de création : [ScriptCreationBD.sql](bd_cpam/ScriptCreationBD.sql).
-> Puis insérer les données initiales nécessaires (catégories et mnémoniques) : [ScriptDonnees.sql](bd_cpam/ScriptDonnees.sql).
+D'abord lancer le script de création : [ScriptCreationBD.sql](bd_cpam/ScriptCreationBD.sql).
+Puis insérer les données initiales nécessaires (catégories et mnémoniques) : [ScriptDonnees.sql](bd_cpam/ScriptDonnees.sql).
 
-### Accès à la base de données
-> Pour la connexion à la BD, il est nécéssaire de renseigner les données de connexion dans un fichier de nom ".env" (cf. <strong>Gestion du fichier ENV</strong>).
+### 2.2 - Accès à la base de données
+Pour la connexion à la BD, il est nécéssaire de renseigner les données de connexion dans un fichier de nom ".env" (cf. <strong>Gestion du fichier ENV</strong>).
 
-## Gestion du fichier ENV
+## 3 - Gestion du fichier ENV
 
-> Créer un fichier appelé ".env".
-> Ce fichier contient les paramètres de connexions au différents serveurs.
-> Ces paramètres correspondent à des variables d'environnement qui sont supprimés à la fin de l'exécution du script PHP.
+Créer un fichier appelé ".env".
+Ce fichier contient les paramètres de connexions au différents serveurs.
+Ces paramètres correspondent à des variables d'environnement qui sont supprimés à la fin de l'exécution du script PHP.
 
-***Important : Il est nécessaire d'ajouter le nom de ce fichier au ".gitignore" ! 
-Il suffit de copier le nom du fichier ".env", et le disposer sur une seule ligne dans le fichier ".gitignore". 
-Cette oprération est importante car sans cela, le fichier ".env" qui contient des données très sensibles sera récupérable à partir de la commande de clonnage de GIT. De plus, ce fichier est propre à une machine en particulier, c'est-à-dire que chaque paramètre du fichier ".env" ne fonctionnera pas forcément sur autre machine (cela peut être dû à des différences au niveau du système d'exploitation, des serveurs utilisés, etc.).***
+> ***Important : Il est nécessaire d'ajouter le nom de ce fichier au ".gitignore" ! 
+> Il suffit de copier le nom du fichier ".env", et le disposer sur une seule ligne dans le fichier ".gitignore". 
+> Cette oprération est importante car sans cela, le fichier ".env" qui contient des données très sensibles sera récupérable à partir de la commande de clonnage de GIT. De plus, > ce fichier est propre à une machine en particulier, c'est-à-dire que chaque paramètre du fichier ".env" ne fonctionnera pas forcément sur autre machine (cela peut être dû à
+> des différences au niveau du système d'exploitation, des serveurs utilisés, etc.).***
 
 Pour le contenu de ce fichier, voici quelques règles à respecter :
 
@@ -46,7 +47,8 @@ Pour le contenu de ce fichier, voici quelques règles à respecter :
 ** Exemple :<br>KEY=VALUE   #Ceci est un commentaire **
 * Les noms de variables doivent impérativement correspondre à ceux précisés dans l'exemple ci-dessous !
 
-### Exemple de fichier ".env"
+### 3.1 - Exemple de fichier ".env"
+
 ```txt
 # ------------------------------------------------------------------
 #  VARIABLES D'ENVIRONNEMENT DE CONNEXION À LA BASE DE DONNÉES
