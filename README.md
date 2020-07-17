@@ -1,7 +1,7 @@
 # Projet_BAAAAAM
 
 Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
-Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/.
+Visible ici : https://www.pjpe.cpam31.fr/.
 
 ## 1 - Configuration minimale
 
