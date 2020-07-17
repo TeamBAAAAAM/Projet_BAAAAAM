@@ -157,7 +157,7 @@
             });
 
             var pj = [<?php
-                $result = categorieActif($link);
+                $result = categoriesActives($link);
 
                 for($i = 0 ; $i < mysqli_num_rows($result) - 1 ; $i++) {
                     echo '"'.mysqli_fetch_array($result)["NomC"].'",';
@@ -183,7 +183,7 @@
     <?php if (!$repost && !$repost_ok) : ?>
         <div class="container text-center" id="status">
             <?php //Affichage dynamique des catégories 
-                $listeCategories = categoriesActives($link);
+                $listeCategories = categoriesActivesAvecMnemoniques($link);
                 if ($listeCategories != null){
                     $rows = mysqli_num_rows($listeCategories);
                     // Affichage des boutons de chaque catégorie active
@@ -503,7 +503,7 @@
                         <?php if (!$repost && !$repost_ok) : ?>
                             <h3>Pièces justificatives à déposer:</h3>
                             <?php //Affichage dynamique des types de PJ demandés
-                                $listeCategories = categoriesActives($link);
+                                $listeCategories = categoriesActivesAvecMnemoniques($link);
                                 if ($listeCategories != null){
                                     for ($i = 0; $i < mysqli_num_rows($listeCategories); $i++) {
                                         $categorie = mysqli_fetch_array($listeCategories);

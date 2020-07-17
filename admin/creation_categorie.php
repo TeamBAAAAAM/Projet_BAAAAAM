@@ -7,11 +7,6 @@ setlocale(LC_TIME, "fr_FR");
 $link = connecterBD();
 ?>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <meta charset="UTF-8">
@@ -26,7 +21,6 @@ and open the template in the editor.
         <!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="script.js"></script>
 
         <script>
             $(function(){
@@ -106,7 +100,7 @@ and open the template in the editor.
                     <label class="col-sm-2 col-form-label">Choisir mnémonique</label>
                     <div class='col-sm-10'>
                     <?php
-                    $result = listeMnemonique($link);
+                    $result = listeMnemoniques($link);
 
                     if ($result != NULL)
                         $rows = mysqli_num_rows($result);

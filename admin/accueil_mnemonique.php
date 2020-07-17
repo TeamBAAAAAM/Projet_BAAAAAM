@@ -8,11 +8,6 @@ require("../fonctions.php");
 	$link = connecterBD();
 ?>
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <meta charset="UTF-8">
@@ -27,7 +22,6 @@ and open the template in the editor.
 		<!-- SCRIPT JAVASCRIPT (JQUERY / BOOTSTRAP 3.4.1 / SCRIPT LOCAL) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-		<script src="script.js"></script>
                
         <title>PJPE - Administrateur</title>
     </head>
@@ -95,24 +89,23 @@ and open the template in the editor.
 							<th></th>
 						</tr>
 					</thead>
-					<tbody >
-					<?php
-						$result = listeMnemonique($link);
-						
-						if ($result != NULL) 
-							$rows = mysqli_num_rows($result);
-						else $rows = 0;
-																			
-						for ($i = 0; $i < $rows ; $i++) {
-							$donnees = mysqli_fetch_array($result);
-												
-							echo 
-								"<tr>
+					<tbody >					
+				<?php					
+					$result = listeMnemoniques($link);
+					
+					if ($result != NULL) 
+						$rows = mysqli_num_rows($result);
+					else $rows = 0;
+                                                                           
+					for ($i = 0; $i < $rows ; $i++){
+						$donnees = mysqli_fetch_array($result);
+                                              
+						echo ("<tr>
 									<td>".$donnees['Mnemonique']."</td>
 									<td>".$donnees['Designation']."</td>
 									<td><a href='modifier_mnemonique.php?id=".$donnees['CodeM']."'><i class='glyphicon glyphicon-pencil'></i></a></td>
 								</tr>"
-							;
+							);
 						}
 					?>
 					</tbody>

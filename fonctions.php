@@ -4,7 +4,7 @@
 /*   FICHIER CONTENANT LES FONCTIONS PHP UTILISÉES POUR LE SITE   */
 
 /******************************************************************/
-// Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
+// Rangées en 4 groupes de fonctions : générales, pour front office, pour back office et pour admin
 // Puis par ordre alphabétique
 
 /* Chargement du Composer */
@@ -346,10 +346,9 @@ function demandeDeConnexion() {
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
 ------------------------------------------------------------------*/
 
-/* Renvoie les catégories d'assuré actives et les types de documents (mnémoniques) associés */
-/* => [Objet de type array si l'assuré est déjà enregistré, NULL sinon] */
-function categoriesActives($link) {
-    //$query = "SELECT CodeC, NomC, DesignationC FROM categorie WHERE StatutC = 'Actif'";
+/* Renvoie les catégories d'assuré actives et les types de documents (mnémoniques) leur étant associés */
+/* => [Objet de type array si succès, NULL sinon] */
+function categoriesActivesAvecMnemoniques($link) {
     $query = "SELECT ca.CodeC, ca.NomC, ca.DesignationC, lm.CodeM, lm.Mnemonique, lm.Designation, cc.Label 
     FROM categorie ca, listemnemonique lm, concerner cc 
     WHERE ca.StatutC = 'Actif' AND cc.CodeC = ca.CodeC AND cc.CodeM = lm.CodeM 
@@ -964,7 +963,7 @@ function dossiersCorbeilleTechnicien($link, $codeTechnicien) {
 /* Séparation nécessaire pour l'insertion des commentaires du technicien */
 /* et empêcher la modification des données principales */
 /* => [Objet de type array de 2 éléments : (0 : partie du haut, 1 : partie du bas) ] */
-function GenererMessageAssure($nomAssure, $prenomAssure, $refDossier) {
+function genererMessageAssure($nomAssure, $prenomAssure, $refDossier) {
     $haut  = "<!DOCTYPE html>";
     $haut .= "<html lang='fr'>";
     $haut .= "   <head>";
@@ -1460,7 +1459,7 @@ function traiterDossier($codeTechnicien, $codeDossier, $statut, $link) {
 }
 
 /* Vérifie l'unicité du matricule '$matricule' */
-/* => ["Unique" si c'est vrai, ... ???] */
+/* => ["Unique" si c'est vrai, message d'erreur sinon] */
 function verifierMatricule($link, $matricule) {
     $query = "SELECT * FROM technicien WHERE Matricule='$matricule'";
     $curseur = mysqli_query($link, $query);
@@ -1475,15 +1474,15 @@ function verifierMatricule($link, $matricule) {
     }
     return "Erreur de vérification du Matricule";
 }
-/* Retourne la liste contenant toutes les catégories*/
-function listeCategorie($link) {
-    $query = "SELECT * "
-            ."FROM categorie c ";
 
-    return mysqli_query($link, $query) ;
-}
+
+/*------------------------------------------------------------------
+ 	FONCTIONS : ADMIN (INTERFACE ADMINISTRATEUR)
+------------------------------------------------------------------*/
+
 /* Retourne les catégories actives */
-function categorieActif($link) {
+/* => [Objet de type array si existe, NULL sinon] */
+function categoriesActives($link) {
     $query = "SELECT * "
             ."FROM categorie c "
             ."WHERE c.StatutC = 'Actif'";
@@ -1492,7 +1491,8 @@ function categorieActif($link) {
 }
 
 /* Retourne les catégories inactives */
-function categorieInactif($link) {
+/* => [Objet de type array si existe, NULL sinon] */
+function categoriesInactives($link) {
     $query = "SELECT * "
             ."FROM categorie c "
             ."WHERE c.StatutC = 'Inactif'";
@@ -1500,15 +1500,16 @@ function categorieInactif($link) {
     return mysqli_query($link, $query);
 }
 
-/* Retourne la liste des mnémoniques */
-function listeMnemonique($link) {
+/* Retourne la liste des mnémoniques existants */
+/* => [Objet de type array si existe, NULL sinon] */
+function listeMnemoniques($link) {
     $query = "SELECT *  "
             ."FROM listemnemonique ";
             
     return mysqli_query($link, $query);  
 }
 
-/* Retourne la liste des mnémoniques */
+/* Retourne la liste des mnémoniques avec la catégorie */
 function listeMnemoniqueAvecCodeC($link, $codeC) {
     $query = "SELECT c.CodeM, Mnemonique, Designation, Label "
             ."FROM concerner c, listemnemonique l "
