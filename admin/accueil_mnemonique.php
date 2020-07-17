@@ -60,44 +60,64 @@ and open the template in the editor.
         </nav>
 
         <div class="container">
+			<?php
+				if(isset($_GET['msg']) && $_GET['msg'] == "Success") {
+					if(isset($_GET['action']) && $_GET['action'] == "creer") {
+						genererMessage(
+							"Ajout de mnémonique",
+							"Succès lors de l'ajout !",
+							"check",
+							"success"
+						);				
+					}		
+					else if(isset($_GET['action']) && $_GET['action'] == "modifier") {
+						genererMessage(
+							"Modification de mnémonique",
+							"Modification effectuée avec succès !",
+							"check",
+							"success"
+						);
+					}
+				}
+            ?> 
             <div>
-                <a href='creation_mnemonique.php'><i class='glyphicon glyphicon-plus'></i>Nouvelle Mnémonique</a>
+				<div>
+                	<a href='creation_mnemonique.php' class="btn btn-default" role="button">
+						<i class='glyphicon glyphicon-plus'></i> Nouvelle Mnémonique
+					</a>
+				</div>
                 <h2>Liste Mnénomiques</h2>
-            <table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Mnémonique</th>						
-						<th>Désignation</th>
-                                                <th></th>
-                                                
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Mnémonique</th>						
+							<th>Désignation</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody >
+					<?php
+						$result = listeMnemonique($link);
 						
-					</tr>
-				</thead>
-				<tbody >
-				<?php
-					
-					$result = listeMnemonique($link);
-					
-					if ($result != NULL) 
-						$rows = mysqli_num_rows($result);
-					else $rows = 0;
-                                                                           
-					for ($i = 0; $i < $rows ; $i++){
-						$donnees = mysqli_fetch_array($result);
-                                              
-						echo ("<tr>
+						if ($result != NULL) 
+							$rows = mysqli_num_rows($result);
+						else $rows = 0;
+																			
+						for ($i = 0; $i < $rows ; $i++) {
+							$donnees = mysqli_fetch_array($result);
+												
+							echo 
+								"<tr>
 									<td>".$donnees['Mnemonique']."</td>
 									<td>".$donnees['Designation']."</td>
-                                                                        <td><a href='modifier_mnemonique.php?id=".$donnees['CodeM']."'><i class='glyphicon glyphicon-pencil'></i></a></td>
-                                                                        
-						     </tr>");
-					}
-				?>
-				</tbody>
-			</table>
+									<td><a href='modifier_mnemonique.php?id=".$donnees['CodeM']."'><i class='glyphicon glyphicon-pencil'></i></a></td>
+								</tr>"
+							;
+						}
+					?>
+					</tbody>
+				</table>
+			</div>       
         </div>
-       
-        </div>
-       
     </body>
 </html>
