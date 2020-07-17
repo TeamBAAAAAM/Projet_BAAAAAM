@@ -1,6 +1,8 @@
 /******************************************************************/
 
+
 /*             FEUILLE DE STYLE DE LA PAGE D'ACCUEIL              */
+
 
 /******************************************************************/
 
@@ -10,13 +12,14 @@
 -------------------------------------------------------*/
 
 body {
-    font-family: "Calibri";
+    font-family: Arial, Roboto, sans-serif;
     background: url(img/background.jpg) no-repeat no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
 }
+
 
 /*------------------------------------------------------
  	ENTÊTE DE LA PAGE
@@ -38,16 +41,17 @@ body {
     margin-left: 0;
 }
 
-.header .dropdown > button {
+.header .dropdown>button {
     padding-right: 20px;
     padding-left: 20px;
     color: #396;
 }
 
-.navbar-header > button {
+.navbar-header>button {
     height: 50px;
     background-color: white;
 }
+
 
 /*------------------------------------------------------
  	PIED DE LA PAGE
@@ -107,7 +111,7 @@ footer div.list-group a {
     background-color: #161c27;
 }
 
-a[href='https://www.oups.gouv.fr/'] > img {
+a[href='https://www.oups.gouv.fr/']>img {
     width: 180px;
 }
 
@@ -118,6 +122,7 @@ img[src="img/num_tel.png"] {
 #google_maps {
     border: 0;
 }
+
 
 /*------------------------------------------------------
  	BOUTONS DE LA PAGE
@@ -130,42 +135,43 @@ a.send_button {
     font-size: 30px;
     background-color: rgba(255, 255, 255, 0.95);
     box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
-    transition: background-color 1s,box-shadow 1s;
+    transition: background-color 1s, box-shadow 1s;
 }
 
 #first_button {
-    color: rgb(71,184,122);
+    color: rgb(71, 184, 122);
 }
 
 #first_button:hover {
     color: white;
-    background-color: rgb(71,184,122);
+    background-color: rgb(71, 184, 122);
     box-shadow: none;
 }
 
 #second_button {
-    color: rgb(7,69,110);
+    color: rgb(7, 69, 110);
 }
 
 #second_button:hover {
     color: white;
-    background-color: rgb(7,69,110);
+    background-color: rgb(7, 69, 110);
     box-shadow: none;
 }
 
 #third_button {
-    color: rgb(110,7,7);
+    color: rgb(110, 7, 7);
 }
 
 #third_button:hover {
     color: white;
-    background-color: rgb(110,7,7);
+    background-color: rgb(110, 7, 7);
     box-shadow: none;
 }
 
 .glyphicon {
     margin-right: 20px;
 }
+
 
 /*------------------------------------------------------
 	MESSAGE DE LA PAGE (SURVOL DES BOUTONS)
@@ -181,7 +187,7 @@ a.send_button {
     text-decoration: none;
     font-size: 30px;
     box-shadow: 1px 1px 5px rgba(22, 15, 29, 0.74);
-    transition: background-color 1s,box-shadow 1s;
+    transition: background-color 1s, box-shadow 1s;
 }
 
 #msg_1 {
@@ -201,10 +207,11 @@ a.send_button {
     background-color: rgba(48, 3, 3, 0.9);
 }
 
-.msg > h3 {
+.msg>h3 {
     padding-bottom: 10px;
     border-bottom: 1px solid white;
 }
+
 
 /*------------------------------------------------------
 	GESTION DU RESPONSIVE
@@ -217,38 +224,32 @@ a.send_button {
         padding: 4px 10px;
         font-size: 15px;
     }
-
     footer {
         margin-top: 20px;
     }
 }
 
 @media(max-width:576px) and (min-width:410px) {
-    #contact > * {
+    #contact>* {
         text-align: center;
     }
-
     a.send_button {
         width: 100%;
         margin-top: 10px;
         padding: 8px 15px;
         font-size: 20px;
     }
-
     footer {
         margin-top: 40px;
     }
-
     .msg {
         width: 350px;
         margin-top: 15px;
     }
-
-    .msg > h3 {
+    .msg>h3 {
         font-size: 20px;
     }
-
-    .msg > h4 {
+    .msg>h4 {
         font-size: 15px;
     }
 }
@@ -258,25 +259,20 @@ a.send_button {
         margin-top: 10px;
         font-size: 26px;
     }
-
     #button_container {
         text-align: center;
     }
-
     footer {
         margin-top: 40px;
     }
-
     .msg {
         width: 350px;
         margin-top: 15px;
     }
-
-    .msg > h3 {
+    .msg>h3 {
         font-size: 20px;
     }
-
-    .msg > h4 {
+    .msg>h4 {
         font-size: 15px;
     }
 }
@@ -285,15 +281,12 @@ a.send_button {
     .msg {
         z-index: 9999999;
     }
-
     #msg_1 {
         border-bottom-left-radius: 30px;
     }
-
     #msg_2 {
         border-top-left-radius: 30px;
     }
-
     #msg_3 {
         border-top-left-radius: 30px;
     }
@@ -303,4 +296,48 @@ a.send_button {
     #button_container {
         margin-top: 150px;
     }
+}
+
+
+/* Gestion du responsive */
+@media (max-width: 576px) {
+	div.btn-status {
+		height: 60px;
+	}
+	div.btn-status > h2 {
+		font-size: 20px;
+	}
+}
+@media (min-width: 576px) and (max-width : 768px) {
+	div.btn-status {
+		height: 80px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
+	}
+}
+@media (min-width: 768px) and (max-width : 992px) {
+	div.btn-status {
+		height: 250px;
+	}
+	div.btn-status > h2 {
+		font-size: 25px;
+	}
+}
+@media (min-width: 992px) {
+	div.btn-status {
+		height: 250px;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	#contact > * {
+		text-align: center;
+	}
+}
+
+@media (min-width: 768px) {
+	#contact > * {
+		text-align: left;
+	}
 }

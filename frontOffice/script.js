@@ -12,7 +12,7 @@
 //À modifier si l'on souhaite modifier le formalisme de NIR et de la référence dossier
 var formatNIR = "# ## ## ## ### ###";
 var nbCharRefD = 8;
-
+var pj = [];
 //Fonction pour gérer les messages des statuts
 function showInfo_function(currentPJ) {
     $("#info-status").show();
@@ -307,7 +307,6 @@ $(document).ready(function() {
 
     //Met la date d'aujourdhui en maximum et comme valeur par défaut dans le champ calendrier
     $("#date_arret").attr("max", aujourdhui());
-    $("#date_arret").attr("value", aujourdhui());
 
     // Gestion des messages
     $(".alert").hide();

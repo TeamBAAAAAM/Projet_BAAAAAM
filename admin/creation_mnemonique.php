@@ -30,14 +30,7 @@ and open the template in the editor.
 
         <title>PJPE - Administrateur</title>
     </head>
-     <?php
-            if(isset($_GET['msg']) and $_GET['msg'] == "Success"){
-                echo "<div class='alert alert-success' role='alert'>
-  A simple success alert 
-</div>";  
-            }
-        
-        ?>
+
     <body>
         <nav class="navbar navbar-default header">
             <div class="container">
@@ -45,9 +38,7 @@ and open the template in the editor.
                     <h1>PJPE - Administrateur</h1>
                 </div>
             </div>
-        </nav>
-        
-       
+        </nav>      
 
         <nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
             <div class="container">
@@ -68,8 +59,22 @@ and open the template in the editor.
             </div>
         </nav>
         
-        <div class="container">
-            <div><a href='accueil_mnemonique.php'><i class='glyphicon glyphicon-arrow-left'></i></a></div>
+        <div class="container">        
+            <?php
+                if(isset($_GET['msg']) && $_GET['msg'] == "Failure") {
+                    genererMessage(
+                        "Ajout de mnémonique",
+                        "Echec lors de l'ajout !",
+                        "remove",
+                        "danger"
+                    );
+                }
+            ?>
+            <div>
+                <a href='accueil_mnemonique.php' class="btn btn-default" role="button">
+                    <i class='glyphicon glyphicon-arrow-left'></i> Retour
+                </a>
+            </div>
             <form method="Post" action="enregistrer_mnemonique.php">
                 <h1>Nouvelle Mnémonique</h1>
                 <div class="form-group row">
@@ -84,17 +89,16 @@ and open the template in the editor.
                         <input type="text" class="form-control" name="designationM" required>
                     </div>
                 </div>
-                
    
-                <div class="col-sm-4">   <button type="submit" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-lock"></span>Valider</button>
-                <button type="Reset" class="btn btn-default btn-lg"> <span class="glyphicon glyphicon-lock"></span>Annuler</button>
-                
+                <div class="col-sm-4">  
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <span class="glyphicon glyphicon-lock"></span> Valider
+                    </button>
+                    <button type="Reset" class="btn btn-default btn-lg">
+                        <span class="glyphicon glyphicon-erase"></span> Effacer
+                    </button>
                 </div>          
-          </form>
-    </div>
-    
-<?php
-// put your code here
-?>
-</body>
+            </form>
+        </div>
+    </body>
 </html>

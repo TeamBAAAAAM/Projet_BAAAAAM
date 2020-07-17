@@ -30,26 +30,19 @@ and open the template in the editor.
 
         <title>PJPE - Administrateur</title>
     </head>
-     <?php
-            if(isset($_GET['msg']) and $_GET['msg'] == "Success"){
-                echo "<div class='alert alert-success' role='alert'>
-  A simple success alert 
-</div>";  
-            }
-        
-        ?>
+
     <?php
-                $query_mnemonique = "SELECT * FROM listemnemonique WHERE CodeM =".$_GET['id'];
-                $mnemonique=null;
+        $query = "SELECT * FROM listemnemonique WHERE CodeM =".$_GET['id'];
+        $mnemonique = null;
 
-                $result = mysqli_query($link, $query_mnemonique);
+        $result = mysqli_query($link, $query);
 
-                if ($result != NULL){
-                    $rows = mysqli_num_rows($result);
-                    for ($i = 0; $i < $rows; $i++) {
-                        $mnemonique = mysqli_fetch_array($result);
-                    }
-                }
+        if ($result != NULL){
+            $rows = mysqli_num_rows($result);
+            for ($i = 0; $i < $rows; $i++) {
+                $mnemonique = mysqli_fetch_array($result);
+            }
+        }
         ?>
     <body>
         <nav class="navbar navbar-default header">
@@ -79,9 +72,23 @@ and open the template in the editor.
             </div>
         </nav>
         
-        <div class="container">
-            <div><a href='accueil_mnemonique.php'><i class='glyphicon glyphicon-arrow-left'></i></a></div>
-            <form method="Post" action="enregistrer_mnemonique.php">
+        <div class="container">        
+			<?php
+				if(isset($_GET['msg']) && $_GET['msg'] == "Failure") {
+                    genererMessage(
+                        "Modification de mnémnonique",
+                        "Échec lors de la modification !",
+                        "remove",
+                        "danger"
+                    );
+				}
+            ?> 
+            <div>
+                <a href='accueil_mnemonique.php' class="btn btn-default" role="button">
+                    <i class='glyphicon glyphicon-arrow-left'></i> Retour
+                </a>
+            </div>
+            <form method="Post" action="enregistrer_mnemonique.php?modifier">
                 <h1>Modification Mnémonique : <?php echo $mnemonique['Mnemonique']?> </h1>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Mnémonique</label>
@@ -89,17 +96,19 @@ and open the template in the editor.
                         <input type="text" class="form-control" value="<?php echo $mnemonique['Mnemonique'] ?>" name="mnemonique" required>
                     </div>
                 </div>
+
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Désignation</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value="<?php echo $mnemonique['Designation'] ?> "name="designationM" required>
+                        <input type="text" class="form-control" value="<?php echo $mnemonique['Designation'];?>" name="designationM" required>
                     </div>
                 </div>
-                
-   
-                <div class="col-sm-4">   <button type="submit" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-lock"></span>Valider</button>
-                                
-                </div>          
+
+                <input type="hidden" name="idM" value="<?php echo $_GET["id"]?>">
+                <input type="hidden" name="modif" value="ok">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <span class="glyphicon glyphicon-lock"></span> Valider
+                </button>   
           </form>
     </div>
     

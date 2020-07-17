@@ -2,7 +2,10 @@
     require_once("../fonctions.php");
     $link = connecterBD();
 
-    if(isset($_POST["download"]) && $_POST["download"] == "OK") {
-        sauvegarderFichierCSVLocal($link);
+    if(isset($_POST["injection_file_download"]) && $_POST["injection_file_download"] == "OK") {
+        telechargererFichierInjectionCSVLocal($link);
+    }
+    else if(isset($_POST["list_folders_download"]) && $_POST["list_folders_download"] == "OK") {
+        telechargerListeDossiersCSVLocal($link);
     }
 ?>

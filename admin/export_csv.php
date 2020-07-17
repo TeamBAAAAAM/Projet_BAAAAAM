@@ -1,16 +1,47 @@
 <?php
     require_once("../fonctions.php");
     $link = connecterBD();
-    $ftp_stream = connecterServeurFTP();
+    $ftp_stream = connecterServeurFTP_CSV();
     
     // Si c'est bien une requête POST pour générer le fichier CSV
-    if(isset($_POST["save"]) && $_POST["save"] == "OK") {
-        if(sauvegarderFichierCSVServeur($ftp_stream, $link)) {
-            $saved_file = True;
+    if(isset($_POST["injection_file_save"]) && $_POST["injection_file_save"] == "OK") {
+        if(sauvegarderFichierInjectionCSVServeur($ftp_stream, $link)) {
+            $injection_file_saved = True;
         }
         else {
             // Booléen pour génération du fichier CSV
-            $saved_file = False;
+            $injection_file_saved = False;
+        }
+    }
+    // Si c'est bien une requête POST pour générer le fichier CSV
+    if(isset($_POST["list_folders_save"]) && $_POST["list_folders_save"] == "OK") {
+        if(sauvegarderListeDossiersCSVServeur($ftp_stream, $link)) {
+            $list_folders_saved = True;
+        }
+        else {
+            // Booléen pour génération du fichier CSV
+            $list_folders_saved = False;
+        }
+    }
+
+    // Si c'est bien une requête POST pour envoyer le fichier CSV (liste des dossiers par mail
+    if(isset($_POST["injection_file_send"]) && $_POST["injection_file_send"] == "OK") {
+        if(envoyerMailFichierInjectionCSV($ftp_stream, $link)) {
+            $injection_file_sended = True;
+        }
+        else {
+            // Booléen pour génération du fichier CSV
+            $injection_file_sended = False;
+        }
+    }
+    // Si c'est bien une requête POST pour envoyer le fichier CSV (injection) par mail
+    if(isset($_POST["list_folders_send"]) && $_POST["list_folders_send"] == "OK") {
+        if(envoyerMailFichierDossiersCSV($ftp_stream, $link)) {
+            $list_folders_sended = True;
+        }
+        else {
+            // Booléen pour génération du fichier CSV
+            $list_folders_sended = False;
         }
     }
 ?>
@@ -63,12 +94,11 @@
 
         <div class="container">
             <h2>Export des données en fichier CSV</h2>
-
             <?php
-                if(isset($saved_file)) {
-                    if($saved_file) {
+                if(isset($injection_file_saved)) {
+                    if($injection_file_saved) {
                         genererMessage(
-                            "Sauvegarde sur le serveur",
+                            "Sauvegarde du fichier d'injection",
                             "Sauvegarde effectuée avec succès !",
                             "glyphicon glyphicon-cloud-download", 
                             "success"
@@ -76,28 +106,130 @@
                     }
                     else {
                         genererMessage(
-                            "Sauvegarde sur le serveur",
+                            "Sauvegarde du fichier d'injection",
                             "Échec lors de la sauvegarde sur le serveur !",
                             "glyphicon glyphicon-cloud-download", 
                             "danger"
                         );
                     }
                 }
+                if(isset($list_folders_saved)) {
+                    if($list_folders_saved) {
+                        genererMessage(
+                            "Sauvegarde de la liste des dossiers restants à traiter",
+                            "Sauvegarde effectuée avec succès !",
+                            "glyphicon glyphicon-cloud-download", 
+                            "success"
+                        );
+                    }
+                    else {
+                        genererMessage(
+                            "Sauvegarde de la liste des dossiers restants à traiter",
+                            "Échec lors de la sauvegarde sur le serveur !",
+                            "glyphicon glyphicon-cloud-download", 
+                            "danger"
+                        );
+                    }
+                }
+                if(isset($injection_file_sended)) {
+                    if($injection_file_sended) {
+                        genererMessage(
+                            "Envoi du fichier d'injection",
+                            "Envoi effectué avec succès !",
+                            "glyphicon glyphicon-send", 
+                            "success"
+                        );
+                    }
+                    else {
+                        genererMessage(
+                            "Envoi du fichier d'injection",
+                            "Échec lors de l'envoi sur le serveur !",
+                            "glyphicon glyphicon-send", 
+                            "danger"
+                        );
+                    }
+                }
+                if(isset($list_folders_sended)) {
+                    if($list_folders_sended) {
+                        genererMessage(
+                            "Envoi de la liste des dossiers restant à traiter",
+                            "Envoi effectué avec succès !",
+                            "glyphicon glyphicon-send", 
+                            "success"
+                        );
+                    }
+                    else {
+                        genererMessage(
+                            "Envoi de la liste des dossiers restant à traiter",
+                            "Échec lors de l'envoi sur le serveur !",
+                            "glyphicon glyphicon-send", 
+                            "danger"
+                        );
+                    }
+                }             
             ?>
-            
-            <form method="POST" action="export_csv.php">
-                <input type="hidden" name="save" value="OK">
-                <button type="submit" class="btn btn-default btn-lg">
-                    <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
-                </button>
-            </form>
-
-            <form method="POST" action="download_csv.php">
-                <input type="hidden" name="download" value="OK">
-                <button type="submit" class="btn btn-default btn-lg">
-                    <span class='glyphicon glyphicon-download-alt'></span> Télécharger en local
-                </button>
-            </form>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="glyphicon glyphicon-import"></span> Fichiers d'injection dans DIADEME
+                        </td>
+                        <td>
+                            <form method="POST" action="export_csv.php">
+                                <input type="hidden" name="injection_file_save" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Sauvegarder sur le serveur">
+                                    <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="download_csv.php">
+                                <input type="hidden" name="injection_file_download" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Télécharger">
+                                    <span class='glyphicon glyphicon-download-alt'></span> Télécharger
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="export_csv.php">
+                                <input type="hidden" name="injection_file_send" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Envoyer par mail">
+                                    <span class='glyphicon glyphicon-send'></span> Envoyer par mail
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>                    
+                            <span class="glyphicon glyphicon-th-list"></span> Liste des dossiers restants à traiter et en cours
+                        </td>
+                        <td>
+                            <form method="POST" action="export_csv.php">
+                                <input type="hidden" name="list_folders_save" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Sauvegarder sur le serveur">
+                                    <span class='glyphicon glyphicon-cloud-download'></span> Sauvegarder sur le serveur
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="download_csv.php">
+                                <input type="hidden" name="list_folders_download" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Télécharger">
+                                    <span class='glyphicon glyphicon-download-alt'></span> Télécharger
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="export_csv.php">
+                                <input type="hidden" name="list_folders_send" value="OK">
+                                <button type="submit" class="btn btn-default btn-sm" title="Envoyer par mail">
+                                    <span class='glyphicon glyphicon-send'></span> Envoyer par mail
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </body>
 </html>
