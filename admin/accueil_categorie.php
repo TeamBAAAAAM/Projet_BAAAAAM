@@ -55,7 +55,31 @@ require("../fonctions.php");
         </nav>
 
         <div class="container">
-            <a href='creation_categorie.php'><i class='glyphicon glyphicon-plus'></i>Nouvelle Catégorie</a>
+			<?php
+				if(isset($_GET['msg']) && $_GET['msg'] == "Success") {
+					if(isset($_GET['action']) && $_GET['action'] == "creer") {
+						genererMessage(
+							"Ajout de catégorie",
+							"Succès lors de l'ajout !",
+							"check",
+							"success"
+						);				
+					}		
+					else if(isset($_GET['action']) && $_GET['action'] == "modifier") {
+						genererMessage(
+							"Modification de catégorie",
+							"Modification effectuée avec succès !",
+							"check",
+							"success"
+						);
+					}
+				}
+            ?>
+			<div>
+				<a href='creation_categorie.php' class="btn btn-default" role="button">
+					<i class='glyphicon glyphicon-plus'></i> Nouvelle Catégorie
+				</a>
+			</div>
             <div>
                 <h2>Catégories Actives</h2>
             <table class="table table-striped">
@@ -63,9 +87,8 @@ require("../fonctions.php");
 					<tr>
 						<th>Catégorie</th>						
 						<th>Désignation</th>
-                                                <th></th>
-                                                <th></th>
-						
+						<th></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody >
@@ -79,12 +102,14 @@ require("../fonctions.php");
                                                                            
 					for ($i = 0; $i < $rows ; $i++){
 						$donnees = mysqli_fetch_array($result);
-						echo ("<tr>
-									<td>".$donnees['NomC']."</td>
-									<td>".$donnees['DesignationC']."</td>
-                                                                        <td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&action=modifier'><i class='glyphicon glyphicon-pencil'></i></a></td>
-                                                                        <td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&statutA=".$donnees['StatutC']."'>Désactiver</a></td>
-						     </tr>");
+						echo
+							"<tr>
+								<td>".$donnees['NomC']."</td>
+								<td>".$donnees['DesignationC']."</td>
+								<td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&action=modifier'><i class='glyphicon glyphicon-pencil'></i></a></td>
+								<td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&statutA=".$donnees['StatutC']."'>Désactiver</a></td>
+							</tr>"
+						;
 					}
 				?>
 				</tbody>
@@ -97,14 +122,12 @@ require("../fonctions.php");
 					<tr>
 						<th>Catégorie</th>						
 						<th>Désignation</th>
-                                                <th></th>
-                                                <th></th>
-						
+						<th></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody id="data-list">
-				<?php
-					
+				<?php					
 					$result = categoriesInactives($link);
 					
 					if ($result != NULL) 
@@ -113,12 +136,14 @@ require("../fonctions.php");
 
 					for ($i = 0; $i < $rows ; $i++){
 						$donnees = mysqli_fetch_array($result);
-						echo ("<tr>
-									<td>".$donnees['NomC']."</td>
-									<td>".$donnees['DesignationC']."</td>
-                                                                        <td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&action=modifier'><i class='glyphicon glyphicon-pencil'></i></a></td>
-                                                                        <td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&statutI=".$donnees['StatutC']."'>Activer</a></td>
-						     </tr>");
+						echo
+							"<tr>
+								<td>".$donnees['NomC']."</td>
+								<td>".$donnees['DesignationC']."</td>
+								<td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&action=modifier'><i class='glyphicon glyphicon-pencil'></i></a></td>
+								<td><a href='modifier_categorie.php?id=".$donnees['CodeC']."&statutI=".$donnees['StatutC']."'>Activer</a></td>
+							 </tr>"
+						;
 					}
 				?>
 				</tbody>

@@ -110,7 +110,7 @@
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show(); //Le formulaire est affiché
+                $("#form_panel").show(); //Le formulaire est affiché  
             });
 
             function initInputMnemo(id) {
@@ -152,7 +152,8 @@
         <?php else: ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").hide(); //Le formulaire est affiché
+                $("#form_panel").hide(); //Le formulaire est affiché          
+                $("#date_arret").attr("value", aujourdhui());
             });
 
             var pj = [<?php
@@ -608,7 +609,7 @@
 					<div class="title_footer">Contact</div>
 					<div id="contact" class="row">
 						<iframe class="col-sm-5" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23113.985644999426!2d1.4384851395507818!3d43.601373400000014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebc91ae4a5ba3%3A0x5d4ac376bccc8d50!2sCPAM%20de%20la%20Haute-Garonne!5e0!3m2!1sfr!2sfr!4v1580058891942!5m2!1sfr!2sfr" style="border:0;" allowfullscreen=""></iframe>	
-						<div class="col-sm-7 text-left">
+						<div class="col-sm-7">
 							<div class="col-sm-12">Caisse Primaire d'Assurance Maladie</div>
 							<div class="col-sm-12">3, Boulevard du Professeur Léopold Escande</div>	
 							<div class="col-sm-12">Haute-Garonne (31) - 31093 Toulouse</div>													

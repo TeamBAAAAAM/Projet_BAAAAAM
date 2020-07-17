@@ -54,7 +54,7 @@ function cheminVersServeurFTP() {
     return $chemin;
 }
 
-/* Connecte au serveur FTP */
+/* Connecte au serveur FTP pour la sauvegarde des pièces */
 function connecterServeurFTP() {    
     // Mise en place d'une connexion basique
     $ftp_stream = ftp_connect(
@@ -73,6 +73,29 @@ function connecterServeurFTP() {
     else {            
         echo "Erreur lors de l'identification !<br>";
         echo "Connexion impossible en tant que ".getenv("FTP_USER")." ...<br>";
+        return NULL;
+    }
+}
+
+/* Connecte au serveur FTP pour la sauvegarde des fichiers CSV */
+function connecterServeurFTP_CSV() {    
+    // Mise en place d'une connexion basique
+    $ftp_stream = ftp_connect(
+        getenv("CSV_FTP_HOST")) or 
+        die("Erreur : Impossible de se connecter à ".getenv("CSV_FTP_HOST")." !<br>"); 
+
+    //Tentative d'identification
+    if(ftp_login($ftp_stream, getenv("CSV_FTP_USER"), getenv("CSV_FTP_PWD"))) {
+        //echo "Connecté en tant que ".getent("FTP_USER")."@".FTP_HOST." ...<br>";
+    
+        // Activation du mode passif
+        ftp_pasv($ftp_stream, true);
+
+        return $ftp_stream;
+    }
+    else {            
+        echo "Erreur lors de l'identification !<br>";
+        echo "Connexion impossible en tant que ".getenv("CSV_FTP_USER")." ...<br>";
         return NULL;
     }
 }
@@ -107,52 +130,143 @@ function connecterBD() {
     return $link;
 }
 
-/* Génère le fichier CSV pour l'insertion dans ADDICT */
-function genererFichierCSV($link) {    
+/* Fonction qui supprime les accents d'une chaine de caractères */
+ function retirerAccents($sentence) {
+    $res = $sentence;
+    $res = preg_replace('#Ç#', 'C', $res);
+    $res = preg_replace('#ç#', 'c', $res);
+    $res = preg_replace('#è|é|ê|ë#', 'e', $res);
+    $res = preg_replace('#È|É|Ê|Ë#', 'E', $res);
+    $res = preg_replace('#à|á|â|ã|ä|å#', 'a', $res);
+    $res = preg_replace('#@|À|Á|Â|Ã|Ä|Å#', 'A', $res);
+    $res = preg_replace('#ì|í|î|ï#', 'i', $res);
+    $res = preg_replace('#Ì|Í|Î|Ï#', 'I', $res);
+    $res = preg_replace('#ð|ò|ó|ô|õ|ö#', 'o', $res);
+    $res = preg_replace('#Ò|Ó|Ô|Õ|Ö#', 'O', $res);
+    $res = preg_replace('#ù|ú|û|ü#', 'u', $res);
+    $res = preg_replace('#Ù|Ú|Û|Ü#', 'U', $res);
+    $res = preg_replace('#ý|ÿ#', 'y', $res);
+    $res = preg_replace('#Ý#', 'Y', $res);
+     
+    return ($res);
+}
+
+/* Génère le fichier CSV pour l'insertion dans DIADEME */
+function genererFichierInjectionCSV($link) {    
     $fichier = tmpfile();
 
     // Ajout de l'entête
-    fputs($fichier, getenv("CSV_HEADER")."\n");
-
-    $result = recupererDossierSauvegarde($link);
+    $header = getenv("CSV_INJECTION_HEADER");
+    fputs($fichier, utf8_decode($header."\n"));
+    
+    $header = retirerAccents(strtolower($header));
+    $result = recupererDossierInjection($link);
     do {
         $tuple = mysqli_fetch_array($result);
         if($tuple != NULL) {
-            $ligne = ";";
-            $ligne .= "IJ;";
-            $ligne .= "OUI;";
-            $ligne .= substr($tuple["DateD"], 0, 10).";";
-            $ligne .= "vide;";
-            $ligne .= ";";
-            $ligne .= ";";
-            $ligne .= $tuple["Mnemonique"];
-            fputs($fichier, $ligne."\n"); // On écrit le tuple dans le fichier CSV
+            $ligne = "";
+            if(strpos($header, "addict") !== Null)
+                //$ligne .= getenv("STORAGE_PATH")."/".$tuple["NirA"]."/".$tuple["RefD"].";";
+                $ligne .= ";";
+            if(strpos($header, "processus") !== Null)
+                $ligne .= "IJ;";
+            if(strpos($header, "archivage") !== Null)
+                $ligne .= "OUI;";
+            if(strpos($header, "date reception") !== Null)
+                $ligne .= substr($tuple["DateD"], 0, 10).";";
+            if(strpos($header, "index metier") !== Null)
+                $ligne .= "vide;";
+            if(strpos($header, "date evenement") !== Null)
+                $ligne .= ";";
+            if(strpos($header, "commentaire") !== Null)
+                $ligne .= ";";
+            if(strpos($header, "docporteur") !== Null)
+                $ligne .= $tuple["Mnemonique"].";";
+            $ligne = substr($ligne, 0, strlen($ligne) - 1); // Suppression du dernier point virgule
+            fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV
         }
     } while($tuple != NULL);
 
     return $fichier;
 }
 
-/* Sauvegarde le fichier d'enregistrement du fichier CSV sur l'espace du serveur */
-function sauvegarderFichierCSVServeur($ftp_stream, $link) {
-    $fichier = genererFichierCSV($link);
+/* Génère le fichier CSV pour le listing des dossiers "À traité" et "En cours" */
+function genererListeDossiersCSV($link) {    
+    $fichier = tmpfile();
+
+    $result = recupererListeDossiers($link);
+
+    $tuple = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    if($tuple != NULL) {
+        // Ajout de l'entête
+        $header = array_keys($tuple);
+        $ligne = implode(";", $header);
+        fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV 
+
+        do {
+            $ligne = implode(";", $tuple);
+            fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV            
+            $tuple = mysqli_fetch_array($result, MYSQLI_NUM);
+        } while($tuple != NULL);
+    }
+
+    return $fichier;
+}
+
+/* Sauvegarde le fichier d'injection dans DIADEME sur l'espace du serveur */
+function sauvegarderFichierInjectionCSVServeur($ftp_stream, $link) {
+    $fichier = genererFichierInjectionCSV($link);
     $nomFichier = stream_get_meta_data($fichier)['uri'];
 
-    $result = ftp_put($ftp_stream, getenv("CSV_NAME_FILE"), $nomFichier, FTP_BINARY);
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_INJECTION_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_INJECTION_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_INJECTION_FILE_PATH")."/".getenv("CSV_INJECTION_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
 
     fclose($fichier);
 
     return $result;
 }
 
-/* Sauvegarde le fichier d'enregistrement du fichier CSV sur l'espace du serveur */
-function sauvegarderFichierCSVLocal($link) {    
-    $fichier = genererFichierCSV($link);
+/* Télécharge le fichier d'injection dans DIADEME en local */
+function telechargererFichierInjectionCSVLocal($link) {    
+    $fichier = genererFichierInjectionCSV($link);
     $nomFichier = stream_get_meta_data($fichier)['uri'];
 
     header("Content-Type: application/octet-stream");
     header("Content-Length: ".filesize($nomFichier));
-    header("Content-Disposition: attachment; filename=".getenv("CSV_NAME_FILE"));
+    header("Content-Disposition: attachment; filename=".getenv("CSV_INJECTION_NAME_FILE"));
+
+    readfile($nomFichier);
+}
+
+/* Sauvegarder un fichier CSV sur le serveur contenant la liste des dossiers "En cours" et "À traiter" */
+function sauvegarderListeDossiersCSVServeur($ftp_stream, $link) {
+    $fichier = genererListeDossiersCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_FOLDERS_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_FOLDERS_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_FOLDERS_FILE_PATH")."/".getenv("CSV_FOLDERS_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
+
+    fclose($fichier);
+
+    return $result;
+}
+
+/* Télécharge un fichier CSV en local contenant la liste des dossiers "En cours" et "À traiter" */
+function telechargerListeDossiersCSVLocal($link) {    
+    $fichier = genererListeDossiersCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    header("Content-Type: application/octet-stream");
+    header("Content-Length: ".filesize($nomFichier));
+    header("Content-Disposition: attachment; filename=".getenv("CSV_FOLDERS_NAME_FILE"));
 
     readfile($nomFichier);
 }
@@ -182,16 +296,26 @@ function genererMessage($title, $body, $icon, $type) {
     ";
 }
 
-/* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
-function recupererDossierSauvegarde($link) {
-    $query = "SELECT DISTINCT DateD, Mnemonique "
-            ."FROM dossier d, justificatif j, listemnemonique m "
-            ."WHERE (d.StatutD = 'À traiter' "
-            ."OR d.StatutD = 'En cours') "            
-            ."AND j.CodeD = d.CodeD "
-            ."AND m.CodeM = j.CodeM";
+/* Retourne les données pour le fichier de sauvegarde */
+function recupererDossierInjection($link) {
+    $query = "SELECT DISTINCT RefD, NirA, DateD, Mnemonique "
+            ."FROM dossier d, justificatif j, listemnemonique m, assure a "
+            ."WHERE d.StatutD = 'Terminé' "            
+            ."AND j.CodeD = d.CodeD "            
+            ."AND m.CodeM = j.CodeM "            
+            ."AND a.CodeA = d.CodeA ";
 
-    echo $query;
+    return mysqli_query($link, $query);
+}
+
+/* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
+function recupererListeDossiers($link) {
+    $query = "SELECT a.CodeA, NirA, NomA, PrenomA, TelA, "
+            ."MailA, CodeD, StatutD, DateD, RefD, DateAM "
+            ."FROM assure a, dossier d "
+            ."WHERE (d.StatutD = 'À traiter' "
+            ."OR d.StatutD = 'En cours') "
+            ."AND d.CodeA = a.CodeA ";
 
     return mysqli_query($link, $query);
 }
@@ -416,9 +540,11 @@ function enregistrerFichiers($ftp_stream, $listeFichiers,
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir =  getenv("STORAGE_PATH") . "/$nir/$ref";
+                $target_dir =  getenv("STORAGE_PATH");
                 $ext = strtolower(pathinfo($file)['extension']);
-                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                $cheminJustificatif = "$target_dir/";
+                $cheminJustificatif .= implode("", explode(" ", $nir));
+                $cheminJustificatif .= "_".$key."_IJ_($ref-$j).$ext";
 
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
@@ -894,6 +1020,55 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
     return mysqli_query($link, $query);
 }
 
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierInjectionCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour injection dans DIADEME";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV pour l'injection des justificatifs dans DIADEME.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererFichierInjectionCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_INJECTION_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierDossiersCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour le listage des dossiers restants à traiter";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV contenant la liste des fichiers ";
+    $content .= "restant à traiter et en cours de traitement.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererListeDossiersCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_FOLDERS_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
 /* Envoie un mail */
 /* 'SENDER_EMAIL_ADDRESS' : Adresse de l'expéditeur (variable globale tout en haut) */
 /* '$to'                  : Adresse de destination                                  */
@@ -903,10 +1078,10 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
 /* Valeurs possibles de $type : => 'text/html'  : Message de type HTML (par défaut) */
 /*                              => 'text/plain' : Message standard                  */
 /* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
-function envoyerMail($to, $subject, $content, $type) {
+function envoyerMail($to, $subject, $content, $type, $attachement = Null, $nameFile = Null) {
     // Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
-
+    
     try {
         //Server settings
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                    // Enable verbose debug output
@@ -927,8 +1102,8 @@ function envoyerMail($to, $subject, $content, $type) {
         //$mail->addBCC('bcc@example.com');
 
         // Attachments
-        //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        if($nameFile != Null) $mail->addAttachment($attachement, $nameFile);        
+        else if($attachement != Null) $mail->addAttachment($attachement);
 
         // Content
         if($type == "text/html") {        
@@ -1334,4 +1509,20 @@ function listeMnemoniques($link) {
     return mysqli_query($link, $query);  
 }
 
+/* Retourne la liste des mnémoniques */
+function listeMnemoniqueAvecCodeC($link, $codeC) {
+    $query = "SELECT c.CodeM, Mnemonique, Designation, Label "
+            ."FROM concerner c, listemnemonique l "
+            ."WHERE CodeC = $codeC "
+            ."AND c.CodeM = l.CodeM "
+            ."  UNION "
+            ."SELECT CodeM, Mnemonique, Designation, NULL "
+            ."FROM listemnemonique "
+            ."WHERE CodeM NOT IN ("
+            ."  SELECT CodeM "
+            ."  FROM concerner "
+            ."  WHERE CodeC = $codeC);";
+
+    return mysqli_query($link, $query);  
+}
 ?>
