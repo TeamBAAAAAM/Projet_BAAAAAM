@@ -1509,7 +1509,7 @@ function listeMnemoniques($link) {
     return mysqli_query($link, $query);  
 }
 
-/* Retourne la liste des mnémoniques */
+/* Retourne la liste des mnémoniques avec la catégorie */
 function listeMnemoniqueAvecCodeC($link, $codeC) {
     $query = "SELECT c.CodeM, Mnemonique, Designation, Label "
             ."FROM concerner c, listemnemonique l "

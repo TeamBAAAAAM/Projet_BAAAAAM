@@ -1,4 +1,8 @@
 <?php
+    /*--------------------------------------------------------------------------------------
+        FICHIER INTERMÉDIAIRE POUR LE TÉLÉCHARGEMENT D'UN FICHIER CSV DE SAUVEGARDE EN LOCAL
+    --------------------------------------------------------------------------------------*/
+    
     require_once("../fonctions.php");
     $link = connecterBD();
 
