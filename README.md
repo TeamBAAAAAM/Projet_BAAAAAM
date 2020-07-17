@@ -21,8 +21,8 @@ Il est également possible d’utiliser le lien suivant https://github.com/TeamB
 
 ### Implémentation de la base de données
 
-> D'abord lancer le script de création : <a href="bd_cpam/ScriptCreationBD.sql">ScriptCreationBD.sql</a>.
-> Puis insérer les données initiales nécessaires (catégories et mnémoniques) : <a href="bd_cpam/ScriptDonnees.sql">ScriptDonnees.sql</a>.
+> D'abord lancer le script de création : [ScriptCreationBD.sql](bd_cpam/ScriptCreationBD.sql).
+> Puis insérer les données initiales nécessaires (catégories et mnémoniques) : [ScriptDonnees.sql](bd_cpam/ScriptDonnees.sql).
 
 ### Accès à la base de données
 > Pour la connexion à la BD, il est nécéssaire de renseigner les données de connexion dans un fichier de nom ".env" (cf. <strong>Gestion du fichier ENV</strong>).
@@ -33,21 +33,20 @@ Il est également possible d’utiliser le lien suivant https://github.com/TeamB
 > Ce fichier contient les paramètres de connexions au différents serveurs.
 > Ces paramètres correspondent à des variables d'environnement qui sont supprimés à la fin de l'exécution du script PHP.
 
-<strong><em>Important : Il est nécessaire d'ajouter le nom de ce fichier au ".gitignore" ! 
+***Important : Il est nécessaire d'ajouter le nom de ce fichier au ".gitignore" ! 
 Il suffit de copier le nom du fichier ".env", et le disposer sur une seule ligne dans le fichier ".gitignore". 
-Cette oprération est importante car sans cela, le fichier ".env" qui contient des données très sensibles sera récupérable à partir de la commande de clonnage de GIT. De plus, ce fichier est propre à une machine en particulier, c'est-à-dire que chaque paramètre du fichier ".env" ne fonctionnera pas forcément sur autre machine (cela peut être dû à des différences au niveau du système d'exploitation, des serveurs utilisés, etc.).</em></strong>
+Cette oprération est importante car sans cela, le fichier ".env" qui contient des données très sensibles sera récupérable à partir de la commande de clonnage de GIT. De plus, ce fichier est propre à une machine en particulier, c'est-à-dire que chaque paramètre du fichier ".env" ne fonctionnera pas forcément sur autre machine (cela peut être dû à des différences au niveau du système d'exploitation, des serveurs utilisés, etc.).***
 
-<p>Pour le contenu de ce fichier, voici quelques règles à respecter :
+Pour le contenu de ce fichier, voici quelques règles à respecter :
 
 * Une clé "KEY" correspond au nom d'une variable à laquelle est affectée une valeur "VALUE".
 * Une variable d'environnement est déclarée de cette façon : KEY=VALUE.
 * Les commentaires sont indiqués par le caractère "#".
 * Il est possible d'ajouter un commentaire après la déclaration d'une variable d'environnement.
-**<em>Exemple :<br>KEY=VALUE   #Ceci est un commentaire</em>
+** Exemple :<br>KEY=VALUE   #Ceci est un commentaire **
 * Les noms de variables doivent impérativement correspondre à ceux précisés dans l'exemple ci-dessous !
 
-  
-### --- Exemple de fichier ".env" ---
+### Exemple de fichier ".env"
 ```txt
 # ------------------------------------------------------------------
 #  VARIABLES D'ENVIRONNEMENT DE CONNEXION À LA BASE DE DONNÉES
