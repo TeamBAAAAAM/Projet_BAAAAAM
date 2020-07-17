@@ -339,7 +339,7 @@ function demandeDeConnexion() {
     $host = $_SERVER['HTTP_HOST'];
     $url = $protocol . '://' . $host . $script . '?' . $params;
     
-    redirigerVers("se_connecter.php?redirect=$url");
+    redirigerVers("index.php?redirect=$url");
 }
 
 /*------------------------------------------------------------------

@@ -77,7 +77,7 @@
             }
         }
 
-        redirigerVers('depot.php?'.$msg); // Passage des varaibles par la méthode GET
+        redirigerVers('depot.php?'.$msg); // Passage des variables par la méthode GET
     }
 
     if(isset($_SESSION["Assure"]) && isset($_SESSION["RefD"])) {
@@ -221,7 +221,7 @@
                         $title .= ", ainsi que la référence du dossier qui vous a été délivrée.";
                         $body .= " et la référence de votre dossier";
 
-                    $body .= " dans le champ précu à cet effet.";
+                    $body .= " dans le champ prévu à cet effet.";
 
                     GenererMessage (
                         $title,
@@ -519,7 +519,7 @@
                                         else {
                                             echo("<div class='row pj ".$categorie['NomC']."'>
                                                 <div class='col-sm-12'>
-                                                    <p># Type de pièces non-défini, merci de contacter l'administrateur ...</p>
+                                                    <p># Type de pièce non défini, merci de contacter l'administrateur ...</p>
                                                 </div>
                                             </div>");
                                         }

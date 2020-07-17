@@ -12,7 +12,7 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else { // Redirection sinon
-		redirigerVers("se_connecter.php");
+		redirigerVers("index.php");
 	}
 
 	// Récupération des données du dossier en cours de traitement
@@ -137,7 +137,7 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li role="presentation"><a role="menuitem" href="se_connecter.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>

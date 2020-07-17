@@ -11,7 +11,7 @@
 	if (isset($_POST["matricule"]) && isset($_POST["mdp"])) {
 		//Vérification des identifiants
 		if (!authentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
-			redirigerVers("se_connecter.php?msg_erreur=msg_3");
+			redirigerVers("index.php?msg_erreur=msg_3");
 		}
 
 		//Récupération des données du technicien
@@ -33,7 +33,7 @@
 			$nomT = $_SESSION["nomT"];
 			$prenomT = $_SESSION["prenomT"];
 		} else { // Sinon, il est redirigé vers la page de connexion
-			redirigerVers("se_connecter.php");
+			redirigerVers("index.php");
 		}
 	}	
 ?>
@@ -86,7 +86,7 @@
 								<?php echo ("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-								<li role="presentation"><a role="menuitem" href="se_connecter.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>
 					</ul>

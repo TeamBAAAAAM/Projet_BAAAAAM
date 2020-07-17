@@ -68,7 +68,7 @@
                             genererMessage(
                                 "Votre enregistrement s'est effectué avec succès !",
                                 "<p>
-                                    <a href='se_connecter.php' class='btn btn btn-primary' role='button'>
+                                    <a href='index.php' class='btn btn btn-primary' role='button'>
                                         <span class='glyphicon glyphicon-log-in'></span>
                                         Connectez vous maintenant
                                     </a>
