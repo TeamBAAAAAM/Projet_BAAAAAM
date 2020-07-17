@@ -21,7 +21,7 @@ Visible ici https://teambaaaaam.github.io/Projet_BAAAAAM/
 <p>Pour la connexion à la BD, il est nécéssaire de renseigner les données de connexion dans un fichier de nom ".env" (cf. <strong>Gestion du fichier ENV</strong></p>
 
 <h2>Gestion du fichier ENV</h2>
-<p>Créer un fichier appelé ".env" (sans caractères avec le '.').</p>
+<p>Créer un fichier appelé ".env".</p>
 <p>Ce fichier contient les paramètres de connexions au différents serveurs. Ces paramètres correspondent à des variables d'environnement qui sont supprimés à la fin de l'exécution du script PHP.</p>
 
 <p><strong><em>Important : Il est nécessaire d'ajouter le nom de ce fichier au ".gitignore" ! 
@@ -41,37 +41,80 @@ Cette oprération est importante car sans cela, le fichier ".env" qui contient d
 <h3>--- Exemple de fichier ".env" ---</h3>
 <p><strong><em>NB : Les "_____" doivent être remplacées par les valeurs correspondantes !</em></strong></p>
 <p>
-# ------------------------------------------------------------------<br>
-#  VARIABLES GLOBALES DE CONNEXION À LA BASE DE DONNÉES<br>
-# ------------------------------------------------------------------<br>
-MYSQL_HOST=_______________________________# Nom du host [MYSQL_HOST]<br>
-MYSQL_USER=_______________________________# Nom d'utilisateur [MYSQL_USER]<br>
-MYSQL_PWD=________________________________# Mot de passe [MYSQL_PWD]<br>
-MYSQL_BD=_________________________________# Nom de la base de données [MYSQL_BD]<br>
-MYSQL_PORT=_______________________________# Numéro du port de connexion [MYSQL_PORT]<br>
-<br>
-# ------------------------------------------------------------------<br>
-# 	VARIABLES GLOBALES DE CONNEXION AU SERVEUR FTP<br>
-# ------------------------------------------------------------------<br>
-FTP_HOST=_________________________________# Nom du host [FTP_HOST]<br>
-FTP_USER=_________________________________# Nom d'utilisateur [FTP_USER]<br>
-FTP_PWD=__________________________________# Mot de passe [FTP_PWD]<br>
-FTP_PORT=_________________________________# Numéro du port de connexion [FTP_PORT]<br>
-<br>
-# ------------------------------------------------------------------<br>
-# 	VARIABLE GLOBALE DU CHEMIN VERS L'ESPACE DE STOCKAGE DES PIECES (sur le serveur FTP)<br>
-# ------------------------------------------------------------------<br>
-STORAGE_PATH=_____________________________# N.B. : À partir de la racine [STORAGE_PATH]<br>
-<br>
-# ------------------------------------------------------------------<br>
-# 	VARIABLES GLOBALES POUR L'ENVOI DES MAILS<br>
-# ------------------------------------------------------------------<br>
-# Ces arguments sont insérer directement dans le fichier de configuration php.ini<br>
-SMTP_HOST=________________________________# Nom du host [SMTP_HOST]<br>
-SMTP_PORT=________________________________# Numéro du port [SMTP_PORT]<br>
-SMTP_USER=________________________________# Nom d'utilisateur [SMTP_USER]<br>
-SMTP_PWD=_________________________________# Mot de passe [SMTP_PWD]<br>
-SENDMAIL_FROM=____________________________# Adresse mail de l'expéditeur [SENDMAIL_FROM]<br>
-SENDMAIL_NAME=____________________________# Nom de l'expéditeur [SENDMAIL_NAME]<br>
+# ------------------------------------------------------------------</br>
+#  VARIABLES D'ENVIRONNEMENT DE CONNEXION À LA BASE DE DONNÉES</br>
+# ------------------------------------------------------------------</br>
+# Nom du host [MYSQL_HOST]</br>
+MYSQL_HOST=</br>
+# Nom d'utilisateur [MYSQL_USER]</br>
+MYSQL_USER=</br>
+# Mot de passe [MYSQL_PWD]</br>
+MYSQL_PWD=</br>
+# Nom de la base de données [MYSQL_BD]</br>
+MYSQL_BD=</br>
+# Numéro du port de connexion [MYSQL_PORT]</br>
+MYSQL_PORT=</br>
+</br>
+# ------------------------------------------------------------------</br>
+# 	VARIABLES D'ENVIRONNEMENT DE CONNEXION AU SERVEUR FTP</br>
+# ------------------------------------------------------------------</br>
+# Nom du host [FTP_HOST]</br>
+FTP_HOST=</br>
+# Nom d'utilisateur [FTP_USER]</br>              
+FTP_USER=</br>
+# Mot de passe [FTP_PWD]</br>
+FTP_PWD=</br>
+# Numéro du port de connexion [FTP_PORT]</br>
+FTP_PORT=</br>
+</br>
+# ------------------------------------------------------------------</br>
+# 	VARIABLE D'ENVIRONNEMENT DU CHEMIN VERS L'ESPACE DE </br>
+#   STOCKAGE DES PIECES (sur le serveur FTP)</br>
+# ------------------------------------------------------------------</br>
+# N.B. : À partir de la racine [STORAGE_PATH]</br>
+STORAGE_PATH=</br>
+</br>
+# ------------------------------------------------------------------</br>
+# 	VARIABLES D'ENVIRONNEMENT POUR L'ENVOI DES MAILS</br>
+# ------------------------------------------------------------------</br>
+# Nom du host [SMTP_HOST]</br>
+SMTP_HOST=</br>
+# Numéro du port [SMTP_PORT]</br>			
+SMTP_PORT=</br>
+# Nom d'utilisateur [SMTP_USER]</br>
+SMTP_USER=</br>
+# Mot de passe [SMTP_PWD]</br>
+SMTP_PWD=</br>
+# Adresse mail de l'expéditeur [SENDMAIL_FROM]</br>
+SENDMAIL_FROM=</br>
+# Nom de l'expéditeur [SENDMAIL_NAME]</br>
+SENDMAIL_NAME=</br>
+</br>
+# ------------------------------------------------------------------</br>
+# 	VARIABLES D'ENVIRONNEMENT POUR L'ENREGISTREMENT DES FICHIERS CSV</br>
+# ------------------------------------------------------------------</br>
+# Nom du fichier CSV d'injection dans DIADEME [CSV_INJECTION_NAME_FILE]</br>
+CSV_INJECTION_NAME_FILE=injection_file.csv</br>
+# Entête du fichier CSV pour l'injection des pièces dans DIADEME [CSV_INJECTION_HEADER]</br>
+CSV_INJECTION_HEADER="ADDICT;Processus;Archivage;Date Réception;Index Métier;Date Événement;Commentaire;DocPorteur"</br>
+# Nom du fichier CSV de sauvegarde des dossiers [CSV_FOLDERS_NAME_FILE]</br>
+CSV_FOLDERS_NAME_FILE=list_folders_file.csv</br>
+</br>
+# Nom du host [CSV_FTP_HOST]</br>
+CSV_FTP_HOST=</br>
+# Nom d'utilisateur [CSV_FTP_USER]</br>
+CSV_FTP_USER=</br>
+# Mot de passe [CSV_FTP_PWD]</br>
+CSV_FTP_PWD=</br>
+# Numéro du port de connexion [CSV_FTP_PORT]</br>
+CSV_FTP_PORT=21</br>
+</br>
+# N.B. : À partir de la racine [CSV_INJECTION_FILE_PATH]</br>
+CSV_INJECTION_FILE_PATH="Injection DIADEME"
+# N.B. : À partir de la racine [CSV_FOLDERS_FILE_PATH]</br>
+CSV_FOLDERS_FILE_PATH="Liste des Dossiers"</br>
+</br>
+# Adresse mail de l'expéditeur [CSV_SENDMAIL_TO]</br>
+CSV_SENDMAIL_TO=</br>
 </p>
 <p><em>La variable globale 'STORAGE_PATH' correspond au chemin menant au dossier de destination des fichiers enregistrés.</em></p>
