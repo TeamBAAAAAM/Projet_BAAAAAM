@@ -28,16 +28,22 @@ and open the template in the editor.
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="script.js"></script>
 
+        <script>
+            $(function(){
+                $( "form input:checkbox" ).click(function(event){
+                    var checked = event.target.checked;
+                    var index = event.target.value;
+                    if(checked) {
+                        $(`#${index}`).show()
+                    } else { 
+                        $(`#${index}`).hide()
+                    }
+                })                
+            })
+        </script>
+
         <title>PJPE - Administrateur</title>
     </head>
-     <?php
-            if(isset($_GET['msg']) and $_GET['msg'] == "Success"){
-                echo "<div class='alert alert-success' role='alert'>
-  A simple success alert 
-</div>";  
-            }
-        
-        ?>
     <body>
         <nav class="navbar navbar-default header">
             <div class="container">
@@ -46,7 +52,6 @@ and open the template in the editor.
                 </div>
             </div>
         </nav>
-               
 
         <nav class="navbar navbar-inverse navbar-static-top navbar-menu-police" data-spy="affix" data-offset-top="90">
             <div class="container">
@@ -67,8 +72,22 @@ and open the template in the editor.
             </div>
         </nav>
         
-        <div class="container">
-            <div><a href='accueil_categorie.php'><i class='glyphicon glyphicon-arrow-left'></i></a></div>
+        <div class="container">        
+            <?php
+                if(isset($_GET['msg']) && $_GET['msg'] == "Failure") {
+                    genererMessage(
+                        "Ajout de catégorie",
+                        "Echec lors de l'ajout !",
+                        "remove",
+                        "danger"
+                    );
+                }
+            ?>
+            <div>
+                <a href='accueil_categorie.php' class="btn btn-default" role="button">
+                    <i class='glyphicon glyphicon-arrow-left'></i> Retour
+                </a>
+            </div>
             <form method="Post" action="enregistrer_categorie.php">
                 <h1>Nouvelle Catégorie</h1>
                 <div class="form-group row">
@@ -85,7 +104,7 @@ and open the template in the editor.
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Choisir mnémonique</label>
-                    <div class='form-check'>
+                    <div class='col-sm-10'>
                     <?php
                     $result = listeMnemonique($link);
 
@@ -93,42 +112,34 @@ and open the template in the editor.
                         $rows = mysqli_num_rows($result);
                     else
                         $rows = 0;
-                    echo '<table>';
                     for ($i = 0; $i < $rows; $i++) {
                         $donnees = mysqli_fetch_array($result);
-                        echo ( "<td> <input class='form-check-input' type='checkbox' value='". $donnees['CodeM']."' name='mnemonique[]' >
-  <label class='form-check-label' for=''>" . $donnees['Mnemonique'] . " </label></td><td><input type='text' class='form-control' style='display:none' name='label[]' id='". $donnees['CodeM']."' class='form-control'/></td></tr>");
+                        echo "
+                            <div class='row' style='height:34px'>
+                                <div class='col-sm-3'>
+                                    <input class='form-check-input' type='checkbox' value='".$donnees['CodeM']."'
+                                        name='mnemonique[]'>
+                                    <label class='form-check-label'>".$donnees['Mnemonique']."</label>
+                                </div>
+                                <div class='col-sm-9'>
+                                    <input type='text' class='form-control' placeholder='".$donnees['Designation']."'
+                                        name='label[]' id='". $donnees['CodeM'].
+                                    "' style='display:none'>
+                                </div>
+                            </div>"
+                        ;
                     } 
-                    echo '</table>';
                     
                     ?>
                     </div>
-         </div>
-        
-    </div>
-                <div class="col-sm-4">   <button type="submit" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-lock"></span>Valider</button>
-                <button type="Reset" class="btn btn-default btn-lg"> <span class="glyphicon glyphicon-lock"></span>Annuler</button></div>
-                
-              
-    </form>
-   </div>
-    
-<?php
-// put your code here
-?>
-</body>
-<script>
-    $(function(){
-         $( "form input:checkbox" ).click(function(event){
-             var checked = event.target.checked;
-             var index = event.target.value;
-             if(checked){
-             $(`#${index}`).show()
-            }else{ 
-                $(`#${index}`).hide()
-        }
-         })
-         
-    })
-</script>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <span class="glyphicon glyphicon-lock"></span> Valider
+                    </button>
+                    <button type="Reset" class="btn btn-default btn-lg">
+                        <span class="glyphicon glyphicon-erase"></span> Effacer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </body>
 </html>
