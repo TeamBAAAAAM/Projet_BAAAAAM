@@ -1,6 +1,6 @@
 <?php
     /*--------------------------------------------------------------------------------------
-        FICHIER INTERMÉDIAIRE SERVANT DE PASSERELLE POUR LE TÉLÉCHARGEMENT D'UN JUSTIFIACATIF
+        FICHIER INTERMÉDIAIRE SERVANT DE PASSERELLE POUR LE TÉLÉCHARGEMENT D'UN JUSTIFICATIF
     --------------------------------------------------------------------------------------*/
 	session_start();
     
@@ -53,9 +53,6 @@
             $file = file_get_contents($link);
         
             echo $file;
-            //echo $link."<br>";
-            //echo $type."<br>";
-            //echo $size."<br>";
         }
         else {  
             echo ("Ce lien n'est pas valide !");
