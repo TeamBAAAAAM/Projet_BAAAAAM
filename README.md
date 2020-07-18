@@ -6,20 +6,32 @@
 ![](https://img.shields.io/github/last-commit/TeamBAAAAAM/Projet_BAAAAAM?color=yellow&style=for-the-badge)
 
 Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
-Visible ici : https://www.pjpe.cpam31.fr/.
+
+**Visible ici : https://www.pjpe.cpam31.fr/**
 
 ## 1 - Configuration minimale
 
-[![MySQL 5.7.56](https://img.shields.io/badge/MySQL-v5.7.56-orange)](https://www.mysql.com/fr/)
-[![Bootstrap 3](https://img.shields.io/badge/Bootstrap-v3.4.1-violet)](https://getbootstrap.com/docs/3.3/)
-[![PHP](https://img.shields.io/badge/PHP-v5.4-purple)](https://www.php.net/)
-[![jQuery](https://img.shields.io/badge/jQuery-v3.4.1-blue)](https://jquery.com/)
+[![MySQL](https://img.shields.io/badge/MySQL_5-v5.7.56-orange?logo=MySQL)](https://www.mysql.com/fr/)
+[![Bootstrap 3](https://img.shields.io/badge/Bootstrap_3-v3.4.1-violet?logo=Bootstrap)](https://getbootstrap.com/docs/3.3/)
+[![PHP](https://img.shields.io/badge/PHP_5-v5.4-purple?logo=PHP)](https://www.php.net/)
+[![jQuery](https://img.shields.io/badge/jQuery_3-v3.4.1-blue?logo=jQuery)](https://jquery.com/)
+
+Pour une installation en locale, la configuration suivante est suffisante :
+
+| Type de logiciel | Version |
+| --- | --- |
+| Client FTP   | [![](https://raster.shields.io/badge/FileZilla_Client-3.49.1-red?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=client)|
+| Serveur FTP  | [![](https://raster.shields.io/badge/FileZilla_Server-0.9.60.2_(Windows_uniquement)-darkred?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=server)|
 
 ## 2 - Installation
 
-Dans un terminal gitbash, taper la commande suivante : 
+Dans un terminal gitbash ouvert à l'endroit où cloner le repository, lancer la commande suivante : 
 ```sh
 git clone https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git
+```
+ou si vous ne vous trouvez pas dans le répertoire où vous souhaitez cloner le repository : 
+```sh
+git clone https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git <chemin vers le dossier dépot>
 ```
 
 Il est également possible d’utiliser le lien suivant https://github.com/TeamBAAAAAM/Projet_BAAAAAM.git pour cloner le dossier contenant les différentes pages à l’aide d’un IDE.
