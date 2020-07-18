@@ -18,7 +18,7 @@ Projet de conception et développement d'une application web pour la dématéria
 [![MySQL](https://img.shields.io/badge/MySQL-v5.7.56-orange?logo=MySQL)](https://www.mysql.com/fr/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-v3.4.1-violet?logo=Bootstrap)](https://getbootstrap.com/docs/3.3/)
 
-Pour une installation en locale, la configuration suivante est suffisante :
+Pour une installation en local, la configuration suivante est suffisante :
 
 | Type de logiciel | Version |
 | --- | --- |
@@ -69,7 +69,7 @@ Pour le contenu de ce fichier, voici quelques règles à respecter :
 ** Exemple :<br>KEY=VALUE   #Ceci est un commentaire **
 * Les noms de variables doivent impérativement correspondre à ceux précisés dans l'exemple ci-dessous !
 
-### 3.1 - Exemple de fichier ".env"
+### 3.1 - Fichier ".env"
 
 #### Dictionnaire des noms de variables d'environnement
 | Nom de la variable | Définition |
@@ -101,6 +101,7 @@ Pour le contenu de ce fichier, voici quelques règles à respecter :
 | SMTP_USER | Nom d'utilisateur pour la connexion au serveur SMTP |
 | STORAGE_PATH | Chemin d'accès vers la zone de dépôt des justificatifs sur le serveur FTP (à partir de la racine) |
 
+#### Exemple de fichier ".env"
 
 ```txt
 # ------------------------------------------------------------------
@@ -179,3 +180,10 @@ CSV_FOLDERS_FILE_PATH="Liste des Dossiers"
 # Adresse mail de l'expéditeur [CSV_SENDMAIL_TO]
 CSV_SENDMAIL_TO=
 ```
+
+## Équipe de développement :
+- [![Aïssatou Diop](https://img.shields.io/badge/Aïssatou_Diop-M1_MIAGE_parcours_IM_(UT1_2019)-blue?style=for-the-badge&color=red)](https://github.com/aissatou1702) 
+- [![Axel Toa](https://img.shields.io/badge/Axel_Toa-M1_MIAGE_parcours_IM_(UT1_2019)-blue?style=for-the-badge&color=red)](https://github.com/AxelToa)
+- [![Brice_Jones](https://img.shields.io/badge/Brice_Jones-Responsable_Prospective_et_Innovation_(CPAM)-blue?style=for-the-badge&color=red)](https://github.com/notmoebius)
+- [![Malaïka Teuhi ](https://img.shields.io/badge/Malaïka_Teuhi-M1_MIAGE_parcours_IM_(UT1_2019)-blue?style=for-the-badge&color=red)](https://github.com/malaikateuhi)
+- [![Yaye Astou Diaw](https://img.shields.io/badge/Yaye_Astou_Diaw-M1_MIAGE_parcours_IM_(UT1_2019)-blue?style=for-the-badge&color=red)](https://github.com/Astou-Thierno)
