@@ -5,10 +5,10 @@ Visible ici : https://www.pjpe.cpam31.fr/.
 
 ## 1 - Configuration minimale
 
-* [MySQL](https://www.mysql.com/fr/) - Système de gestion de base de données (version 5.7.56 ou ultérieure)
-* [Bootstrap 3](https://getbootstrap.com/docs/3.3/) - Framework CSS (version 3.4.1 ou ultérieure)
-* [PHP](https://www.php.net/) - Langage de programmation BACK (version 5.4 ou ultérieure)
-* [jQuery](https://jquery.com/) - Framework JS (version 3.4.1 ou ultérieure)
+[![MySQL 5.7.56](https://img.shields.io/badge/MySQL-v5.7.56-orange)](https://www.mysql.com/fr/)
+[![Bootstrap 3](https://img.shields.io/badge/Bootstrap-v3.4.1-violet)](https://getbootstrap.com/docs/3.3/)
+[![PHP](https://img.shields.io/badge/PHP-v5.4-purple)](https://www.php.net/)
+[![jQuery](https://img.shields.io/badge/jQuery-v3.4.1-blue)](https://jquery.com/)
 
 ## 2 - Installation
 
