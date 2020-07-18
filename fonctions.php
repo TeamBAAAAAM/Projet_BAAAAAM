@@ -721,16 +721,15 @@ function majFichiers($ftp_stream, $listeFichiers, $codeA, $nirA, $codeD, $refD, 
  	FONCTIONS : BACK OFFICE (INTERFACE TECHNICIEN)
 ------------------------------------------------------------------*/
 
-/* Vérifie que le technicien de matricule '$matricule' possède bien le mot de passe '$mdpt' */
-/* => [Vrai si le technicien est bien authentifié, Faux sinon] */
-function authentifierTechnicien($link, $matricule, $mdpT) {
+/* Récupère le mot de passe haché d'un technicien pour authentification */
+/* => [Le mot de passe si le matricule du technicien existe, NULL sinon] */
+function authentifierTechnicien($link, $matricule) {
     $query = "SELECT Matricule, MdpT "
             ."FROM technicien "
-            ."WHERE Matricule = '$matricule' "
-            ."AND MdpT = '$mdpT'";
+            ."WHERE Matricule = '$matricule' ";
     $result = mysqli_query($link, $query);
 
-    return (mysqli_fetch_array($result) != NULL);
+    return mysqli_fetch_array($result);
 }
 
 /* Change le statut du dossier de code '$codeDossier' en '$statut' */

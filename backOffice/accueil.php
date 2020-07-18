@@ -10,7 +10,7 @@
 	// Récupération des données du technicien après connexion
 	if (isset($_POST["matricule"]) && isset($_POST["mdp"])) {
 		//Vérification des identifiants
-		if (!authentifierTechnicien($link, $_POST["matricule"], $_POST["mdp"])) {
+		if (!password_verify($_POST["mdp"], authentifierTechnicien($link, $_POST["matricule"])["MdpT"])) {			
 			redirigerVers("index.php?msg_erreur=msg_3");
 		}
 

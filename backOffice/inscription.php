@@ -114,7 +114,7 @@ session_start();
                     </div>
                 <?php
                     if (isset($_GET["msg_erreur_mdp"])) {
-                        // S'il les deux mot de passe ne correspondent pas
+                        // S'il les deux mots de passe ne correspondent pas
                         if ($_GET["msg_erreur_mdp"] == "msg_2") {
                             genererMessage(
                                 "Les 2 mots de passe ne sont pas identiques !",
