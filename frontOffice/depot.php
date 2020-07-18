@@ -110,7 +110,7 @@
         <?php if ($repost || $repost_ok) : ?>
         <script>
             $(document).ready(function(){
-                $("#form_panel").show(); //Le formulaire est affiché  
+                $("#form_panel").show(); //Le formulaire est affiché
             });
 
             function initInputMnemo(id) {
