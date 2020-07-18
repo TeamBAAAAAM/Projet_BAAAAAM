@@ -1,5 +1,7 @@
 # Projet_BAAAAAM
 
+![repo size](https://img.shields.io/github/repo-size/TeamBAAAAAM/Projet_BAAAAAM?style=for-the-badge)
+
 Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
 Visible ici : https://www.pjpe.cpam31.fr/.
 
