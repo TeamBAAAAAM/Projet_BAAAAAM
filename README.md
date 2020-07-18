@@ -11,17 +11,22 @@ Projet de conception et développement d'une application web pour la dématéria
 
 ## 1 - Configuration minimale
 
-[![MySQL](https://img.shields.io/badge/MySQL_5-v5.7.56-orange?logo=MySQL)](https://www.mysql.com/fr/)
-[![Bootstrap 3](https://img.shields.io/badge/Bootstrap_3-v3.4.1-violet?logo=Bootstrap)](https://getbootstrap.com/docs/3.3/)
-[![PHP](https://img.shields.io/badge/PHP_5-v5.4-purple?logo=PHP)](https://www.php.net/)
-[![jQuery](https://img.shields.io/badge/jQuery_3-v3.4.1-blue?logo=jQuery)](https://jquery.com/)
+[![HTML](https://img.shields.io/badge/HTML--blue?logo=HTML5&color=darkorange)](https://www.w3schools.com/html/)
+[![CSS](https://img.shields.io/badge/CSS--blue?logo=CSS3&color=blue)](https://www.w3schools.com/css/)
+[![jQuery](https://img.shields.io/badge/jQuery-v3.4.1-blue?logo=jQuery)](https://jquery.com/)
+[![PHP](https://img.shields.io/badge/PHP-v5.4-purple?logo=PHP)](https://www.php.net/)
+[![MySQL](https://img.shields.io/badge/MySQL-v5.7.56-orange?logo=MySQL)](https://www.mysql.com/fr/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-v3.4.1-violet?logo=Bootstrap)](https://getbootstrap.com/docs/3.3/)
 
 Pour une installation en locale, la configuration suivante est suffisante :
 
 | Type de logiciel | Version |
 | --- | --- |
-| Client FTP   | [![](https://raster.shields.io/badge/FileZilla_Client-3.49.1-red?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=client)|
-| Serveur FTP  | [![](https://raster.shields.io/badge/FileZilla_Server-0.9.60.2_(Windows_uniquement)-darkred?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=server)|
+| Client FTP | [![](https://raster.shields.io/badge/FileZilla_Client-3.49.1-red?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=client)|
+| Serveur FTP (Windows uniquement) | [![](https://raster.shields.io/badge/FileZilla_Server-0.9.60.2-darkred?style=for-the-badge&logo=FileZilla)](https://filezilla-project.org/download.php?type=server)|
+| Plate-forme de développement Web (Windows) | [![](https://raster.shields.io/badge/WampsServer-3.2.0-pink?style=for-the-badge&logo=Apache)](https://www.wampserver.com/)|
+| Plate-forme de développement Web (Mac OS) | [![](https://raster.shields.io/badge/Mamp-5.7-lightgrey?style=for-the-badge&logo=Apache)](https://www.mamp.info/fr/downloads/)|
+| Client SMTP (ID de la CPAM) | [![](https://raster.shields.io/badge/OVH_Cloud-5.7-darkblue?style=for-the-badge&logo=OVH)](https://www.ovh.com/fr/)|
 
 ## 2 - Installation
 
@@ -66,11 +71,42 @@ Pour le contenu de ce fichier, voici quelques règles à respecter :
 
 ### 3.1 - Exemple de fichier ".env"
 
+#### Dictionnaire des noms de variables d'environnement
+| Nom de la variable | Définition |
+| --- | --- |
+| CSV_FOLDERS_NAME_FILE | Nom du fichier CSV de sauvegarde des dossiers |
+| CSV_FOLDERS_FILE_PATH | Chemin d'accès vers la zone de dépôt de la liste des dossiers "En cours" ou "À traiter" dans DIADEME sur le serveur FTP (à partir de la racine) |
+| CSV_INJECTION_FILE_PATH | Chemin d'accès vers la zone de dépôt du fichier d'injection dans DIADEME sur le serveur FTP (à partir de la racine) |
+| CSV_INJECTION_HEADER | Entête du fichier CSV pour l'injection des pièces dans DIADEME (colonnes séparées par des points-virgules)|
+| CSV_INJECTION_NAME_FILE | Nom du fichier CSV d'injection dans DIADEME |
+| CSV_HOST | Nom de l'hôte pour la connexion au serveur FTP pour l'enregistrement des fichiers CSV |
+| CSV_PORT | Numéro du port de connexion au serveur FTP pour l'enregistrement des fichiers CSV |
+| CSV_PWD | Mot de passe pour la connexion au serveur FTP pour l'enregistrement des fichiers CSV |
+| CSV_USER | Nom d'utilisateur pour la connexion au serveur FTP pour l'enregistrement des fichiers CSV |
+| CSV_SENDMAIL_TO | Adresse mail de destination du mail contenant l'un des fichiers CSV |
+| FTP_HOST | Nom de l'hôte pour la connexion au serveur FTP pour l'enregistrement des justificatifs |
+| FTP_PORT | Numéro du port de connexion au serveur FTP pour l'enregistrement des justificatifs |
+| FTP_PWD | Mot de passe pour la connexion au serveur FTP pour l'enregistrement des justificatifs |
+| FTP_USER | Nom d'utilisateur pour la connexion au serveur FTP pour l'enregistrement des justificatifs |
+| MYSQL_BD | # Nom de la base de données |
+| MYSQL_HOST | Nom de l'hôte pour la connexion à la base de données |
+| MYSQL_PORT | Numéro du port de connexion à la base de données |
+| MYSQL_PWD | Mot de passe pour la connexion à la base de données |
+| MYSQL_USER | Nom d'utilisateur pour la connexion à la base de données |
+| SENDMAIL_FROM | Adresse mail de l'expéditeur des mails automatiques |
+| SENDMAIL_NAME | Nom de l'expéditeur des mails automatiques  |
+| SMTP_HOST | Nom de l'hôte pour la connexion au serveur SMTP |
+| SMTP_PORT | Numéro du port de connexion au serveur SMTP |
+| SMTP_PWD | Mot de passe pour la connexion au serveur SMTP |
+| SMTP_USER | Nom d'utilisateur pour la connexion au serveur SMTP |
+| STORAGE_PATH | Chemin d'accès vers la zone de dépôt des justificatifs sur le serveur FTP (à partir de la racine) |
+
+
 ```txt
 # ------------------------------------------------------------------
 #  VARIABLES D'ENVIRONNEMENT DE CONNEXION À LA BASE DE DONNÉES
 # ------------------------------------------------------------------
-# Nom du host [MYSQL_HOST]
+# Nom de l'hôte [MYSQL_HOST]
 MYSQL_HOST=
 # Nom d'utilisateur [MYSQL_USER]
 MYSQL_USER=
@@ -84,7 +120,7 @@ MYSQL_PORT=
 # ------------------------------------------------------------------
 #  VARIABLES D'ENVIRONNEMENT DE CONNEXION AU SERVEUR FTP
 # ------------------------------------------------------------------
-# Nom du host [FTP_HOST]
+# Nom de l'hôte [FTP_HOST]
 FTP_HOST=
 # Nom d'utilisateur [FTP_USER]            
 FTP_USER=
@@ -101,9 +137,9 @@ FTP_PORT=
 STORAGE_PATH=
 
 # ------------------------------------------------------------------
-#  VARIABLES D'ENVIRONNEMENT POUR L'ENVOI DES MAILS</br>
+#  VARIABLES D'ENVIRONNEMENT POUR L'ENVOI DES MAILS
 # ------------------------------------------------------------------
-# Nom du host [SMTP_HOST]
+# Nom de l'hôte [SMTP_HOST]
 SMTP_HOST=
 # Numéro du port [SMTP_PORT]		
 SMTP_PORT=
