@@ -179,7 +179,7 @@ function genererFichierInjectionCSV($link) {
             if(strpos($header, "date evenement") !== Null)
                 $ligne .= ";";
             if(strpos($header, "commentaire") !== Null)
-                $ligne .= ";";
+                $ligne .= "Référence dossier PJPE : ".$tuple["RefD"].";";
             if(strpos($header, "docporteur") !== Null)
                 $ligne .= $tuple["Mnemonique"].";";
             $ligne = substr($ligne, 0, strlen($ligne) - 1); // Suppression du dernier point virgule
