@@ -1,9 +1,9 @@
 # Projet_BAAAAAM
 
-![](https://img.shields.io/github/repo-size/TeamBAAAAAM/Projet_BAAAAAM?style=for-the-badge)
-![](https://img.shields.io/github/license/TeamBAAAAAM/Projet_BAAAAAM?color=Red&style=for-the-badge)
-![](https://img.shields.io/github/contributors/TeamBAAAAAM/Projet_BAAAAAM?style=for-the-badge)
 ![](https://img.shields.io/github/last-commit/TeamBAAAAAM/Projet_BAAAAAM?color=yellow&style=for-the-badge)
+![](https://img.shields.io/github/repo-size/TeamBAAAAAM/Projet_BAAAAAM?style=for-the-badge)
+![](https://img.shields.io/github/contributors/TeamBAAAAAM/Projet_BAAAAAM?style=for-the-badge)
+![](https://img.shields.io/github/license/TeamBAAAAAM/Projet_BAAAAAM?color=Red&style=for-the-badge)
 
 Projet de conception et développement d'une application web pour la dématérialisation des arrêts de travail avec la CPAM de la Haute-Garonne.
 
