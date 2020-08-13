@@ -67,7 +67,7 @@
             }
 		}
 
-        redirigerVers('suivi.php?'.$msg); // Passage des varaibles par la méthode GET
+        redirigerVers('suivi.php?'.$msg); // Passage des variables par la méthode GET
 	}
 
 	if(isset($_SESSION["Assure"])) {
@@ -154,7 +154,7 @@
                         $title .= ", ainsi que la référence du dossier qui vous a été délivrée.";
                         $body .= " et la référence de votre dossier";
 
-                    $body .= " dans le champ précu à cet effet.";
+                    $body .= " dans le champ prévu à cet effet.";
 
                     GenererMessage (
                         $title,
@@ -192,7 +192,7 @@
 		
         <div class="container">
             <div class="panel panel-default" id="form_panel">
-                <div class="panel-heading">Formulaire d'envoi</div>
+                <div class="panel-heading">Formulaire de suivi</div>
                 <div class="panel-body">
 					<form method="POST" action="suivi.php">
 						<div class="container" id="etat-civil">
@@ -300,127 +300,127 @@
 		</div>
 		
 		<?php if($post_ok) : ?>
-		<div class="container">
-			<div class="row container">
-				<div id="panel-assure" class="col-lg-6">
-					<div class="row">
-						<div class="col-xs-12">
-							<h3><span class="glyphicon glyphicon glyphicon-user"></span> NIR : <?php echo $NirAssure;?></h3>
-							<h5><?php echo "Assuré : $PrenomAssure $NomAssure";?></h5>
-							<h5>En arrêt de travail depuis le : <?php echo date("d/m/Y", $DateAM);?></h5>
-							<h5>
-								<?php
-									if($TelephoneAssure != "") echo "Tel : $TelephoneAssure";
-									else echo "N/A";
-								?>
-								/
-								<?php
-									if($MailAssure != "") echo "Email : $MailAssure";
-									else echo "N/A";
-								?>
-							</h5>
+			<div class="container">
+				<div class="row container">
+					<div id="panel-assure" class="col-lg-6">
+						<div class="row">
+							<div class="col-xs-12">
+								<h3><span class="glyphicon glyphicon glyphicon-user"></span> NIR : <?php echo $NirAssure;?></h3>
+								<h5><?php echo "Assuré : $PrenomAssure $NomAssure";?></h5>
+								<h5>En arrêt de travail depuis le : <?php echo date("d/m/Y", $DateAM);?></h5>
+								<h5>
+									<?php
+										if($TelephoneAssure != "") echo "Tel : $TelephoneAssure";
+										else echo "Tel : N/A";
+									?>
+									/
+									<?php
+										if($MailAssure != "") echo "Email : $MailAssure";
+										else echo "N/A";
+									?>
+								</h5>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-        <div id="suivi" class="container">
-			<?php if($StatutD == "À traiter") : ?>
+			<div id="suivi" class="container">
+				<?php if($StatutD == "À traiter") : ?>
 
-				<?php
-						GenererMessage (
-							"Dossier No. $ReferenceDossier",
-							"Votre dossier a bien été réceptionné par nos services !",
-							"inbox",
-							"warning"
-						);
-				?>
-								
-				<div class="bar-icons warning">
-					<span class="icon glyphicon glyphicon-download-alt"></span>
-					<span class="icon glyphicon glyphicon-inbox"></span>
-					<span class="icon glyphicon glyphicon-hourglass disabled"></span>
-					<span class="icon glyphicon glyphicon-edit disabled"></span>
-				</div>
-
-				<div class="progress">
-					<div class="progress-bar progress-bar-striped progress-bar-warning active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:36.80%">
-						Dossier réceptionné
+					<?php
+							GenererMessage (
+								"Dossier No. $ReferenceDossier",
+								"Votre dossier a bien été réceptionné par nos services !",
+								"inbox",
+								"warning"
+							);
+					?>
+									
+					<div class="bar-icons warning">
+						<span class="icon glyphicon glyphicon-download-alt"></span>
+						<span class="icon glyphicon glyphicon-inbox"></span>
+						<span class="icon glyphicon glyphicon-hourglass disabled"></span>
+						<span class="icon glyphicon glyphicon-edit disabled"></span>
 					</div>
-				</div>
 
-			<?php elseif($StatutD == "En cours") :?>
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped progress-bar-warning active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:36.80%">
+							Dossier réceptionné
+						</div>
+					</div>
+
+				<?php elseif($StatutD == "En cours") :?>
 				
-				<?php
-						GenererMessage (
-							"Dossier No. $ReferenceDossier",
-							"Votre dossier est en cours de traitement par un de nos agents !",
-							"hourglass",
-							"info"
-						);
-				?>
+					<?php
+							GenererMessage (
+								"Dossier No. $ReferenceDossier",
+								"Votre dossier est en cours de traitement par un de nos agents !",
+								"hourglass",
+								"info"
+							);
+					?>
 
-				<div class="bar-icons info">
-					<span class="icon glyphicon glyphicon-download-alt"></span>
-					<span class="icon glyphicon glyphicon-inbox"></span>
-					<span class="icon glyphicon glyphicon-hourglass"></span>
-					<span class="icon glyphicon glyphicon-edit disabled"></span>
-				</div>
-
-				<div class="progress">
-					<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:66.66%">
-						Dossier en cours de traitement
+					<div class="bar-icons info">
+						<span class="icon glyphicon glyphicon-download-alt"></span>
+						<span class="icon glyphicon glyphicon-inbox"></span>
+						<span class="icon glyphicon glyphicon-hourglass"></span>
+						<span class="icon glyphicon glyphicon-edit disabled"></span>
 					</div>
-				</div>
 
-			<?php elseif($StatutD == "Classé sans suite") :?>
-
-				<?php
-						GenererMessage (
-							"Dossier No. $ReferenceDossier",
-							"Les documents que nous avons reçus ne nous permettent pas de procéder au versement d'indemnités journalières.",
-							"remove",
-							"danger"
-						);
-				?>
-
-				<div class="bar-icons danger">
-					<span class="icon glyphicon glyphicon-download-alt"></span>
-					<span class="icon glyphicon glyphicon-inbox"></span>
-					<span class="icon glyphicon glyphicon-hourglass"></span>
-					<span class="icon glyphicon glyphicon-remove"></span>
-				</div>
-
-				<div class="progress">
-					<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
-						Dossier classé sans suite
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:66.66%">
+							Dossier en cours de traitement
+						</div>
 					</div>
-				</div>
 
-			<?php else : ?>
+				<?php elseif($StatutD == "Classé sans suite") :?>
 
-				<?php
-						GenererMessage (
-							"Dossier No. $ReferenceDossier",
-							"Votre dossier est valide et a bien été traité ! Vous recevrez bientôt vos indemnités journalières.",
-							"ok",
-							"success"
-						);
-				?>
+					<?php
+							GenererMessage (
+								"Dossier No. $ReferenceDossier",
+								"Les documents que nous avons reçus ne nous permettent pas de procéder au versement d'indemnités journalières.",
+								"remove",
+								"danger"
+							);
+					?>
 
-				<div class="bar-icons success">
-					<span class="icon glyphicon glyphicon-download-alt"></span>
-					<span class="icon glyphicon glyphicon-inbox"></span>
-					<span class="icon glyphicon glyphicon-hourglass"></span>
-					<span class="icon glyphicon glyphicon-ok"></span>
-				</div>
-
-				<div class="progress">
-					<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
-						Dossier validé
+					<div class="bar-icons danger">
+						<span class="icon glyphicon glyphicon-download-alt"></span>
+						<span class="icon glyphicon glyphicon-inbox"></span>
+						<span class="icon glyphicon glyphicon-hourglass"></span>
+						<span class="icon glyphicon glyphicon-remove"></span>
 					</div>
-				</div>
+
+					<div class="progress">
+						<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+							Dossier mis en attente
+						</div>
+					</div>
+
+				<?php else : ?>
+
+					<?php
+							GenererMessage (
+								"Dossier No. $ReferenceDossier",
+								"Votre dossier est valide et a bien été traité ! Vous recevrez bientôt vos indemnités journalières.",
+								"ok",
+								"success"
+							);
+					?>
+
+					<div class="bar-icons success">
+						<span class="icon glyphicon glyphicon-download-alt"></span>
+						<span class="icon glyphicon glyphicon-inbox"></span>
+						<span class="icon glyphicon glyphicon-hourglass"></span>
+						<span class="icon glyphicon glyphicon-ok"></span>
+					</div>
+
+					<div class="progress">
+						<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+							Dossier validé
+						</div>
+					</div>
 
 				<?php endif ?>
 
@@ -431,11 +431,17 @@
 								Consulter un autre dossier
 							</a>
 						</div>
+						<?php if($StatutD != "Terminé") :?>
+						<div class="col-sm-4">
+							<a href="depot.php" class="btn btn-default btn-lg">
+								<span class="glyphicon glyphicon-new-window"></span>
+								Renvoyer des justificatifs
+							</a>
+						</div>
+						<?php endif ?>					
 					</div>
-				<?php endif ?>
-				</div>
 			</div>
-		</div>
+		<?php endif ?>
 
 		<footer class="container-fluid text-center">
 			<div class="row">

@@ -1,6 +1,8 @@
 /******************************************************************/
 
+
 /*             FEUILLE DE STYLE DES PAGES CÔTÉ ASSURÉ             */
+
 
 /******************************************************************/
 
@@ -10,273 +12,330 @@
 -------------------------------------------------------*/
 
 body {
-	font-family: "Calibri";
+    font-family: Arial, Roboto, sans-serif;
 }
+
 
 /*------------------------------------------------------
  	ENTÊTE DE LA PAGE
 -------------------------------------------------------*/
 
 .header {
-	padding: 10px 32px;
-	border: none;
-	border-radius: 0px;
-	background-color: #339966;
-	color: white;
-	box-shadow: 1px 1px 10px grey;
+    padding: 10px 32px;
+    border: none;
+    border-radius: 0px;
+    background-color: #339966;
+    color: white;
+    box-shadow: 1px 1px 10px grey;
 }
 
 .header img {
-	margin-left: 15px;
-	height: 50px;
+    margin-left: 15px;
+    height: 50px;
 }
 
-.navbar-header > button {
-	height: 50px;
-	background-color: white;
+.navbar-header>button {
+    height: 50px;
+    background-color: white;
 }
+
 
 /*------------------------------------------------------
  	BOUTONS DES CATÉGORIES
 -------------------------------------------------------*/
 
 #status {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 div.btn-status {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	text-decoration: none;
-	border-radius: 20px;
-	font-family: Calibri;
-	padding-bottom: 10px;
-	border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 20px;
+    font-family: Arial, Roboto, sans-serif;
+    padding-bottom: 10px;
+    border: 1px solid white;
 }
 
 div.btn-status:hover {
-	transition: background-color 0.25s, color 0.75s ease-out;
+    transition: background-color 0.25s, color 0.75s ease-out;
 }
 
 #btn-modal {
-	border: 5px outset white;
-	background-color: #1058af;
-	color: white;
-	font-weight: bold;
-	margin-top: 34px;
-	font-size: 20px;
-	padding-left: 16px; 
-	padding-right: 16px; 
-	border-radius: 100px;
+    border: 5px outset white;
+    background-color: #1058af;
+    color: white;
+    font-weight: bold;
+    margin-top: 34px;
+    font-size: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 100px;
 }
+
 #btn-modal:hover {
-	border-style: inset;
+    border-style: inset;
 }
 
 .unselected {
-	background-color: rgb(0, 199, 235);
-	color: white;
+    background-color: rgb(0, 199, 235);
+    color: white;
 }
 
 .unselected:hover {
-	background-color: rgb(0, 114, 255);
-	color: white;
-	cursor: pointer;
+    background-color: rgb(0, 114, 255);
+    color: white;
+    cursor: pointer;
 }
 
 .selected {
-	background-color: rgb(0, 114, 255);
-	color: white;
+    background-color: rgb(0, 114, 255);
+    color: white;
 }
 
 #champ_obligatoire {
-	margin: 20px 0px;
-	font-style: italic;
-	font-weight: bold;
+    margin: 20px 0px;
+    font-style: italic;
+    font-weight: bold;
 }
 
 .control-label {
-	margin-left: 5px;
-	margin-top : 15px;
+    margin-left: 5px;
+    margin-top: 15px;
 }
+
 
 /*------------------------------------------------------
 	FORMULAIRE
 -------------------------------------------------------*/
 
 #form_panel {
-	margin-top: 50px;
-	border-radius: 25px;
+    margin-top: 50px;
+    border-radius: 25px;
 }
 
-#form_panel > .panel-heading {
-	border-radius: 25px 25px 0px 0px;
-	padding-left: 40px;
-	background-color: rgb(0, 114, 255);
-	font-size: 2em;
-	color: white;
+#form_panel>.panel-heading {
+    border-radius: 25px 25px 0px 0px;
+    padding-left: 40px;
+    background-color: rgb(0, 114, 255);
+    font-size: 2em;
+    color: white;
 }
 
 .modal-content {
-	background-color: rgba(0, 16, 29, 0.88);
-	color: white;
+    background-color: rgba(0, 16, 29, 0.88);
+    color: white;
 }
+
 .head_modal_title {
-	border: none;
+    border: none;
 }
 
 .label_enregistrement {
-	font-size: small;
-	margin-left: 15px;
-	padding: 4px;
+    font-size: small;
+    margin-left: 15px;
+    padding: 4px;
 }
 
-span.badge {	
-	font-size: small;
-	padding: 4px 8px;
+span.badge {
+    font-size: small;
+    padding: 4px 8px;
 }
 
 .panel_header_fichier {
-	background-color: #29293d;
-	color: #00ace6;
+    background-color: #29293d;
+    color: #00ace6;
 }
 
 span.glyphicon {
-	margin-right: 15px;
+    margin-right: 15px;
 }
 
-li.list-group-item {	
-	font-size: larger;
+li.list-group-item {
+    font-size: larger;
 }
+
+.ext-icon {
+    height: 100px;
+}
+
+.repost {
+    width: 94.5%;
+    margin: 0px;
+}
+
+.repost>div.row {
+    display: flex;
+    align-items: center;
+    margin: 20px 0px;
+    padding: 15px;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    box-shadow: 1px 1px 3px black inset;
+    text-align: center;
+}
+
 
 /* Bar de progression du suivi */
+
 .bar-icons {
-	background: none;
-	margin-bottom: 10px;
-	display: flex;
-	justify-content: space-between;
-	font-size: 64px;
+    background: none;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 64px;
 }
-.bar-icons.danger {color: #a94442;}
-.bar-icons.success {color: #3c763d;}
-.bar-icons.info {color: #31708f;}
-.bar-icons.warning {color: #8a6d3b;}
+
+.bar-icons.danger {
+    color: #a94442;
+}
+
+.bar-icons.success {
+    color: #3c763d;
+}
+
+.bar-icons.info {
+    color: #31708f;
+}
+
+.bar-icons.warning {
+    color: #8a6d3b;
+}
 
 .bar-icons .icon.disabled {
-	background-color: #1e1a25;
-	color: transparent;
-	text-shadow: 2px 2px 3px rgba(255,255,255,0.75);
-	-webkit-background-clip: text;
-	   -moz-background-clip: text;
-			background-clip: text;
+    background-color: #1e1a25;
+    color: transparent;
+    text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.75);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
 }
+
 
 /*note*/
+
 .note {
-	font-style: italic;
-	font-size: 0.75em;
-	color: blue;
+    font-style: italic;
+    font-size: 0.75em;
+    color: blue;
 }
 
+
 /*footer*/
+
 footer {
-	margin-top: 95px;
-	background-color: rgba(28, 35, 49, 0.568);
-	color: white;
-	padding: 0px 50px;
+    margin-top: 95px;
+    background-color: rgba(28, 35, 49, 0.568);
+    color: white;
+    padding: 0px 50px;
 }
 
 footer div.title_footer {
-	padding-top: 30px;
-	padding-bottom: 10px;
-	margin-bottom: 15px;
-	font-size: 18px;
-	font-weight: bold;
-	border-bottom: 1px solid #21d192;
-	text-transform: uppercase;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #21d192;
+    text-transform: uppercase;
 }
 
 footer iframe.col-sm-5 {
-	padding-left: 30px;
-	padding-right: 0px;
-	border: none;
+    padding-left: 30px;
+    padding-right: 0px;
+    border: none;
 }
 
 #juridique {
-	margin-top: 15px;
-	padding: 10px 0px;
-	background-color: rgba(24, 31, 43, 0.78);
+    margin-top: 15px;
+    padding: 10px 0px;
+    background-color: rgba(24, 31, 43, 0.78);
 }
 
 footer a {
-	text-decoration: none;	
-	color: #21d192;
+    text-decoration: none;
+    color: #21d192;
 }
+
 footer a:hover {
-	text-decoration: none;	
-	color: lightgrey;
+    text-decoration: none;
+    color: lightgrey;
 }
 
 footer #links a {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 #copyright {
-	padding: 20px 0px;
-	background-color: #161c27;
+    padding: 20px 0px;
+    background-color: #161c27;
 }
 
 footer div.list-group a {
-	border: none;
-	background-color: #1c2331;
-	color: #21d192;
+    border: none;
+    background-color: #1c2331;
+    color: #21d192;
 }
 
 .header a {
-	border: none;
-	text-decoration: none;
-	color: white;
+    border: none;
+    text-decoration: none;
+    color: white;
 }
 
 .header a:hover {
-	color: rgb(163, 206, 204);
+    color: rgb(163, 206, 204);
 }
 
-a[href='https://www.oups.gouv.fr/'] > img {
-	width: 180px;
+a[href='https://www.oups.gouv.fr/']>img {
+    width: 180px;
 }
 
 img[src="../img/num_tel.png"] {
-	height: 50px;
+    height: 50px;
 }
 
-.champ_obligatoire{
-	font-size: 14px;
+.champ_obligatoire {
+    font-size: 14px;
     font-style: italic;
     font-weight: bold;
     color: #03057B;
 }
 
+
 /* Message */
+
 div.alert {
-	margin: 30px 150px;
-	margin-top: 0px;
-	margin-bottom: 20px;
+    margin: 30px 150px;
+    margin-top: 0px;
+    margin-bottom: 20px;
 }
-div.alert > h3 {
-	margin-top: 0px;
+
+div.alert>h3 {
+    margin-top: 0px;
 }
+
 
 /* Bouton de fermeture de message */
+
 #msg_close {
-	float: right;
-	font-size: 24px;
+    float: right;
+    font-size: 24px;
 }
-#msg_close:hover {color: rgb(0, 0, 0, 0.25);}
-#msg_close + h3 {margin-top: 0px;}
+
+#msg_close:hover {
+    color: rgb(0, 0, 0, 0.25);
+}
+
+#msg_close+h3 {
+    margin-top: 0px;
+}
+
 
 /* Gestion du responsive */
+
 @media (max-width: 576px) {
 	div.btn-status {
 		height: 60px;
@@ -284,19 +343,13 @@ div.alert > h3 {
 	div.btn-status > h2 {
 		font-size: 20px;
 	}
-	#contact > * {
-		text-align: center;
-	}
 }
-@media only screen and (min-width: 576px) and (max-width : 768px) {
+@media (min-width: 576px) and (max-width : 768px) {
 	div.btn-status {
 		height: 80px;
 	}
 	div.btn-status > h2 {
 		font-size: 25px;
-	}
-	#contact > * {
-		text-align: center;
 	}
 }
 @media (min-width: 768px) and (max-width : 992px) {
@@ -307,8 +360,20 @@ div.alert > h3 {
 		font-size: 25px;
 	}
 }
-@media only screen and (min-width : 992px) {
+@media (min-width: 992px) {
 	div.btn-status {
 		height: 250px;
+	}
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+	#contact > * {
+		text-align: center;
+	}
+}
+
+@media (min-width: 768px) {
+	#contact > * {
+		text-align: left;
 	}
 }

@@ -50,16 +50,18 @@
                         $msg_erreur_mdp = 'msg_2';
                     }
 
-                    // Ensuite, on vérifie l'unicité de la matricule  
+                    // Ensuite, on vérifie l'unicité du matricule  
                     if ($verif == "Unique") {
                         //Si les 2 conditions précédentes sont vérifiées, on procède a l'enregistrement
                         // On insère dans la table technicien de la base le nouveau technicien qui vient de s'inscrire 
                         // Requête paramétrée.
                         $insertTech ="INSERT INTO technicien (Matricule, NomT, PrenomT, MdpT) VALUES(?,?,?,?)"; 
-                                            
+                        
+                        $mdpHashed = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+
                         // Préparation de la requête.
                         $requete = mysqli_prepare($connexion, $insertTech);
-                        mysqli_stmt_bind_param($requete, "ssss",$matricule,$nom,$prenom,$mot_de_passe);
+                        mysqli_stmt_bind_param($requete, "ssss",$matricule, $nom, $prenom, $mdpHashed);
                         
                         // Exécution de la requête.
                         $result = mysqli_stmt_execute($requete);
@@ -68,7 +70,7 @@
                             genererMessage(
                                 "Votre enregistrement s'est effectué avec succès !",
                                 "<p>
-                                    <a href='se_connecter.php' class='btn btn btn-primary' role='button'>
+                                    <a href='index.php' class='btn btn btn-primary' role='button'>
                                         <span class='glyphicon glyphicon-log-in'></span>
                                         Connectez vous maintenant
                                     </a>

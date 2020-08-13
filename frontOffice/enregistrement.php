@@ -60,16 +60,16 @@
                         if(!assureExiste($_POST["nir"], $link)) {
                             // Enregistrement de l'assuré dans la BD
                             if(!enregistrerAssure($_POST["nir"], $_POST["nom"], $_POST["prenom"],  $_POST["tel"], $_POST["email"], $link)) { // Message d'échec
-                                echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement de l'assuré !</div>";
+                                genererMessage("Alerte !", "Échec de l'enregistrement de l'assuré !", "alert", "danger");
                             } else {
                                 //Création du dossier d'un assuré dont le nom est son NIR (en local)
                                 if(!creerRepertoireNIR($ftp_stream, $_POST["nir"])) { // Message d'échec
-                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de la création du dossier du NIR de l'assuré' !</div>";
+                                    genererMessage("Alerte !", "Échec de la création du dossier du NIR de l'assuré !", "alert", "danger");
                                 } else { // Message de réussite
                                     $_SESSION["MessageAssure"] = "
                                         <ul class='list-group'>
                                             <li class='list-group-item list-group-item-success'> 
-                                                <h3>Enregistrement de vos informations</h3>
+                                                <h3>Vos informations</h3>
                                             </li>";                   
                                             
                                     if(isset($_POST["nir"])) {$_SESSION["MessageAssure"] .= "
@@ -125,11 +125,11 @@
                             $_SESSION["RefD"] = genererReferenceDossier(8, $link);
                             // Enregistrement du dossier dans la BD
                             if(!enregistrerDossier($assure["CodeA"], $_POST["date_arret"], $_SESSION["RefD"], $link)) { // Message d'échec
-                                echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec de l'enregistrement du dossier dans la base de données !</div>";
+                                genererMessage("Alerte !", "Échec de l'enregistrement du dossier dans la base de données !", "alert", "danger");
                             } else {
                                 //Création du dossier de l'arrêt maladie dont le nom est sa référence (en local)
-                                if(!creerRepertoireAM($ftp_stream, $_SESSION["RefD"], $assure["NirA"])) { // Message d'échec
-                                    echo "<div class='alert alert-danger'><strong>Alerte !</strong> Échec lors de la création du dossier !</div>";
+                                if(!creerRepertoireAM($ftp_stream, $_SESSION["RefD"], $assure["NirA"])) { // Message d'échec                                    
+                                    genererMessage("Alerte !", "Échec lors de la création du dossier d'arrêt de travail !", "alert", "danger");
                                 } else {
                                     // Récupération des données du dossier dans la BD
                                     $dossier = chercherDossierAvecREF($_SESSION["RefD"], $link);
@@ -183,10 +183,19 @@
                         
                         // Enregistrement des PJ
                         if(!isset($_SESSION["MessageFichiers"])) {
-                            $resultats = enregistrerFichiers(
-                                $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
-                                $dossier["CodeD"], $dossier["RefD"], $link
-                            );
+                            if(isset($_GET['repost'])) { // Si ce n'est pas le premier dépôt                                
+                                // On remplace ou ajoute les fichiers
+                                $resultats = majFichiers(
+                                    $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
+                                    $dossier["CodeD"], $dossier["RefD"], $link
+                                );    
+                            }
+                            else {
+                                $resultats = enregistrerFichiers(
+                                    $ftp_stream, $_FILES, $dossier["CodeA"], $dossier["NirA"],
+                                    $dossier["CodeD"], $dossier["RefD"], $link
+                                );
+                            }
                             
                             if($resultats != null) { // Message de réussite
                                 $_SESSION["MessageFichiers"] = "

@@ -4,12 +4,16 @@
 /*   FICHIER CONTENANT LES FONCTIONS PHP UTILISÉES POUR LE SITE   */
 
 /******************************************************************/
-// Rangées en 3 groupes de fonctions : générales, pour front office et pour back office
+// Rangées en 4 groupes de fonctions : générales, pour front office, pour back office et pour admin
 // Puis par ordre alphabétique
+
+/* Chargement du Composer */
+require 'vendor/autoload.php';
 
 /*------------------------------------------------------------------
  	IMPORTATION DES CLASSES PHPMailer
 ------------------------------------------------------------------*/
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -17,82 +21,28 @@ use PHPMailer\PHPMailer\Exception;
 /*------------------------------------------------------------------
  	IMPORTATION DES VARIABLES D'ENVIRONNEMENT DU FICHIER '.env'
 ------------------------------------------------------------------*/
-// Les variables de ce fichiers ne sont disponible que depuis ce fichier PHP
-chargerVarEnv(__DIR__."/.env");
+
+/* Les variables de ce fichiers ne sont disponibles que depuis ce fichier PHP */
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 /*------------------------------------------------------------------
  	VARIABLES GLOBALES POUR L'ENVOI DES MAILS
 ------------------------------------------------------------------*/
 
-// Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
-// précisées dans le fichier README.md > Section "Initialisation de SENDGRID"
+/* Avant de pouvoir envoyer des mails, il est nécéssaire d'effectuer les actions
+précisées dans le fichier README.md > Section "Initialisation de SENDGRID" */
 define("MAIL_REQUEST_SUBJECT", "PJPE - Demande de pièces justificatives");         // Objet du message de demandes de pièces
 define("MAIL_CONFIRM_SUBJECT", "PJPE - Confirmation d'enregistrement");            // Objet du message de confirmation de réception
+define("MAIL_CONFIRM_TREATMENT", "PJPE - Confirmation de traitement");             // Objet du message de confirmation de traitement
 define("DEPOSITE_LINK", "http://".$_SERVER['HTTP_HOST']."/frontOffice/depot.php"); // Lien vers le formulaire de dépôt
-define("FOOTER_EMAIL", "Merci de ne pas répondre à ce message.");                  // Message du footer
+define("FOOTER_EMAIL", 
+    "Ceci est un message automatique. Merci de ne pas y répondre.");               // Message du footer
 
 /*------------------------------------------------------------------
  	FONCTIONS GÉNÉRALES
 ------------------------------------------------------------------*/
-/* Renvoie les lignes du fichier '$filename' de format ENV dans une liste */
-function chargerFichierEnv($filename) {
-    $res = [];
-    
-    try {
-        // Caractère indiquant un commentaire
-        $CHAR_COMMENT = "#";
-        // Délimiteur de ligne
-        $CHAR_DELIMITER = ";";
-        // Les caractères à ne pas tenir compte (par exemple : '"')
-        $CHAR_ESCAPE = array("'", "\"", ";", "\n", "\r", "\t");
-
-        // Chargement du fichier
-        $fichier = fopen($filename, 'rb');
-        
-        $res = [];
-        // Tant qu'on est pas à la dernière ligne du fichier
-        while(!feof($fichier)){
-            // Chargement de la ligne suivante
-            $ligne = fgets($fichier);
-            
-            // Si la ligne n'est pas vide
-            if($ligne != "") {
-                /* GESTION DES COMMENTAIRES */
-                $pos_comment = strpos($ligne, $CHAR_COMMENT); // Position d'un éventuel commentaire
-
-                // S'il y a bien un commentaire
-                if($pos_comment !== False || $ligne[0] == $CHAR_COMMENT) {
-                    $ligne = substr($ligne, 0, $pos_comment); // Suppression du commentaire
-                }
-                
-                $ligne = str_replace($CHAR_ESCAPE, "", $ligne); // Supresseion des caractères inutiles
-
-                if($ligne != "") {
-                    try {
-                        $arg = explode("=", $ligne);
-                        $arg[0] = trim($arg[0]); //Supression des espaces avant et après de la clé
-                        $arg[1] = trim($arg[1]); //Supression des espaces avant et après de la valeur
-                        $res[] = implode("=", $arg);
-                    } catch (Exception $e) {}
-                }
-            }
-        }
-        fclose($fichier);
-    } catch (Exception $e) {}
-
-    return $res;
-}
-
-/* Déclare les variables d'environnement contenu dans le fichier '$nomDuFichier' de format 'env'*/
-/* Les éléments de "$listeVariablesIni" sont également ajoutés au fichier "php.ini" */
-function chargerVarEnv($nomDeFichier) {
-    $lignes = chargerFichierEnv($nomDeFichier);
-
-    foreach ($lignes as $ligne) {
-        // Insertion des valeurs dans le tableau getenv()
-        putenv($ligne);
-    }
-}
 
 /* Renvoie le chemin permettant d'accéder au serveur FTP */
 function cheminVersServeurFTP() {
@@ -104,7 +54,7 @@ function cheminVersServeurFTP() {
     return $chemin;
 }
 
-/* Connecte au serveur FTP */
+/* Connecte au serveur FTP pour la sauvegarde des pièces */
 function connecterServeurFTP() {    
     // Mise en place d'une connexion basique
     $ftp_stream = ftp_connect(
@@ -123,6 +73,29 @@ function connecterServeurFTP() {
     else {            
         echo "Erreur lors de l'identification !<br>";
         echo "Connexion impossible en tant que ".getenv("FTP_USER")." ...<br>";
+        return NULL;
+    }
+}
+
+/* Connecte au serveur FTP pour la sauvegarde des fichiers CSV */
+function connecterServeurFTP_CSV() {    
+    // Mise en place d'une connexion basique
+    $ftp_stream = ftp_connect(
+        getenv("CSV_FTP_HOST")) or 
+        die("Erreur : Impossible de se connecter à ".getenv("CSV_FTP_HOST")." !<br>"); 
+
+    //Tentative d'identification
+    if(ftp_login($ftp_stream, getenv("CSV_FTP_USER"), getenv("CSV_FTP_PWD"))) {
+        //echo "Connecté en tant que ".getent("FTP_USER")."@".FTP_HOST." ...<br>";
+    
+        // Activation du mode passif
+        ftp_pasv($ftp_stream, true);
+
+        return $ftp_stream;
+    }
+    else {            
+        echo "Erreur lors de l'identification !<br>";
+        echo "Connexion impossible en tant que ".getenv("CSV_FTP_USER")." ...<br>";
         return NULL;
     }
 }
@@ -157,13 +130,153 @@ function connecterBD() {
     return $link;
 }
 
+/* Fonction qui supprime les accents d'une chaine de caractères */
+ function retirerAccents($sentence) {
+    $res = $sentence;
+    $res = preg_replace('#Ç#', 'C', $res);
+    $res = preg_replace('#ç#', 'c', $res);
+    $res = preg_replace('#è|é|ê|ë#', 'e', $res);
+    $res = preg_replace('#È|É|Ê|Ë#', 'E', $res);
+    $res = preg_replace('#à|á|â|ã|ä|å#', 'a', $res);
+    $res = preg_replace('#@|À|Á|Â|Ã|Ä|Å#', 'A', $res);
+    $res = preg_replace('#ì|í|î|ï#', 'i', $res);
+    $res = preg_replace('#Ì|Í|Î|Ï#', 'I', $res);
+    $res = preg_replace('#ð|ò|ó|ô|õ|ö#', 'o', $res);
+    $res = preg_replace('#Ò|Ó|Ô|Õ|Ö#', 'O', $res);
+    $res = preg_replace('#ù|ú|û|ü#', 'u', $res);
+    $res = preg_replace('#Ù|Ú|Û|Ü#', 'U', $res);
+    $res = preg_replace('#ý|ÿ#', 'y', $res);
+    $res = preg_replace('#Ý#', 'Y', $res);
+     
+    return ($res);
+}
+
+/* Génère le fichier CSV pour l'insertion dans DIADEME */
+function genererFichierInjectionCSV($link) {    
+    $fichier = tmpfile();
+
+    // Ajout de l'entête
+    $header = getenv("CSV_INJECTION_HEADER");
+    fputs($fichier, utf8_decode($header."\n"));
+    
+    $header = retirerAccents(strtolower($header));
+    $result = recupererDossierInjection($link);
+    do {
+        $tuple = mysqli_fetch_array($result);
+        if($tuple != NULL) {
+            $ligne = "";
+            if(strpos($header, "addict") !== Null)
+                //$ligne .= getenv("STORAGE_PATH")."/".$tuple["NirA"]."/".$tuple["RefD"].";";
+                $ligne .= ";";
+            if(strpos($header, "processus") !== Null)
+                $ligne .= "IJ;";
+            if(strpos($header, "archivage") !== Null)
+                $ligne .= "OUI;";
+            if(strpos($header, "date reception") !== Null)
+                $ligne .= substr($tuple["DateD"], 0, 10).";";
+            if(strpos($header, "index metier") !== Null)
+                $ligne .= "vide;";
+            if(strpos($header, "date evenement") !== Null)
+                $ligne .= ";";
+            if(strpos($header, "commentaire") !== Null)
+                $ligne .= "Référence dossier PJPE : ".$tuple["RefD"].";";
+            if(strpos($header, "docporteur") !== Null)
+                $ligne .= $tuple["Mnemonique"].";";
+            $ligne = substr($ligne, 0, strlen($ligne) - 1); // Suppression du dernier point virgule
+            fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV
+        }
+    } while($tuple != NULL);
+
+    return $fichier;
+}
+
+/* Génère le fichier CSV pour le listing des dossiers "À traité" et "En cours" */
+function genererListeDossiersCSV($link) {    
+    $fichier = tmpfile();
+
+    $result = recupererListeDossiers($link);
+
+    $tuple = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    if($tuple != NULL) {
+        // Ajout de l'entête
+        $header = array_keys($tuple);
+        $ligne = implode(";", $header);
+        fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV 
+
+        do {
+            $ligne = implode(";", $tuple);
+            fputs($fichier, utf8_decode($ligne."\n")); // On écrit le tuple dans le fichier CSV            
+            $tuple = mysqli_fetch_array($result, MYSQLI_NUM);
+        } while($tuple != NULL);
+    }
+
+    return $fichier;
+}
+
+/* Sauvegarde le fichier d'injection dans DIADEME sur l'espace du serveur */
+function sauvegarderFichierInjectionCSVServeur($ftp_stream, $link) {
+    $fichier = genererFichierInjectionCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_INJECTION_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_INJECTION_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_INJECTION_FILE_PATH")."/".getenv("CSV_INJECTION_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
+
+    fclose($fichier);
+
+    return $result;
+}
+
+/* Télécharge le fichier d'injection dans DIADEME en local */
+function telechargererFichierInjectionCSVLocal($link) {    
+    $fichier = genererFichierInjectionCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    header("Content-Type: application/octet-stream");
+    header("Content-Length: ".filesize($nomFichier));
+    header("Content-Disposition: attachment; filename=".getenv("CSV_INJECTION_NAME_FILE"));
+
+    readfile($nomFichier);
+}
+
+/* Sauvegarder un fichier CSV sur le serveur contenant la liste des dossiers "En cours" et "À traiter" */
+function sauvegarderListeDossiersCSVServeur($ftp_stream, $link) {
+    $fichier = genererListeDossiersCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    // Si le dossier n'existe pas
+    if(!is_dir(cheminVersServeurFTP()."/".getenv("CSV_FOLDERS_FILE_PATH"))) {
+        ftp_mkdir($ftp_stream, getenv("CSV_FOLDERS_FILE_PATH")); // Création du dossier
+    }
+    $path = getenv("CSV_FOLDERS_FILE_PATH")."/".getenv("CSV_FOLDERS_NAME_FILE");
+    $result = ftp_put($ftp_stream, $path, $nomFichier, FTP_BINARY);
+
+    fclose($fichier);
+
+    return $result;
+}
+
+/* Télécharge un fichier CSV en local contenant la liste des dossiers "En cours" et "À traiter" */
+function telechargerListeDossiersCSVLocal($link) {    
+    $fichier = genererListeDossiersCSV($link);
+    $nomFichier = stream_get_meta_data($fichier)['uri'];
+
+    header("Content-Type: application/octet-stream");
+    header("Content-Length: ".filesize($nomFichier));
+    header("Content-Disposition: attachment; filename=".getenv("CSV_FOLDERS_NAME_FILE"));
+
+    readfile($nomFichier);
+}
+
 /* Génère un lien pour le suivi du dossier de référence '$ref' */
 /* => Chaine de caractère */
 function genererLienSuivi($ref) {
     $host = $_SERVER['HTTP_HOST'];
-    $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     
-    return "http://$host$uri/suivi.php?RefD=$ref";
+    return "http://$host/frontOffice/suivi.php?RefD=$ref";
 }
 
 /* Affiche un message de titre '$title', de contenu '$body', de glyphicon '$icon' et ayant un type Boostrap */
@@ -181,6 +294,30 @@ function genererMessage($title, $body, $icon, $type) {
             </p>
         </div>
     ";
+}
+
+/* Retourne les données pour le fichier de sauvegarde */
+function recupererDossierInjection($link) {
+    $query = "SELECT DISTINCT RefD, NirA, DateD, Mnemonique "
+            ."FROM dossier d, justificatif j, listemnemonique m, assure a "
+            ."WHERE d.StatutD = 'Terminé' "            
+            ."AND j.CodeD = d.CodeD "            
+            ."AND m.CodeM = j.CodeM "            
+            ."AND a.CodeA = d.CodeA ";
+
+    return mysqli_query($link, $query);
+}
+
+/* Retourne la liste des dossiers "à traiter" et "en cours" dans la BD */
+function recupererListeDossiers($link) {
+    $query = "SELECT a.CodeA, NirA, NomA, PrenomA, TelA, "
+            ."MailA, CodeD, StatutD, DateD, RefD, DateAM "
+            ."FROM assure a, dossier d "
+            ."WHERE (d.StatutD = 'À traiter' "
+            ."OR d.StatutD = 'En cours') "
+            ."AND d.CodeA = a.CodeA ";
+
+    return mysqli_query($link, $query);
 }
 
 /* Redirige vers la page '$nomPage' */
@@ -202,12 +339,29 @@ function demandeDeConnexion() {
     $host = $_SERVER['HTTP_HOST'];
     $url = $protocol . '://' . $host . $script . '?' . $params;
     
-    redirigerVers("se_connecter.php?redirect=$url");
+    redirigerVers("index.php?redirect=$url");
 }
 
 /*------------------------------------------------------------------
  	FONCTIONS : FRONT OFFICE (INTERFACE ASSURE)
 ------------------------------------------------------------------*/
+
+/* Renvoie les catégories d'assuré actives et les types de documents (mnémoniques) leur étant associés */
+/* => [Objet de type array si succès, NULL sinon] */
+function categoriesActivesAvecMnemoniques($link) {
+    $query = "SELECT ca.CodeC, ca.NomC, ca.DesignationC, lm.CodeM, lm.Mnemonique, lm.Designation, cc.Label 
+    FROM categorie ca, listemnemonique lm, concerner cc 
+    WHERE ca.StatutC = 'Actif' AND cc.CodeC = ca.CodeC AND cc.CodeM = lm.CodeM 
+    UNION 
+    SELECT ca.CodeC, ca.NomC as nomCategorie, ca.DesignationC, null, null, null, null 
+    FROM categorie ca WHERE ca.StatutC = 'Actif' 
+    AND ca.CodeC NOT IN (SELECT CodeC FROM concerner) 
+    ORDER BY CodeC";
+
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
 
 /* Vérifie si '$nir' correspond au NIR d'un assuré déjà enregistré dans la base de données */
 /* => [Vrai si le NIR est reconnu, Faux sinon] */
@@ -386,9 +540,11 @@ function enregistrerFichiers($ftp_stream, $listeFichiers,
             if ($fichier['name'][$i] != "") {
                 $file = basename($fichier['name'][$i]);
 
-                $target_dir =  getenv("STORAGE_PATH") . "/$nir/$ref";
+                $target_dir =  getenv("STORAGE_PATH");
                 $ext = strtolower(pathinfo($file)['extension']);
-                $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+                $cheminJustificatif = "$target_dir/";
+                $cheminJustificatif .= implode("", explode(" ", $nir));
+                $cheminJustificatif .= "_".$key."_IJ_($ref-$j).$ext";
 
                 $designation = $mnemonique["Designation"] . " No. " . $j;
 
@@ -444,27 +600,158 @@ function fichierExiste($link, $chemin){
     return (mysqli_fetch_array($result) != NULL);
 }
 
+/* Supprime physiquement le fichier de chemin '$cheminJustificatif' */
+/* => [True si le fichier a été supprimer, False Sinon  */
+function supprimerFichierPhysique($ftp_stream, $cheminJustificatif) {
+    if (ftp_delete($ftp_stream, $cheminJustificatif)) return True ;
+    else return False;
+}
+
+/* Supprime le fichier de chemin '$cheminJustificatif' de la BD*/
+/* => [True si le fichier a été supprimer, False Sinon  */
+function supprimerFichierBD($codeJ, $link) {
+    $query = "DELETE FROM justificatif "
+            ."WHERE CodeJ = $codeJ";
+
+    return mysqli_query($link, $query);
+}
+
+/* Met à jour la ligne de données du justificatif de code '$codeJ' dans la BD*/
+/* => [True si la ligne a bien été mise à jour, False Sinon  */
+function majJustificatifBD($codeJ, $nouveauCheminJ, $link) {
+    $query = "UPDATE justificatif "
+            ."SET CheminJ = '$nouveauCheminJ', CodeT = NULL, StatutJ = NULL "
+            ."WHERE CodeJ = $codeJ";
+
+    return mysqli_query($link, $query);
+}
+
+/* Supprime le fichier de chemin $cheminJ1 puis enregistre le fichier de chemin $cheminJ2 */
+/* => [True si le fichier a été supprimer, False Sinon  */
+function majFichier($ftp_stream, $fichier, $justificatif, $nouveauCheminJ, $link) {
+    $codeJ = $justificatif["CodeJ"];
+    $codeD = $justificatif["CodeD"];
+    $ancienCheminJ = $justificatif["CheminJ"];
+
+    // Suppression physique du fichier de chemin $ancienCheminJ
+    if(supprimerFichierPhysique($ftp_stream, $ancienCheminJ)) {
+        // Mise à jour du justificatif de code $codeJ
+        if(majJustificatifBD($codeJ, $nouveauCheminJ, $link)) {
+            //Enregistrement physique du fichier de chemin $cheminJ2
+            if(ftp_put($ftp_stream, $nouveauCheminJ, $fichier['tmp_name'], FTP_BINARY)) {
+                return True;
+            } else {echo "Échec lors de l'ajout physique !";}
+        } else {echo "Échec lors de la mise à jour dans la BD !";}
+    } else {echo "Échec lors de la suppression physique !";}
+
+    return False;
+}
+
+/* Écrase et remplace tous les fichiers de la liste $listeFichiers dans  */
+function majFichiers($ftp_stream, $listeFichiers, $codeA, $nirA, $codeD, $refD, $link) {
+    $resultats = array();
+
+    foreach ($listeFichiers as $key => $fichier) {
+        if(is_int($key)) { // Si le justificatif a été trouvé
+            $justificatif = recupererJustificatif($link, $key);
+            $ancienCheminJ = $justificatif["CheminJ"];
+            $designation = $justificatif["Designation"];
+            $nirA = $justificatif["NirA"];
+            $refD = $justificatif["RefD"];
+    
+            $file = basename($fichier['name']);
+            
+            // Récupération du nom du fichier sans son extension
+            $nomFichier = explode(".", basename($ancienCheminJ))[0]; // Le nom du fichier sans l'extension
+            $j = substr($nomFichier, strrpos($nomFichier, "_") + 1); // Le numéro du fichier
+
+            $target_dir =  getenv("STORAGE_PATH") . "/$nirA/$refD";
+            $ext = strtolower(pathinfo($file)['extension']);
+            $nouveauCheminJ = "$target_dir/$nomFichier.$ext";
+    
+            $designation = "Document mis à jour : $designation No. $j";
+            
+            if(majFichier($ftp_stream, $fichier, $justificatif, $nouveauCheminJ, $link)) {
+                if (ftp_put($ftp_stream, $nouveauCheminJ, $fichier['tmp_name'], FTP_BINARY)) {
+                    $resultats[] = array(TRUE, $file, $designation);
+                } else {
+                    $resultats[] = array(FALSE, $file, $designation);
+                }
+            } else {
+                $resultats[] = array(FALSE, $file, $designation);
+            }
+        }
+        else { // Sinon, on enregistre le fichier
+            $mnemonique = chercherObjetMnemoAvecMnemo($key, $link);
+
+            $j = compterPJDansDossierAvecMnemo(
+                $codeA, $codeD, $mnemonique["CodeM"], $link
+            ) + 1;
+
+            for ($i = 0; $i < count($fichier['name']); $i++) {
+                if ($fichier['name'][$i] != "") {
+                    $file = basename($fichier['name'][$i]);
+
+                    $target_dir =  getenv("STORAGE_PATH") . "/$nirA/$refD";
+                    $ext = strtolower(pathinfo($file)['extension']);
+                    $cheminJustificatif = "$target_dir/$key" . "_$j.$ext";
+
+                    $designation = "Document sauvegardé : ".$mnemonique["Designation"]." No. $j";
+                    
+                    if (enregistrerFichier($cheminJustificatif, $codeD, $mnemonique["CodeM"], $link)) {
+                        if (ftp_put($ftp_stream, $cheminJustificatif, $fichier['tmp_name'][$i], FTP_BINARY)) {
+                            $resultats[] = array(TRUE, $file, $designation);
+                        } else {
+                            $resultats[] = array(FALSE, $file, $designation);
+                        }
+                    } else {
+                        $resultats[] = array(FALSE, $file, $designation);
+                    }
+                    $j++;
+                }
+            }
+        }
+    }
+        
+
+    return $resultats;
+}
 
 /*------------------------------------------------------------------
  	FONCTIONS : BACK OFFICE (INTERFACE TECHNICIEN)
 ------------------------------------------------------------------*/
 
-/* Vérifie que le technicien de matricule '$matricule' possède bien le mot de passe '$mdpt' */
-/* => [Vrai si le technicien est bien authentifié, Faux sinon] */
-function authentifierTechnicien($link, $matricule, $mdpT) {
+/* Récupère le mot de passe haché d'un technicien pour authentification */
+/* => [Le mot de passe si le matricule du technicien existe, NULL sinon] */
+function authentifierTechnicien($link, $matricule) {
     $query = "SELECT Matricule, MdpT "
             ."FROM technicien "
-            ."WHERE Matricule = '$matricule' "
-            ."AND MdpT = '$mdpT'";
+            ."WHERE Matricule = '$matricule' ";
     $result = mysqli_query($link, $query);
 
-    return (mysqli_fetch_array($result) != NULL);
+    return mysqli_fetch_array($result);
 }
 
 /* Change le statut du dossier de code '$codeDossier' en '$statut' */
 /* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
 function changerStatutDossier($link, $codeDossier, $statut) {
     $query = "UPDATE dossier SET StatutD = '$statut' WHERE CodeD = '$codeDossier'";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Change le statut d'un justificatif de code '$codeJustificatif' en '$statut' */
+/* et affecte ou retirer le code d'un technicien de code '$codeTechnicien' */
+/* => [Vrai si le changement de statut a bien été effectué, Faux sinon] */
+function changerStatutPJ($link, $codeJustificatif, $statut, $codeTechnicien) {
+    $query = "UPDATE justificatif ";
+    if($statut == "NULL") $query .= "SET StatutJ = NULL, ";
+    else $query .= "SET StatutJ = '$statut', ";
+    if($codeTechnicien == Null) $query .= "CodeT = NULL ";
+    else $query .= "CodeT = $codeTechnicien ";
+    $query .= "WHERE CodeJ = $codeJustificatif";
+    
     $result = mysqli_query($link, $query);
 
     return $result;
@@ -484,7 +771,8 @@ function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
     return mysqli_fetch_array($result);
 }
 
-/* Renvoie la classe CSS correspondante pour chaque bouton du fichier traiter.php           */
+/* Affiche la classe CSS correspondante pour chaque bouton de traitement de dossier du      */
+/* du fichier traiter.php                                                                   */
 /* => Effectue seulement un affichage (pas de valeur de retour)                             */
 /* => Active ou désactive un bouton permettant de modifier le statut d'un dossier           */
 /* => $sessionValue correspond au statut du dossier en cours ($_SESSION['statut'])          */
@@ -492,7 +780,7 @@ function chercherDossierTraiteAvecCodeD($codeDossier, $link) {
 /* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
 /* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
 /* => le statut du dossier courant                                                          */
-function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
+function classBoutonTraiterDossier($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant) {
     switch($sessionValue) {
         case "En cours":
             if($codeT_dossier == $codeT_courant) {
@@ -551,6 +839,87 @@ function classBoutonTraiter($sessionValue, $buttonValue, $codeT_dossier, $codeT_
     }
 }
 
+/* Renvoie la classe CSS correspondante pour chaque bouton de traitement de PJ du           */
+/* du fichier traiter.php                                                                   */
+/* => Active ou désactive un bouton permettant de modifier le statut d'une PJ               */
+/* => $sessionValue correspond au statut du PJ courant                                      */
+/* => $buttonValue est soit "NULL", soit 'Valide' ou bien 'Invalide'                        */
+/* => $codeT_dossier est le code du technicien qui est actuellement connecté                */
+/* => Selon si le dossier est dans sa corbeille ou pas, il pourra ou non modifier           */
+/* => le statut du dossier courant                                                          */
+function classBoutonTraiterPJ($sessionValue, $buttonValue, $codeT_dossier, $codeT_courant, $statutDossier) {
+    if($statutDossier == "Terminé" || $statutDossier == "Classé sans suite") $text = "disabled";
+    else $text = "";
+    switch($sessionValue) {
+        case NULL:
+            if($codeT_dossier == $codeT_courant) {
+                switch($buttonValue) {
+                    case NULL:
+                        return "btn btn-warning disabled";
+                    case "Valide":
+                        return "btn btn-default $text";
+                    case "Invalide":
+                        return "btn btn-default $text";
+                }
+            }
+            else { // désactiver les boutons si en cours de traitement par un autre technicien
+                switch($buttonValue) {
+                    case NULL:
+                        return "btn btn-warning disabled";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            break;
+        case "Valide":
+            if($codeT_dossier == $codeT_courant) {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default $text";
+                    case "Valide":
+                        return "btn btn-success disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            else {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default disabled";
+                    case "Valide":
+                        return "btn btn-success disabled";
+                    case "Invalide":
+                        return "btn btn-default disabled";
+                }
+            }
+            break;
+        case "Invalide":
+            if($codeT_dossier == $codeT_courant) {
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default $text";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-danger disabled";
+                }
+            }
+            else {                
+                switch ($buttonValue) {
+                    case NULL:
+                        return "btn btn-default disabled";
+                    case "Valide":
+                        return "btn btn-default disabled";
+                    case "Invalide":
+                        return "btn btn-danger disabled";
+                }
+            }
+            break;
+    }
+}
+
 /* Renvoie les informations du technicien ayant le matricule '$matricule' sous la forme d'une liste */
 /* => [Objet de type array si le technicien est déjà enregistré, NULL sinon] */
 function donneesTechnicien($link, $matricule) {
@@ -589,6 +958,49 @@ function dossiersCorbeilleTechnicien($link, $codeTechnicien) {
     return $result;
 }
 
+/* Génère et renvoie un message pré-rempli pour demander des pièces à un assuré */
+/* Séparation nécessaire pour l'insertion des commentaires du technicien */
+/* et empêcher la modification des données principales */
+/* => [Objet de type array de 2 éléments : (0 : partie du haut, 1 : partie du bas) ] */
+function genererMessageAssure($nomAssure, $prenomAssure, $refDossier) {
+    $haut  = "<!DOCTYPE html>";
+    $haut .= "<html lang='fr'>";
+    $haut .= "   <head>";
+    $haut .= "        <meta charset='utf-8'>";
+    $haut .= "        <meta name='viewport' content='width=device-width, initial-scale=1'>";
+    $haut .= "        <style>";
+    $haut .= "           h3 {margin-bottom: 25px; font-style: italic;}";
+    $haut .= "           p {margin-bottom: 10px;}";
+    $haut .= "           span.esp {margin-right: 20px;}";
+    $haut .= "        </style>";
+    $haut .= "    </head>"; 
+    $haut .= "    <body>";
+
+    $haut .= "    <h3>Bonjour $prenomAssure $nomAssure,</h3>";
+
+    $haut .= "    <p>";
+    $haut .= "      <span class='esp'></span>Nous souhaiterions vous informer que lors de votre ";
+    $haut .= "      dernier dépôt, certaines pièces justificatives affiliées au dossier ";
+    $haut .= "      de référence ".$refDossier." semblent invalides et/ou manquantes.";
+    $haut .= "    </p>";
+    $haut .= "    <p id='comment'>";
+
+    /****** LE COMMENTAIRE DU TECHNICIEN SERA PLACÉ ICI ******/
+
+    $bas = "      </p>";
+    $bas .= "     <p><span class='esp'></span><em>Merci de cliquer sur le lien suivant afin de déposer les documents demandés :</em><br>";
+    $bas .= "     <span class='esp'></span><a href='".DEPOSITE_LINK."?RefD=$refDossier' target='_blank'>".DEPOSITE_LINK."?RefD=$refDossier</a></p>";
+    $bas .= "     <p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale pour vous authentifier.</strong></p>";
+  
+    $bas .= "     <p><span class='esp'></span>Bien cordialement,</p>";
+    $bas .= "     <h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+    if(FOOTER_EMAIL != "") $bas .="<hr><em>".FOOTER_EMAIL."</em>";
+
+    $bas .= '</body></html>';
+
+    return [$haut, $bas];
+}
+
 /* Enregistre le contenu d'un mail envoyé à l'assuré de code '$codeAssure' par le technicien de code '$codeTechnicien'*/
 /* => [Vrai si l'enregistrement a bien été effectué, Faux sinon] */
 function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link) {
@@ -607,6 +1019,55 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
     return mysqli_query($link, $query);
 }
 
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierInjectionCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour injection dans DIADEME";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV pour l'injection des justificatifs dans DIADEME.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererFichierInjectionCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_INJECTION_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
+/* Fonction qui envoi la liste des dossiers restants à traiter par mail */
+/* Ce mail est à renseigner dans le fichier ".env" */
+function envoyerMailFichierDossiersCSV($ftp_stream, $link) {
+    $to = getenv("CSV_SENDMAIL_TO");
+    $subject = "Fichier CSV pour le listage des dossiers restants à traiter";
+    $content = "<h3>- Site PJPE -</h3>";
+    $content .= "<p>";
+    $content .= "<em>Ci-joint, le fichier CSV contenant la liste des fichiers ";
+    $content .= "restant à traiter et en cours de traitement.</em>";
+    $content .= "</p><hr>";
+    $content .= "Message automatique, merci de ne pas y répondre.";
+    $type = "text/html";
+
+    // Récupération du fichier CSV en fichier temporaire
+    $tmpfile = genererListeDossiersCSV($link);
+    if($tmpfile != Null) {
+        $attachement = stream_get_meta_data($tmpfile)['uri'];
+        $nameFile = getenv("CSV_FOLDERS_NAME_FILE");
+        $res = envoyerMail($to, $subject, $content, $type, $attachement, $nameFile);
+        fclose($tmpfile);
+        return $res;
+    }
+    else return False;
+}
+
 /* Envoie un mail */
 /* 'SENDER_EMAIL_ADDRESS' : Adresse de l'expéditeur (variable globale tout en haut) */
 /* '$to'                  : Adresse de destination                                  */
@@ -616,13 +1077,10 @@ function enregistrerMessageAssure($codeAssure, $codeTechnicien, $contenu, $link)
 /* Valeurs possibles de $type : => 'text/html'  : Message de type HTML (par défaut) */
 /*                              => 'text/plain' : Message standard                  */
 /* => [Vrai si le message a bien été envoyé, Faux sinon]                            */
-function envoyerMail($to, $subject, $content, $type) {
-    // Load Composer's autoloader
-    require 'vendor/autoload.php';
-
+function envoyerMail($to, $subject, $content, $type, $attachement = Null, $nameFile = Null) {
     // Instantiation and passing `true` enables exceptions
     $mail = new PHPMailer(true);
-
+    
     try {
         //Server settings
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                    // Enable verbose debug output
@@ -643,8 +1101,8 @@ function envoyerMail($to, $subject, $content, $type) {
         //$mail->addBCC('bcc@example.com');
 
         // Attachments
-        //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-        //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        if($nameFile != Null) $mail->addAttachment($attachement, $nameFile);        
+        else if($attachement != Null) $mail->addAttachment($attachement);
 
         // Content
         if($type == "text/html") {        
@@ -684,7 +1142,7 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
     $content .= '    </head>'; 
     $content .= '    <body>';
 
-    $content .= "<h3>Bonjour $prenomAssure $nomAssure</h3>";
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure,</h3>";
     $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
     $content .= "nous vous confirmons que vos documents ont bien été réceptionnés ";
     $content .= "par nos services.</p>";
@@ -702,7 +1160,7 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
 
     // Génération du lien de suivi
     $content .= "<span class='esp'></span><a href='".genererLienSuivi($_SESSION["RefD"])."'>".genererLienSuivi($_SESSION["RefD"])."</a><br>";
-    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre NIR pour vous authentifier.</strong></p>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale (NIR) pour vous authentifier.</strong></p>";
     
     $content .= "<p><span class='esp'></span>Ci-dessous, vous trouverez les informations relatives à votre ";
     $content .= "dossier :</p>";
@@ -716,6 +1174,54 @@ function envoyerMailConfirmationEnregistrement($prenomAssure, $nomAssure, $to) {
     $content .= '</body></html>';
 
     return envoyerMail($to, MAIL_CONFIRM_SUBJECT, $content, "text/html");
+}
+
+/* Envoie un mail de confirmation d'enregistrement de données à l'adresse '$to' */
+/* Pour plus d'informations, consulter la fonction 'envoyerMail()'                */
+/* => [Vrai si le message a bien été envoyé, Faux sinon] */
+function envoyerMailConfirmationTraitement($prenomAssure, $nomAssure, $refDossier, $to, $statut) {
+    $content  = '<!DOCTYPE html>';
+    $content .= '<html lang="fr">';
+    $content .= '   <head>';
+    $content .= '        <meta charset="utf-8">';
+    $content .= '        <meta name="viewport" content="width=device-width, initial-scale=1">';
+    $content .= '        <style>';
+    $content .= '           h3 {margin-bottom: 25px; font-style: italic;}';
+    $content .= '           p {margin-bottom: 10px;}';
+    $content .= '           span.esp {margin-right: 20px;}';
+    $content .= '        </style>';
+    $content .= '    </head>'; 
+    $content .= '    <body>';
+
+    $content .= "<h3>Bonjour $prenomAssure $nomAssure,</h3>";
+
+    if($statut == "Classé sans suite") {
+        $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+        $content .= "nous vous informons que le traitement de votre dossier (Référence : ";
+        $content .= "$refDossier) ne nous permet pas de donner une suite favorable. ";
+        $content .= "Les justificatifs que vous avez fournis ne permettent pas ";
+        $content .= "d'aboutir au versement de vos indemnités journalières.</p>";
+    }
+    else {
+        $content .= "<p><span class='esp'></span>Suite à votre envoi via la plateforme PJPE, ";
+        $content .= "nous avons le plaisir de vous informer que votre dossier (Référence : $refDossier) ";
+        $content .= "est complet et a été traité par nos services. Vous recevrez vos indemnités journalières ";
+        $content .= "dans les prochains jours.</p>";
+    }
+
+    $content .= "<p><span class='esp'></span>Il vous est toujours possible ";
+    $content .= "de consulter le suivi du traitement de votre dossier via le lien ci-dessous :</p>";
+
+    // Génération du lien de suivi
+    $content .= "<span class='esp'></span><a href='".genererLienSuivi($refDossier)."'>".genererLienSuivi($refDossier)."</a><br>";
+    $content .= "<p><span class='esp'></span><strong>NB : Vous aurez besoin de votre numéro de sécurité sociale (NIR) pour vous authentifier.</strong></p>";
+    
+    $content .= "<p><span class='esp'></span>Bien cordialement,</p>";
+    $content .= "<h4 style='margin-top: 30px; font-style: italic;'>- La CPAM de la Haute-Garonne -</h4>";
+
+    $content .= '</body></html>';
+
+    return envoyerMail($to, MAIL_CONFIRM_TREATMENT, $content, "text/html");
 }
 
 /* Envoie un mail de sujet '$subject' et de contenu '$txt' à l'adresse '$mail' */
@@ -838,14 +1344,83 @@ function nbDossiersTermines($link) {
 
 /* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
 /* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererJustificatif($link, $codeJ) {
+    $query = "SELECT * "
+            ."FROM justificatif j, listemnemonique l, dossier d, assure a "
+            ."WHERE j.CodeJ = $codeJ "
+            ."AND j.CodeD = d.codeD "
+            ."AND j.CodeM = l.codeM "
+            ."AND d.CodeA = a.codeA ";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
 function recupererJustificatifs($link, $codeDossier) {
-    $query = "SELECT CheminJ, Mnemonique "
+    $query = "SELECT CodeJ, CheminJ, Mnemonique, StatutJ, CodeT AS Matricule "
             ."FROM justificatif j, listemnemonique l "
             ."WHERE j.CodeM = l.CodeM "
-            ."AND j.CodeD = '$codeDossier'";
+            ."AND j.CodeT IS NULL "
+            ."AND j.CodeD = '$codeDossier'"
+            ." UNION "
+            ."SELECT CodeJ, CheminJ, Mnemonique, StatutJ, Matricule "
+            ."FROM justificatif j, listemnemonique l, technicien t "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeT = t.CodeT "
+            ."AND j.CodeD = '$codeDossier' "
+            ."ORDER BY StatutJ, CodeJ";
     $result = mysqli_query($link, $query);
 
     return $result;
+}
+
+/* Renvoie la liste des fichiers du dossier de code '$codeDossier' ayant pour statut $statutPJ */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererJustificatifsAvecStatutJ($link, $codeDossier, $statutPJ) {
+    $query = "SELECT CodeJ, CheminJ, Mnemonique, Designation, Matricule "
+            ."FROM justificatif j, listemnemonique l, technicien t "
+            ."WHERE j.CodeM = l.CodeM "
+            ."AND j.CodeT = t.CodeT "
+            ."AND j.CodeD = '$codeDossier' "
+            ."AND j.StatutJ = '$statutPJ'";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Renvoie la liste de toutes les mnémoniques de la BD */
+/* => [Objet de type array si le dossier existe, NULL sinon] */
+function recupererMnemoniques($link) {
+    $query = "SELECT * FROM listemnemonique";
+    $result = mysqli_query($link, $query);
+
+    return $result;
+}
+
+/* Renvoie le nombre de justificatifs correspondant au statut $statutJ */
+/* => [Entier nul ou posiitf] */
+function nbPJsSelonStatut($link, $statutJ, $codeDossier) {
+    $query = "SELECT COUNT(*) AS num "
+            ."FROM justificatif "
+            ."WHERE CodeD = $codeDossier ";
+    if ($statutJ == "NULL") $query .= "AND StatutJ IS NULL";
+    else $query .= "AND StatutJ = '$statutJ'";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result)['num'];
+}
+
+/* Renvoie le nombre de justificatifs correspondant au statut $statutJ */
+/* => [Entier nul ou posiitf] */
+function nbPJsAvecCodeDossier($link, $codeDossier) {
+    $query = "SELECT COUNT(*) AS num "
+            ."FROM justificatif "
+            ."WHERE CodeD = $codeDossier";
+    $result = mysqli_query($link, $query);
+
+    return mysqli_fetch_array($result)['num'];
 }
 
 /* Affilie le dossier de code '$codeDossier' au technicien de code '$codeTechnicien' et change son statut en '$statut' */
@@ -883,7 +1458,7 @@ function traiterDossier($codeTechnicien, $codeDossier, $statut, $link) {
 }
 
 /* Vérifie l'unicité du matricule '$matricule' */
-/* => ["Unique" si c'est vrai, ... ???] */
+/* => ["Unique" si c'est vrai, message d'erreur sinon] */
 function verifierMatricule($link, $matricule) {
     $query = "SELECT * FROM technicien WHERE Matricule='$matricule'";
     $curseur = mysqli_query($link, $query);
@@ -899,4 +1474,54 @@ function verifierMatricule($link, $matricule) {
     return "Erreur de vérification du Matricule";
 }
 
+
+/*------------------------------------------------------------------
+ 	FONCTIONS : ADMIN (INTERFACE ADMINISTRATEUR)
+------------------------------------------------------------------*/
+
+/* Retourne les catégories actives */
+/* => [Objet de type array si existe, NULL sinon] */
+function categoriesActives($link) {
+    $query = "SELECT * "
+            ."FROM categorie c "
+            ."WHERE c.StatutC = 'Actif'";
+
+    return mysqli_query($link, $query) ;
+}
+
+/* Retourne les catégories inactives */
+/* => [Objet de type array si existe, NULL sinon] */
+function categoriesInactives($link) {
+    $query = "SELECT * "
+            ."FROM categorie c "
+            ."WHERE c.StatutC = 'Inactif'";
+  
+    return mysqli_query($link, $query);
+}
+
+/* Retourne la liste des mnémoniques existants */
+/* => [Objet de type array si existe, NULL sinon] */
+function listeMnemoniques($link) {
+    $query = "SELECT *  "
+            ."FROM listemnemonique ";
+            
+    return mysqli_query($link, $query);  
+}
+
+/* Retourne la liste des mnémoniques avec la catégorie */
+function listeMnemoniqueAvecCodeC($link, $codeC) {
+    $query = "SELECT c.CodeM, Mnemonique, Designation, Label "
+            ."FROM concerner c, listemnemonique l "
+            ."WHERE CodeC = $codeC "
+            ."AND c.CodeM = l.CodeM "
+            ."  UNION "
+            ."SELECT CodeM, Mnemonique, Designation, NULL "
+            ."FROM listemnemonique "
+            ."WHERE CodeM NOT IN ("
+            ."  SELECT CodeM "
+            ."  FROM concerner "
+            ."  WHERE CodeC = $codeC);";
+
+    return mysqli_query($link, $query);  
+}
 ?>

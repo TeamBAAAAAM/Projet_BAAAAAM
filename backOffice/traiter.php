@@ -12,7 +12,7 @@
 		$nomT = $_SESSION["nomT"];
 		$prenomT = $_SESSION["prenomT"];
 	} else { // Redirection sinon
-		redirigerVers("se_connecter.php");
+		redirigerVers("index.php");
 	}
 
 	// Récupération des données du dossier en cours de traitement
@@ -28,11 +28,35 @@
 			libererDossier($link, $_SESSION["codeDossier"]);
 			redirigerVers("corbeille_generale.php");
 		}
+		else if($_GET["statut"] != "En cours") {			
+			$dossier = chercherDossierTraiteAvecCodeD($_SESSION["codeDossier"], $link);
+			envoyerMailConfirmationTraitement(
+				$dossier["PrenomA"],
+				$dossier["NomA"], 
+				$dossier["RefD"],
+				$dossier["MailA"],
+				$_GET["statut"]
+			);
+		}
 		// Redirection pour supprimer les variables transmises dans l'URL
 		redirigerVers("traiter.php");
 
 	} else if(isset($_GET["codeD"])) {
 		$_SESSION["codeDossier"] = $_GET["codeD"];
+		// Redirection pour supprimer les variables transmises dans l'URL
+		redirigerVers("traiter.php");
+	}
+
+	// Récupération des données de la PJ
+	if(isset($_GET["statutPJ"]) && isset($_GET["codePJ"])) {
+		if($_GET["statutPJ"] == "NULL") {
+			changerStatutPJ($link, $_GET["codePJ"], $_GET["statutPJ"], Null);
+		}
+		else changerStatutPJ($link, $_GET["codePJ"], $_GET["statutPJ"], $codeT);
+		// Redirection pour supprimer les variables transmises dans l'URL
+		redirigerVers("traiter.php");
+	}
+	else if(isset($_GET["statutPJ"]) || isset($_GET["codePJ"])) {
 		// Redirection pour supprimer les variables transmises dans l'URL
 		redirigerVers("traiter.php");
 	}
@@ -83,7 +107,7 @@
 
         <title>PJPE - Traitement</title>
 	</head>
-	<body onLoad="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);">
+	<body>
 		<nav class="navbar navbar-default header">
 			<div class="container">
 				<div class="navbar-header">
@@ -113,17 +137,18 @@
 							<?php echo("$prenomT $nomT "); ?><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-menu-down"></span>
 							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li role="presentation"><a role="menuitem" href="se_connecter.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
+								<li role="presentation"><a role="menuitem" href="index.php?logout"><span class="glyphicon glyphicon-log-out"></span>Se déconnecter</a></li>
 							</ul>
 						</li>						
 					</ul>
 				</div>
 			</div>
 		</nav>		
-		<div class="container-fluid">
+
+		<div class="container">		
 			<?php
 				if(isset($_POST['email'])) {
-					if(envoyerMailDemandePJ($mailAssure, $refDossier, $_POST['mail_text'])) {
+					if(envoyerMailDemandePJ($mailAssure, $refDossier, implode("",$_POST['mail_text']))) {
 						GenererMessage (
 							"Mail envoyé !",
 							"Votre message a bien été envoyé.",
@@ -133,7 +158,7 @@
 
 						$contenu = "À : $mailAssure\n";
 						$contenu .= "Objet : ".MAIL_REQUEST_SUBJECT." [REF. ".$refDossier."]"."\n";
-						$contenu .= "Message : ".$_POST['mail_text'];
+						$contenu .= "Message : ".implode("",$_POST['mail_text']);
 						$contenu = explode("'", $contenu);
 						$contenu = implode("\\'", $contenu);
 
@@ -151,7 +176,8 @@
 
 							//Récupération des messages de l'assuré
 							$messagesAssure = listeMessages($codeAssure, $link);
-						} else {						
+						}
+						else {						
 							GenererMessage (
 								"Erreur lors de l'enregistrement !",
 								"Votre message n'a pas pu être enregistré !",
@@ -159,7 +185,8 @@
 								"danger"
 							);
 						}
-					} else {				
+					}
+					else {				
 						GenererMessage (
 							"Erreur lors de l'envoi !",
 							"Votre message n'a pas pu être envoyé !",
@@ -173,9 +200,7 @@
 					unset($_POST['email']);
 				}
 			?>
-		</div>
 
-		<div class="container">
 			<div class="row container">
 				<div id="panel-dossier" class="col-lg-6">
 					<div class="panel panel-default">
@@ -194,17 +219,23 @@
 										<span class="glyphicon glyphicon-minus-sign"></span>Remettre à traiter</a>
 									<!-- Pour un dossier En cours -->
 									<a href="traiter.php?statut=En%20cours"
-										class="<?php classBoutonTraiter($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
+										class="<?php classBoutonTraiterDossier($statutDossier, "En cours", $codeT_dossier, $codeT);?>"
 										role="button"><span class="glyphicon glyphicon-hourglass"></span>En cours</a>
 								</div>	
 								<div class="col-lg-12 btn-group btn-group-justified" role="group">
 									<!-- Pour mettre le dossier à Classé sans suite -->
 									<a href="traiter.php?statut=Classé%20sans%20suite"
-										class="<?php classBoutonTraiter($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>" 
+										class="
+											<?php classBoutonTraiterDossier($statutDossier, "Classé sans suite", $codeT_dossier, $codeT);?>
+											<?php if(nbPJsSelonStatut($link, "NULL", $codeDossier) > 0) echo " disabled";?>
+										" 
 										role="button"><span class="glyphicon glyphicon-remove"></span>Classé sans suite</a>
 									<!-- Pour mettre le dossier à Terminé -->
 									<a href="traiter.php?statut=Terminé"
-										class="<?php classBoutonTraiter($statutDossier, "Terminé", $codeT_dossier, $codeT);?>"
+										class="
+											<?php classBoutonTraiterDossier($statutDossier, "Terminé", $codeT_dossier, $codeT);?>
+											<?php if(nbPJsSelonStatut($link, "NULL", $codeDossier) > 0) echo " disabled";?>
+										"
 										role="button"><span class="glyphicon glyphicon-ok"></span>Terminé</a>
 								</div>
 							</div>
@@ -220,15 +251,14 @@
 									<h5><?php echo "Assuré : $prenomAssure $nomAssure";?></h5>
 									<h5>En arrêt de travail depuis le : <?php echo date("d/m/Y", $dateArretMaladie);?></h5>
 									<h5>
-										<!-- Affichage des coordonnées si renseignées -->
 										<?php
 											if($telephoneAssure != "") echo "Tel : $telephoneAssure";
-											else echo "N/A";
+											else echo "Tel : N/A";
 										?>
 										
 										<?php
 											if($mailAssure != "") echo "Email : $mailAssure";
-											else echo "N/A";
+											else echo "Email : N/A";
 										?>
 									</h5>
 								</div>
@@ -269,8 +299,8 @@
 
 							if($message == null) {
 								genererMessage(
-									"Aucune correspondance !",
-									"Aucun message enregistré n'est affilié à cet assuré.",
+									"Vide",
+									"Aucun message enregistré n'est affilié à cet assuré !",
 									"floppy-disk",
 									"warning"
 								);
@@ -315,14 +345,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span></button>
-						<h4>Envoyer un mail à l'assuré</h4>
-						<div class="container" style="padding-bottom: 10px">
-							Type de demande : 
-							<!-- Màj du contenu du mail en fonction de la valeur du checkbox -->
-							<input id="cb1" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces manquantes
-							<input id="cb2" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces illisibles
-							<input id="cb3" onChange="MAJMessageAssure('<?php echo DEPOSITE_LINK."', '".FOOTER_EMAIL;?>', '<?php echo $refDossier;?>', null);" type="checkbox"> Pièces invalides
-						</div>
+						<h4><span class="glyphicon glyphicon-envelope"></span>Envoyer un mail à l'assuré</h4>
 						<div class="input-group">
 							<span class="input-group-addon">À : </span>
 							<input id="email" type="text" class="form-control" name="email" value="<?php echo $mailAssure;?>" readonly>
@@ -333,8 +356,13 @@
 							value="<?php echo MAIL_REQUEST_SUBJECT." [REF. $refDossier]";?>">
 						</div>									
 					</div>
-					<div class="modal-body">
-						<textarea id="mail_text" name="mail_text" rows="15"></textarea>
+					<div class="modal-body row" style="margin: 10px;">
+						<?php $msgA = genererMessageAssure($nomAssure, $prenomAssure, $refDossier);?>
+						<input type="hidden" name="mail_text[]" rows="9" class="col-sm-12" style="resize: none;" value="<?php echo $msgA[0];?>" readonly>
+						<div><?php echo $msgA[0];?></div>
+						<textarea name="mail_text[]" rows="10" placeholder="Tapez vos commentaires ici ..." class="col-sm-12" style="resize: none; margin-bottom: 10px"></textarea>
+						<input type="hidden" name="mail_text[]" rows="5" class="col-sm-12" style="resize: none;" value="<?php echo $msgA[1];?>" readonly>
+						<div><?php echo $msgA[1];?></div>
 					</div>
 					<div class="modal-footer">
 						<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-send"></span>Envoyer</button>
@@ -350,6 +378,24 @@
 					<div class= "panel panel-default">
 						<div class="panel-heading text-center">
 							<h4><span class="glyphicon glyphicon-duplicate"></span>Liste des pièces justificatives</h4>
+							<h4 class="row">
+								<div class="col-sm-3" title="Nombre de pièces valides">
+									<span class="glyphicon glyphicon-ok"></span>
+									<?php echo nbPJsSelonStatut($link, "Valide", $codeDossier);?>
+								</div>
+								<div class="col-sm-3" title="Nombre de pièces invalides">
+									<span class="glyphicon glyphicon-remove"></span>
+									<?php echo nbPJsSelonStatut($link, "Invalide", $codeDossier);?>
+								</div>
+								<div class="col-sm-3" title="Nombre de pièces non-contrôlées">
+									<span class="glyphicon glyphicon-file"></span>
+									<?php echo nbPJsSelonStatut($link, "NULL", $codeDossier);?>
+								</div>
+								<div class="col-sm-3" title="Nombre de pièces totales">
+									<span class="glyphicon glyphicon-list"></span>
+									<?php echo nbPJsAvecCodeDossier($link, $codeDossier);?>
+								</div>
+							</h4>
 						</div>
 						<ul class="panel-body list-group">
 						<?php
@@ -366,13 +412,70 @@
 								$nomFichier = substr($nomFichier, 1);
 								$extension = strrchr($cheminFichier, '.');
 								$extension = substr($extension, 1);
-								echo("
-								<li class='list-group-item' onClick='updateViewer(\"$cheminFichier\");'>
-									<h5>
-										<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
-										$nomFichier
-									</h5>
-								</li>");
+								echo "
+								<li class='list-group-item'>
+									<div class='row'>
+										<div class='col-sm-2 image' onClick='updateViewer(\"$cheminFichier\");'>
+											<img alt='icon $extension' class='icon' src='../img/icons/$extension-icon.png'>
+										</div>
+										<div class='col-sm-6 text' onClick='updateViewer(\"$cheminFichier\");'>
+											<h5>$nomFichier</h5>
+										</div>
+										<div class='col-md-1 button'>
+											<a href='traiter.php?statutPJ=Valide&codePJ=".$justificatif['CodeJ']."' class='"
+												.classBoutonTraiterPJ(
+													$justificatif["StatutJ"],
+													"Valide",
+													$codeT_dossier,
+													$codeT,
+													$statutDossier
+												)
+												."' role='button' title='Valider ce fichier'>
+												<span class='glyphicon glyphicon-ok'></span>
+											</a>
+										</div>
+										<div class='col-md-1 button'>
+											<a href='traiter.php?statutPJ=Invalide&codePJ=".$justificatif['CodeJ']."' class='"
+												.classBoutonTraiterPJ(
+													$justificatif["StatutJ"],
+													"Invalide",
+													$codeT_dossier,
+													$codeT,
+													$statutDossier
+												)
+												."' role='button' title='Invalider ce fichier'>
+												<span class='glyphicon glyphicon-remove'></span>
+											</a>
+										</div>
+										<div class='col-md-1 button'>
+											<a href='traiter.php?statutPJ=NULL&codePJ=".$justificatif['CodeJ']."' class='"
+												.classBoutonTraiterPJ(
+													$justificatif["StatutJ"],
+													Null,
+													$codeT_dossier,
+													$codeT,
+													$statutDossier
+												)
+												."' role='button' title='Retirer le statut de ce fichier'>
+												<span class='glyphicon glyphicon-erase'></span>
+											</a>
+										</div>
+									</div>
+									<div class='row'>
+										<div class='col-sm-12 matricule' onClick='updateViewer(\"$cheminFichier\");'>
+								";
+
+								if($justificatif['Matricule'] != Null) {
+									echo "Contrôlée par : ".$justificatif['Matricule'];
+								}
+								else {
+									echo "- Non contrôlée -";
+								}
+
+								echo "		</div>
+										</div>
+									</li>
+								";
 							}
 						?>
 						</ul>
@@ -382,6 +485,12 @@
 					<div class= "panel panel-default">
 						<div class="panel-heading text-center">
 							<h4><span class="glyphicon glyphicon-picture"></span>Aperçu</h4>
+							<h4 class="row">
+								<div class="col-sm-12">
+									<span id="nom-fichier-icon-apercu" class="glyphicon glyphicon-file"></span>
+									<span id="nom-fichier-apercu">Sélectionnez un fichier dans la liste ...</span>
+								</div>
+							</h4>
 						</div>
 						<div class="panel-body">
 							<iframe id="apercu" class="container-fluid" onload="gestionTailleApercu()">

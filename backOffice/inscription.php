@@ -32,7 +32,7 @@ session_start();
         <nav class="navbar navbar-default header">
             <div class="container">
                 <div class="navbar-header">
-                    <a href="se_connecter.php"><h1>PJPE - Inscription</h1></a>
+                    <a href="index.php"><h1>PJPE - Inscription</h1></a>
                 </div>
             </div>
         </nav>
@@ -62,7 +62,7 @@ session_start();
                             genererMessage(
                                 "Le matricule saisi existe déjà dans la base de données !",
                                 "Cela signifie que vous êtes déjà inscrit, auquel cas vous pouvez vous 
-                                <a href='se_connecter.php' class='btn btn-primary' role='button'>
+                                <a href='index.php' class='btn btn-primary' role='button'>
                                     <span class='glyphicon glyphicon-log-in'></span>
                                     Connecter directement
                                 </a>, 
@@ -114,7 +114,7 @@ session_start();
                     </div>
                 <?php
                     if (isset($_GET["msg_erreur_mdp"])) {
-                        // S'il les deux mot de passe ne correspondent pas
+                        // S'il les deux mots de passe ne correspondent pas
                         if ($_GET["msg_erreur_mdp"] == "msg_2") {
                             genererMessage(
                                 "Les 2 mots de passe ne sont pas identiques !",
@@ -138,7 +138,7 @@ session_start();
                     <span class="glyphicon glyphicon-floppy-open"></span> S'enregistrer
                 </button>
                 
-                <a href="se_connecter.php" class="btn btn-lg btn-danger float-right" onclick="confirmationAnnulation(event)">
+                <a href="index.php" class="btn btn-lg btn-danger float-right" onclick="confirmationAnnulation(event)">
                     <span class='glyphicon glyphicon-remove'></span> Annuler
                 </a>
             </form>

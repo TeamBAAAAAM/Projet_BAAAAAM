@@ -11,7 +11,7 @@
         $_SESSION = array();
     }
 
-    $formPage = "accueil.php"; //La page ciblée lors de l'envoie du formulaire en temps normal
+    $formPage = "accueil.php"; //La page ciblée lors de l'envoi du formulaire en temps normal
 
     //Si l'utilisateur a été redirigé vers la page de connexion
     if(isset($_GET["redirect"])) {
@@ -40,12 +40,12 @@
 	</head>
 	<body id="body_sign">
         <?php
-            // Si la déconnexion s'est effectué avec succès
+            // Si déconnexion réussie
             if (empty($_SESSION) && isset($_GET['logout'])) {
                 echo "<div class='container-fluid'>";
                 genererMessage(
                     "Déconnexion réussie !",
-                    "Vous avez été correctement déconnecter.",
+                    "Vous avez été correctement déconnecté.",
                     "log-out",
                     "success"
                 );
@@ -69,7 +69,7 @@
                         if ($_GET["msg_erreur"]== "msg_3") {
                             genererMessage(
                                 "Identification impossible !",
-                                "La matricule et/ou le mot de passe sont incorrects !",
+                                "Le matricule et/ou le mot de passe sont incorrects !",
                                 "remove",
                                 "danger"
                             );
@@ -92,7 +92,7 @@
                 <!-- LIEN DU BAS -->
                 <div class="inscription">                    
                     <a id="inscrire" href='inscription.php'>Pas enregistré ?</a>             
-                    <a href='#' class="float-right">Mot de passe oublié ?</a>
+                    <!--a href='#' class="float-right" disabled>Mot de passe oublié ?</a-->
                 </div>
             </form>
         </div>
